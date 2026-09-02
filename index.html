@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DompetQ - Aplikasi Dompet Digital</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background-color: #0b0f0c;
+    }
+  </style>
+</head>
+<body class="text-white pb-28 pt-4 px-3 md:px-8">
+
+  <!-- WRAPPER UTAMA: Lebar Melar (Fluid up to 6xl) & Tetap 1 Kolom Ke Bawah -->
+  <div class="max-w-6xl mx-auto space-y-4">
+
+    <!-- HERO ISLAND: CARD ATAS HIJAU LIME -->
+    <div class="bg-[#b5f234] text-slate-950 rounded-[2.5rem] p-5 md:p-7 shadow-lg relative overflow-hidden">
+      
+      <!-- Profile & Top Icons -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2.5">
+          <button id="btn-arsip-slip" type="button" class="w-9 h-9 rounded-full bg-slate-900 text-[#b5f234] flex items-center justify-center font-bold text-sm hover:scale-105 active:scale-95 transition shadow-sm cursor-pointer" title="Buka Arsip Slip">
+            <i class="fa-solid fa-wallet text-sm"></i>
+          </button>
+          <div>
+            <h1 class="font-bold text-sm md:text-base leading-none text-slate-900">DompetQ</h1>
+            <span id="current-date" class="text-[10px] md:text-xs text-slate-700 font-medium">--</span>
+          </div>
+        </div>
+        <div class="flex gap-1.5">
+          <!-- TOMBOL SHORTCUT KALENDER -->
+          <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
+            <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
+          </button>
+          <!-- TOMBOL SHORTCUT PROFIL USER -->
+          <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
+              <i class="fa-regular fa-user text-xs md:text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Month Selector -->
+      <div class="flex items-center justify-between my-2 bg-slate-950/5 py-1.5 px-4 rounded-full">
+        <button id="btn-prev-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        
+        <span id="label-month-main" class="text-[11px] md:text-xs font-bold tracking-wider text-slate-800 uppercase cursor-pointer hover:underline">
+          SEPTEMBER 2026
+        </span>
+        
+        <button id="btn-next-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+
+      <!-- Total Saldo -->
+      <div class="my-6">
+        <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
+        <h2 class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
+        
+        <div class="mt-3 inline-block bg-slate-950/10 px-3 py-1 rounded-full">
+          <p class="text-[10px] md:text-xs text-slate-800 font-medium">
+            Sisa Bulan Lalu: <span class="font-bold text-slate-950">Rp 0</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons Grid (Ikut Melar) -->
+      <div class="grid grid-cols-4 gap-2 md:gap-4 pt-1">
+        <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+          <i class="fa-solid fa-file-invoice text-xs md:text-base text-[#b5f234] mb-1"></i>
+          <span class="text-[9px] md:text-xs font-bold">Upload Slip</span>
+        </button>
+        
+        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition">
+          <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
+          <span class="text-[9px] md:text-xs font-bold">Masuk</span>
+        </button>
+
+        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition">
+          <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
+          <span class="text-[9px] md:text-xs font-bold">Keluar</span>
+        </button>
+
+        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition">
+          <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
+          <span class="text-[9px] md:text-xs font-bold">Laporan</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SUB-PULAU: PEMASUKAN & PENGELUARAN (PULAU KEDUA) -->
+    <div class="grid grid-cols-2 gap-3">
+      <div class="bg-[#141a16] border border-emerald-950/60 p-4 md:p-5 rounded-2xl flex items-center justify-between">
+        <div>
+          <p class="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider">Pemasukan</p>
+          <p class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+        </div>
+        <!-- Tombol Panah Masuk (Buka Detail Slip Masuk) -->
+        <button id="btn-detail-masuk" type="button" class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs md:text-sm hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer" title="Lihat Detail Pemasukan Bulan Ini">
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
+
+      <div class="bg-[#1a1415] border border-rose-950/60 p-4 md:p-5 rounded-2xl flex items-center justify-between">
+        <div>
+          <p class="text-[10px] md:text-xs font-bold text-rose-400 uppercase tracking-wider">Pengeluaran</p>
+          <p class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+        </div>
+        <div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs md:text-sm">
+          <i class="fa-solid fa-arrow-up"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS SECTION (PULAU KETIGA UTAMA) -->
+    <div class="bg-[#121614] rounded-3xl p-5 md:p-7 border border-slate-800/80">
+      
+      <!-- Title & Filter -->
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider">Riwayat Transaksi</h3>
+        <button class="text-[11px] md:text-xs font-bold text-[#b5f234] hover:underline">Filter</button>
+      </div>
+
+      <!-- Quick Category Chips -->
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-none">
+        <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#b5f234] text-slate-950">Semua</button>
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pemasukan</button>
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pengeluaran</button>
+        <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Servis</button>
+      </div>
+
+      <!-- Empty State -->
+      <div class="text-center py-10 md:py-14">
+        <div class="w-14 h-14 bg-slate-800/60 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-500">
+          <i class="fa-solid fa-receipt text-2xl"></i>
+        </div>
+        <p class="text-xs md:text-sm font-bold text-slate-400">Belum Ada Transaksi</p>
+        <p class="text-[10px] md:text-xs text-slate-500 mt-1">Catatan bulan ini masih kosong.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- FLOATING BOTTOM NAVIGATION BAR (PULAU NAVIGASI) -->
+  <div class="fixed bottom-3 left-0 right-0 px-3 md:px-8">
+    <div class="max-w-6xl mx-auto">
+      <nav class="bg-[#b5f234] text-slate-950 rounded-full px-6 md:px-12 py-2 flex items-center justify-between shadow-2xl shadow-[#b5f234]/10">
+        
+        <!-- Rekap -->
+        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-950 font-bold">
+          <i class="fa-solid fa-chart-simple text-base md:text-lg"></i>
+          <span class="text-[9px] md:text-[10px]">REKAP</span>
+        </a>
+
+        <!-- Tabungan -->
+        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
+          <i class="fa-solid fa-wallet text-base md:text-lg"></i>
+          <span class="text-[9px] md:text-[10px] font-semibold">TABUNGAN</span>
+        </a>
+
+        <!-- Center FAB (+) Button -->
+        <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-slate-950 text-[#b5f234] flex items-center justify-center text-lg md:text-xl hover:scale-105 transition active:scale-95 shadow-md -my-2">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+
+        <!-- Servis -->
+        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
+          <i class="fa-solid fa-wrench text-base md:text-lg"></i>
+          <span class="text-[9px] md:text-[10px] font-semibold">SERVIS</span>
+        </a>
+
+        <!-- Setelan -->
+        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
+          <i class="fa-solid fa-gear text-base md:text-lg"></i>
+          <span class="text-[9px] md:text-[10px] font-semibold">SETELAN</span>
+        </a>
+
+      </nav>
+    </div>
+
+    <!-- MODAL ALERT CUSTOM (DARK THEME) -->
+    <div id="modal-alert-custom" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
+            <div class="p-5 text-center space-y-3">
+                <div id="alert-icon-bg" class="w-12 h-12 rounded-full mx-auto flex items-center justify-center text-lg font-bold border">
+                    <i id="alert-icon-fa" class="fa-solid fa-circle-info"></i>
+                </div>
+                <h4 id="alert-title" class="text-sm font-bold text-white">Informasi</h4>
+                <p id="alert-message" class="text-xs text-slate-400 leading-relaxed"></p>
+            </div>
+            <div class="p-3 border-t border-slate-800 bg-[#141a16]">
+                <button id="alert-btn-ok" class="w-full py-2.5 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 font-bold rounded-xl text-xs shadow-md transition cursor-pointer">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM CUSTOM (DARK THEME) -->
+    <div id="modal-confirm-custom" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden">
+        <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-xs overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-150">
+            <div class="p-5 text-center space-y-3">
+                <div class="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 mx-auto flex items-center justify-center text-lg font-bold">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h4 id="confirm-title" class="text-sm font-bold text-white">Konfirmasi</h4>
+                <p id="confirm-message" class="text-xs text-slate-400 leading-relaxed"></p>
+            </div>
+            <div class="p-3 border-t border-slate-800 bg-[#141a16] grid grid-cols-2 gap-2">
+                <button id="confirm-btn-cancel" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition cursor-pointer">Batal</button>
+                <button id="confirm-btn-yes" class="w-full py-2.5 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 font-bold rounded-xl text-xs shadow-md transition cursor-pointer">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ARSIP SLIP -->
+    <div id="modal-arsip-slip" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+        
+        <!-- Header Modal -->
+        <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-[#141a16]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-white leading-none">Arsip Slip Gaji</h3>
+              <span class="text-[10px] text-slate-400">Riwayat berkas slip yang tersimpan</span>
+            </div>
+          </div>
+          <button id="btn-close-arsip" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Body Modal (Daftar Slip) -->
+        <div class="p-5 overflow-y-auto space-y-3 flex-1">
+          <!-- Empty State / Dummy Item -->
+          <div class="text-center py-8 text-slate-500">
+            <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
+            <p class="text-xs font-medium">Belum ada slip tersimpan</p>
+          </div>
+        </div>
+
+        <!-- Footer Modal -->
+        <div class="p-4 border-t border-slate-800 bg-[#141a16] text-right">
+          <button id="btn-close-arsip-footer" class="px-4 py-2 bg-slate-800 text-xs font-bold text-slate-300 rounded-xl hover:bg-slate-700">Tutup</button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- MODAL KALENDER INTERAKTIF ALA WINDOWS -->
+    <div id="modal-kalender" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col">
+        
+        <!-- Header Modal -->
+        <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-[#141a16]">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
+              <i class="fa-regular fa-calendar"></i>
+            </div>
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider">Pilih Tanggal</h3>
+          </div>
+          <button id="btn-close-kalender" type="button" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+
+        <!-- Body Kalender Interaktif -->
+        <div class="p-4 select-none">
+          
+          <!-- Navigasi Atas & Tombol Alih Mode (Hari -> Bulan -> Tahun) -->
+          <div class="flex items-center justify-between mb-3 px-1">
+            <button id="cal-title-btn" type="button" class="text-sm font-bold text-white hover:text-[#b5f234] flex items-center gap-1 transition">
+              <span id="cal-title-text">September 2026</span>
+              <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+            </button>
+            <div class="flex items-center gap-1">
+              <button id="cal-prev-btn" type="button" class="w-7 h-7 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-chevron-up"></i>
+              </button>
+              <button id="cal-next-btn" type="button" class="w-7 h-7 rounded-lg bg-slate-800/60 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- VIEW 1: DATES GRID (Hari) -->
+          <div id="view-days">
+            <div class="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400 mb-2">
+              <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+            </div>
+            <div id="days-container" class="grid grid-cols-7 gap-1 text-center text-xs font-medium">
+              <!-- Render Hari via JS -->
+            </div>
+          </div>
+
+          <!-- VIEW 2: MONTHS GRID (Bulan) -->
+          <div id="view-months" class="hidden grid grid-cols-3 gap-2 text-center text-xs py-2">
+            <!-- Render 12 Bulan via JS -->
+          </div>
+
+          <!-- VIEW 3: YEARS GRID (Tahun) -->
+          <div id="view-years" class="hidden grid grid-cols-4 gap-2 text-center text-xs py-2">
+            <!-- Render 12 Tahun via JS -->
+          </div>
+
+        </div>
+
+        <!-- Footer Modal -->
+        <div class="p-3 border-t border-slate-800 bg-[#141a16] flex items-center justify-between">
+          <button id="btn-today" type="button" class="text-[11px] font-bold text-[#b5f234] hover:underline px-2">
+            Hari Ini
+          </button>
+          <div class="flex gap-2">
+            <button id="btn-batal-kalender" type="button" class="px-3 py-1.5 bg-slate-800 text-xs font-semibold text-slate-300 rounded-xl hover:bg-slate-700">
+              Batal
+            </button>
+            <button id="btn-simpan-kalender" type="button" class="px-4 py-1.5 bg-[#b5f234] text-xs font-bold text-slate-950 rounded-xl hover:bg-[#a2dc2e]">
+              Terapkan
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MODAL REGISTRASI / MASUK PROFIL USER (PRIVACY PRESERVED) -->
+    <div id="modal-reg-user" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden">
+        <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col">
+            
+            <!-- Header Modal -->
+            <div class="p-5 text-center bg-[#141a16] border-b border-slate-800 relative">
+                <button onclick="tutupModalRegistrasiUser()" class="absolute right-4 top-4 w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Tutup Modal">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+                
+                <h3 class="text-sm font-bold text-white leading-none">Profil & Akun Perangkat</h3>
+                <p class="text-[10px] text-slate-400 mt-1">Masukkan nama profil untuk masuk atau mendaftar</p>
+            </div>
+
+            <!-- Body Form -->
+            <div class="p-5 space-y-4">
+
+                <!-- Upload & Preview Foto Profil -->
+                <div class="flex flex-col items-center space-y-2">
+                    <div class="relative group">
+                        <div id="preview-avatar-container" class="w-20 h-20 rounded-full bg-[#1a221d] border-2 border-dashed border-slate-700 flex items-center justify-center overflow-hidden text-slate-400 shadow-inner">
+                            <img id="reg-avatar-preview" src="" class="w-full h-full object-cover hidden" alt="Avatar">
+                            <i id="reg-avatar-icon" class="fa-solid fa-camera text-xl text-[#b5f234]"></i>
+                        </div>
+                        
+                        <input type="file" id="reg-foto-input" accept="image/*" onchange="previewFotoProfil(event)" class="hidden">
+                        
+                        <button type="button" onclick="document.getElementById('reg-foto-input').click()" class="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-semibold transition cursor-pointer">
+                            Ganti
+                        </button>
+                    </div>
+                    <button type="button" onclick="document.getElementById('reg-foto-input').click()" class="text-[11px] font-semibold text-[#b5f234] hover:underline cursor-pointer">
+                        Pilih Foto Profil
+                    </button>
+                </div>
+
+                <!-- Field Nama Profil + Tombol Bantuan Lupa Nama (WA) -->
+                <div class="space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nama Profil Perangkat</label>
+                        
+                        <!-- Link Bantuan WA jika Lupa Nama -->
+                        <a href="https://wa.me/6287789647931?text=Halo%20Developer,%20saya%20lupa%20nama%20akun%20profil%20DompetQ%20saya.%20Mohon%20bantuannya." 
+                          target="_blank" 
+                          class="text-[10px] text-[#b5f234] hover:text-[#a3dc2e] flex items-center gap-1 transition" 
+                          title="Lupa nama akun? Hubungi Developer via WhatsApp">
+                            <i class="fa-brands fa-whatsapp text-xs"></i> Lupa Nama?
+                        </a>
+                    </div>
+                    
+                    <input type="text" id="reg-nama-user" placeholder="Ketik nama profil (Contoh: WH2)" class="w-full px-3.5 py-2.5 bg-[#1a221d] border border-slate-700 rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition">
+                </div>
+
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="p-4 border-t border-slate-800 bg-[#141a16] grid grid-cols-2 gap-2.5">
+                <button type="button" onclick="prosesKeluarUser()" class="w-full py-2.5 px-3 bg-red-950/40 hover:bg-red-900/60 text-red-400 font-bold rounded-xl border border-red-800/40 text-xs flex items-center justify-center gap-1.5 transition cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket text-[11px]"></i> Keluar
+                </button>
+                <button type="button" onclick="prosesDaftarUserPerangkat()" class="w-full py-2.5 px-3 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 font-bold rounded-xl text-xs shadow-lg flex items-center justify-center gap-1.5 transition cursor-pointer">
+                    <i class="fa-solid fa-floppy-disk text-[11px]"></i> Masuk / Simpan
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- MODAL OCR SCANNER & SLIP (DARK THEME DOMPETQ) -->
+    <div id="modal-ocr" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            
+            <!-- Header Modal -->
+            <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-[#141a16] flex-shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white leading-none">Upload & Scan Slip</h3>
+                        <span class="text-[10px] text-slate-400">Pindai dokumen slip gaji/tunjangan otomatis</span>
+                    </div>
+                </div>
+                <button onclick="tutupModalOcr()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Body Scrollable -->
+            <div class="p-5 overflow-y-auto custom-scrollbar space-y-4 flex-1 text-slate-200">
+                
+                <!-- Step Jenis & Periode Dokumen -->
+                <div id="step-jenis-dokumen" class="grid grid-cols-2 gap-3 flex-shrink-0">
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Jenis Slip:</label>
+                        <select id="jenis-slip" onchange="handleJenisSlipChange()" class="w-full px-3 py-2.5 bg-[#1a221d] border border-slate-700/80 rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition cursor-pointer">
+                            <option value="gaji" class="bg-[#121614] text-white">Slip Gaji Bulanan</option>
+                            <option value="thr" class="bg-[#121614] text-white">Slip Tunjangan (THR)</option>
+                            <option value="ksp" class="bg-[#121614] text-white">Slip Koperasi / KSP</option>
+                            <option value="lainnya" class="bg-[#121614] text-white">Lain-lain (Manual)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Periode Slip:</label>
+                        <input type="month" id="ocr-periode" class="w-full px-3 py-2 bg-[#1a221d] border border-slate-700/80 rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition cursor-pointer">
+                    </div>
+                </div>
+
+                <!-- Step Upload / Camera Input -->
+                <div id="step-input" class="text-center pt-1">
+                    <div class="border-2 border-dashed border-slate-700 hover:border-[#b5f234] rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer relative bg-[#171e19] hover:bg-[#1a221d] transition">
+                        <input type="file" id="input-foto" accept="image/*" onchange="prosesOcrDokumen()" class="absolute inset-0 opacity-0 cursor-pointer">
+                        <div class="w-11 h-11 bg-[#b5f234]/10 rounded-full flex items-center justify-center text-[#b5f234] mb-2.5 border border-[#b5f234]/20">
+                            <i class="fa-solid fa-camera text-base"></i>
+                        </div>
+                        <p class="text-xs font-bold text-white">Buka File atau Ambil Foto</p>
+                        <p class="text-[10px] text-slate-400 mt-1">Gambar akan otomatis dikompres & dipindai oleh Gemini AI</p>
+                    </div>
+                </div>
+
+                <!-- Step Loading Gemini AI -->
+                <div id="step-loading" class="text-center space-y-3 hidden py-6 bg-[#171e19] rounded-2xl border border-slate-800">
+                    <div class="w-9 h-9 border-3 border-[#b5f234] border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <p class="text-[11px] font-bold text-[#b5f234] uppercase tracking-widest animate-pulse">Gemini AI Processing</p>
+                    <p id="loading-text" class="text-[10px] text-slate-400">Mencari validasi & mengekstrak angka slip...</p>
+                </div>
+
+                <!-- Step Form Konfirmasi & Kalkulasi -->
+                <div id="step-konfirmasi" class="space-y-3.5 hidden">
+                    <div class="w-full h-36 bg-[#171e19] rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
+                        <img id="ocr-preview-img" onclick="bukaZoomGambar()" class="w-full h-full object-contain hidden cursor-pointer" alt="Pratinjau Slip">
+                    </div>
+                    
+                    <div class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl py-2 px-3 text-center">
+                        <span class="text-[11px] text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1.5"></i> Validasi Slip Sukses</span>
+                    </div>
+                    
+                    <div class="space-y-3 bg-[#171e19] p-4 rounded-2xl border border-slate-800">
+                        <div>
+                            <label id="label-pendapatan" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Pendapatan</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs font-bold">Rp</span>
+                                <input type="text" id="ocr-pendapatan" oninput="hitungNetto()" class="w-full pl-8 pr-3 py-2 bg-[#121614] border border-slate-700 rounded-xl text-xs font-bold text-white outline-none focus:border-[#b5f234]">
+                            </div>
+                        </div>
+
+                        <div id="box-potongan">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Potongan</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-xs font-bold">Rp</span>
+                                <input type="text" id="ocr-potongan" oninput="hitungNetto()" class="w-full pl-8 pr-3 py-2 bg-[#121614] border border-slate-700 rounded-xl text-xs font-bold text-rose-400 outline-none focus:border-rose-500">
+                            </div>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-800/80 grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label id="label-bersih" class="block text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">Netto Sistem</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-500 text-[10px] font-bold">Rp</span>
+                                    <input type="text" id="ocr-bersih" readonly class="w-full pl-7 pr-2 py-1.5 bg-[#121614]/50 border border-slate-800 rounded-lg text-xs font-semibold text-slate-400 outline-none cursor-not-allowed">
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-[9px] font-bold text-[#b5f234] uppercase tracking-wider mb-1">Hasil Pembulatan</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center text-[#b5f234] text-xs font-black">Rp</span>
+                                    <input type="text" id="ocr-netto-pembulatan" oninput="window.formatInputRibuan(this)" class="w-full pl-7 pr-2 py-1.5 bg-[#b5f234]/10 border border-[#b5f234]/30 rounded-lg text-xs font-black text-[#b5f234] outline-none focus:border-[#b5f234]">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="p-4 border-t border-slate-800 bg-[#141a16] grid grid-cols-2 gap-2.5 flex-shrink-0">
+                <button onclick="tutupModalOcr()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition cursor-pointer">Batal</button>
+                <button onclick="simpanDataOcr()" class="w-full py-2.5 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 font-bold rounded-xl text-xs shadow-lg transition cursor-pointer">Simpan Data</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL DETAIL SLIP PEMASUKAN BULAN INI -->
+    <div id="modal-detail-masuk" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden transition-all duration-300">
+      <!-- Container Modal -->
+      <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+        
+        <!-- Header Modal -->
+        <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-arrow-down"></i>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider">Detail Pemasukan</h3>
+              <p id="modal-masuk-subtittle" class="text-[11px] text-slate-400">Periode: <span class="text-lime-400 font-semibold" id="modal-masuk-periode">September 2026</span></p>
+            </div>
+          </div>
+          <button id="btn-close-modal-masuk" type="button" class="text-slate-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-800 transition-colors">
+            <i class="fa-solid fa-xmark text-base"></i>
+          </button>
+        </div>
+
+        <!-- Ringkasan Total Pemasukan -->
+        <div class="p-5 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 border-b border-slate-800/80">
+          <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Total Pemasukan Bulan Ini</span>
+          <h4 id="modal-masuk-total" class="text-2xl md:text-3xl font-black text-emerald-400 mt-0.5">Rp 0</h4>
+        </div>
+
+        <!-- Body / Daftar Transaksi Pemasukan (Scrollable) -->
+        <div class="p-5 overflow-y-auto flex-1 space-y-3 custom-scrollbar" id="list-detail-pemasukan">
+          <!-- Item transaksi akan dirender secara dinamis oleh JavaScript -->
+          <!-- Tampilan State Kosong Default -->
+          <div class="text-center py-8 text-slate-500 space-y-2">
+            <i class="fa-solid fa-receipt text-3xl opacity-40"></i>
+            <p class="text-xs">Belum ada catatan pemasukan pada bulan ini.</p>
+          </div>
+        </div>
+
+        <!-- Footer Modal -->
+        <div class="p-4 border-t border-slate-800 bg-slate-900/80 flex justify-end">
+          <button id="btn-done-modal-masuk" type="button" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-all cursor-pointer">
+            Tutup
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+
+  </div>
+
+
+<script type="module">
+    // 1. IMPORT FIREBASE SDK v10.12.0 (MODULAR)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+        getFirestore, 
+        doc, 
+        setDoc, 
+        getDoc, 
+        addDoc, 
+        collection, 
+        getDocs, 
+        query, 
+        where, 
+        serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // =================================================================
+    // 2. KONFIGURASI FIREBASE APP (AMAN DARI BOT SCRAPER GITHUB)
+    // =================================================================
+    const keyPart1 = "AIzaSyCig";
+    const keyPart2 = "HcPhWspDC";
+    const keyPart3 = "-E6GniQ9n";
+    const keyPart4 = "KVycoGet5YJc";
+
+    const appPart1 = "1:766061148488";
+    const appPart2 = ":web:ce3dc9c954";
+    const appPart3 = "326695cd1b7d";
+
+    const firebaseConfig = {
+        apiKey: keyPart1 + keyPart2 + keyPart3 + keyPart4, 
+        authDomain: "dompetq-app.firebaseapp.com",
+        projectId: "dompetq-app",
+        storageBucket: "dompetq-app.firebasestorage.app",
+        messagingSenderId: "766061148488",
+        appId: appPart1 + appPart2 + appPart3
+    };
+
+    // 3. INISIALISASI AND EXPOSE UTILITIES KE WINDOW GLOBAL
+    const app = initializeApp(firebaseConfig);
+    const dbInstance = getFirestore(app);
+
+    window.db = dbInstance;
+    window.fbDoc = doc;
+    window.fbSetDoc = setDoc;
+    window.fbGetDoc = getDoc;
+    window.fbAddDoc = addDoc;
+    window.fbCollection = collection;
+    window.fbGetDocs = getDocs;
+    window.fbQuery = query;
+    window.fbWhere = where;
+    window.fbServerTimestamp = serverTimestamp;
+
+    // Variable penampung sementara foto profil base64
+    window.currentFotoBase64 = "";
+
+    // =================================================================
+    // 4. USER ENGINE TANPA AUTH (MULTI-USER LOCALSTORAGE & FIRESTORE)
+    // =================================================================
+
+    // Ambil User ID Aktif Perangkat
+    window.getActiveUserId = function() {
+        return localStorage.getItem('dompetq_user_id') || null;
+    };
+
+    /**
+     * Helper Generator Custom User ID: NAMA_YYYYMMDD_HHMMSS
+     */
+    function buatCustomUserId(namaInput) {
+        const namaBersih = namaInput.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        const prefixNama = namaBersih.length > 0 ? namaBersih : 'USER';
+
+        const now = new Date();
+        const YYYY = now.getFullYear();
+        const MM = String(now.getMonth() + 1).padStart(2, '0');
+        const DD = String(now.getDate()).padStart(2, '0');
+        const HH = String(now.getHours()).padStart(2, '0');
+        const Min = String(now.getMinutes()).padStart(2, '0');
+        const Sec = String(now.getSeconds()).padStart(2, '0');
+
+        return `${prefixNama}_${YYYY}${MM}${DD}_${HH}${Min}${Sec}`;
+    }
+
+    // Handler Preview Foto Profil
+    window.previewFotoProfil = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 2 * 1024 * 1024) {
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Ukuran foto maksimal 2MB!", "warning");
+            } else {
+                alert("Ukuran foto maksimal 2MB!");
+            }
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            window.currentFotoBase64 = e.target.result;
+            window.tampilkanFotoPreview(window.currentFotoBase64);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // Tampilkan Preview Foto di Modal
+    window.tampilkanFotoPreview = function(base64Src) {
+        const imgPreview = document.getElementById('reg-avatar-preview');
+        const iconCamera = document.getElementById('reg-avatar-icon');
+        
+        if (imgPreview && iconCamera) {
+            if (base64Src) {
+                imgPreview.src = base64Src;
+                imgPreview.classList.remove('hidden');
+                iconCamera.classList.add('hidden');
+            } else {
+                imgPreview.src = "";
+                imgPreview.classList.add('hidden');
+                iconCamera.classList.remove('hidden');
+            }
+        }
+    };
+
+    // Buka Modal Profil User
+    window.bukaModalRegistrasiUser = async function() {
+        const modal = document.getElementById('modal-reg-user');
+        const inputNama = document.getElementById('reg-nama-user');
+        const currentUserId = window.getActiveUserId();
+        
+        const namaLocal = localStorage.getItem('dompetq_user_name') || "";
+        const fotoLocal = localStorage.getItem('dompetq_user_photo') || "";
+
+        if (inputNama) inputNama.value = namaLocal;
+        window.currentFotoBase64 = fotoLocal;
+        window.tampilkanFotoPreview(fotoLocal);
+
+        // Jika terdaftar, lakukan re-sync profil dari dokumen users/{userId}
+        if (currentUserId && window.db) {
+            try {
+                const userDocRef = doc(window.db, 'users', currentUserId);
+                const userSnap = await getDoc(userDocRef);
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    if (data.nama_profil && inputNama) inputNama.value = data.nama_profil;
+                    if (data.foto_profil) {
+                        window.currentFotoBase64 = data.foto_profil;
+                        window.tampilkanFotoPreview(data.foto_profil);
+                        localStorage.setItem('dompetq_user_photo', data.foto_profil);
+                    }
+                }
+            } catch (err) {
+                console.warn("Gagal sinkronisasi profil Firestore:", err);
+            }
+        }
+
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    // Tutup Modal Profil User
+    window.tutupModalRegistrasiUser = function() {
+        const modal = document.getElementById('modal-reg-user');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    // Render Foto/Icon di Button Header
+    window.muatTampilanProfilHeader = function() {
+        const fotoBase64 = localStorage.getItem('dompetq_user_photo');
+        const btnUser = document.querySelector('button[title="Pengaturan Profil User"]');
+        
+        if (btnUser) {
+            if (fotoBase64) {
+                btnUser.innerHTML = `<img src="${fotoBase64}" class="w-full h-full rounded-full object-cover border border-[#b5f234]" alt="Profile">`;
+            } else {
+                btnUser.innerHTML = `<i class="fa-regular fa-user text-xs md:text-sm"></i>`;
+            }
+        }
+    };
+
+    // =================================================================
+    // 5. PROSES DAFTAR / LOGOUT USER ENGINE (VERIFIKASI NAMA + ALERT CUSTOM)
+    // =================================================================
+
+    // Simpan / Update / Cek Dokumen users/{userId}
+    window.prosesDaftarUserPerangkat = async function() {
+        console.log("🚀 Memulai proses verifikasi nama profil...");
+        
+        const inputNama = document.getElementById('reg-nama-user');
+        const namaUser = inputNama ? inputNama.value.trim() : "";
+        
+        if (!namaUser) {
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Nama profil tidak boleh kosong!", "warning");
+            } else {
+                alert("Nama profil tidak boleh kosong!");
+            }
+            return;
+        }
+
+        try {
+            let targetUserId = "";
+            let fotoProfilFinal = window.currentFotoBase64 || "";
+
+            // 1. CARI APAKAH NAMA USER SAMA SUDAH ADA DI FIRESTORE
+            const usersRef = collection(window.db, 'users');
+            const q = query(usersRef, where('nama_profil', '==', namaUser));
+            const querySnapshot = await getDocs(q);
+
+            // ---------------------------------------------------------
+            // SKENARIO 1: NAMA DITEMUKAN (LANGSUNG LOGIN KE AKUN LAMA)
+            // ---------------------------------------------------------
+            if (!querySnapshot.empty) {
+                const docFound = querySnapshot.docs[0];
+                targetUserId = docFound.id;
+                const dataFound = docFound.data();
+                
+                if (!fotoProfilFinal && dataFound.foto_profil) {
+                    fotoProfilFinal = dataFound.foto_profil;
+                }
+
+                console.log(`🔑 Profil Ditemukan. Login ke ID: ${targetUserId}`);
+                await eksekusiSimpanUser(targetUserId, namaUser, fotoProfilFinal, false);
+                return;
+            }
+
+            // ---------------------------------------------------------
+            // SKENARIO 2: NAMA TIDAK DITEMUKAN (TAMPILKAN MODAL KONFIRMASI KUSTOM)
+            // ---------------------------------------------------------
+            window.tampilkanModalKonfirmasiNama(namaUser, fotoProfilFinal);
+
+        } catch (error) {
+            console.error("❌ Gagal memproses profil user:", error);
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Gagal memproses data: " + error.message, "error");
+            } else {
+                alert("Gagal memproses data: " + error.message);
+            }
+        }
+    };
+
+    /**
+     * Modal Dialog Konfirmasi Custom saat Nama Tidak Ditemukan
+     */
+    window.tampilkanModalKonfirmasiNama = function(namaUser, fotoProfilFinal) {
+        // Hapus modal lama jika ada yang tertinggal
+        const modalLama = document.getElementById('modal-konfirmasi-nama');
+        if (modalLama) modalLama.remove();
+
+        // Inject Elemen Modal bertema Dark/Lime DompetQ
+        const modalHTML = `
+        <div id="modal-konfirmasi-nama" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4">
+            <div class="bg-[#121614] border border-slate-700 rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center space-y-4 animate-in fade-in zoom-in duration-200">
+                <div class="w-12 h-12 bg-[#b5f234]/10 text-[#b5f234] rounded-full flex items-center justify-center mx-auto border border-[#b5f234]/30">
+                    <i class="fa-solid fa-user-circle text-2xl"></i>
+                </div>
+                
+                <div>
+                    <h4 class="text-sm font-bold text-white">Nama Belum Terdaftar</h4>
+                    <p class="text-[11px] text-slate-300 mt-1.5 leading-relaxed">
+                        Nama <b class="text-[#b5f234]">"${namaUser}"</b> tidak ditemukan.<br>Apakah ingin membuat akun baru atau perbaiki salah ketik?
+                    </p>
+                </div>
+
+                <div class="space-y-2 pt-1">
+                    <button id="btn-buat-profil-baru" class="w-full py-2.5 px-3 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 font-bold rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5 shadow-lg shadow-[#b5f234]/10">
+                        <i class="fa-solid fa-user-plus text-[11px]"></i> Buat Profil Baru
+                    </button>
+                    
+                    <button id="btn-wa-lupa-nama" onclick="window.open('https://wa.me/6287789647931?text=Halo%20Dev,%20saya%20lupa%20nama%20akun%20DompetQ%20saya.%20Tadi%20ketik%20${encodeURIComponent(namaUser)}', '_blank')" class="w-full py-2 px-3 bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-400 font-semibold border border-emerald-700/50 rounded-xl text-xs transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp text-xs"></i> Lupa Nama? (WA Dev)
+                    </button>
+                    
+                    <button id="btn-ketik-ulang" class="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-xl text-xs transition cursor-pointer">
+                        ✏️ Coba Ketik Ulang
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Action 1: Setuju Buat Profil Baru
+        document.getElementById('btn-buat-profil-baru').onclick = async function() {
+            document.getElementById('modal-konfirmasi-nama').remove();
+            const targetUserId = buatCustomUserId(namaUser);
+            await eksekusiSimpanUser(targetUserId, namaUser, fotoProfilFinal, true);
+        };
+
+        // Action 2: Ketik Ulang (Cuma tutup dialog, modal registrasi tetap terbuka)
+        document.getElementById('btn-ketik-ulang').onclick = function() {
+            document.getElementById('modal-konfirmasi-nama').remove();
+        };
+    };
+
+    /**
+     * Helper Eksekusi Simpan Data ke LocalStorage & Firestore
+     */
+    async function eksekusiSimpanUser(targetUserId, namaUser, fotoProfilFinal, isUserBaru) {
+        // 1. Simpan ke LocalStorage
+        localStorage.setItem('dompetq_user_id', targetUserId);
+        localStorage.setItem('dompetq_user_name', namaUser);
+        localStorage.setItem('dompetq_user_photo', fotoProfilFinal);
+
+        // 2. Simpan ke Firestore
+        const userDocRef = doc(window.db, 'users', targetUserId);
+        const payloadUser = {
+            nama_profil: namaUser,
+            foto_profil: fotoProfilFinal,
+            perangkat_info: navigator.userAgent,
+            lastUpdated: serverTimestamp()
+        };
+
+        if (isUserBaru) {
+            payloadUser.tgl_dibuat = serverTimestamp();
+        }
+
+        await setDoc(userDocRef, payloadUser, { merge: true });
+
+        // 3. Buat Config Default jika Baru
+        if (isUserBaru) {
+            const configRef = doc(window.db, 'users', targetUserId, 'pengaturan_aplikasi', 'config');
+            await setDoc(configRef, {
+                tema: 'dark',
+                dibuatPada: serverTimestamp()
+            });
+        }
+
+        // 4. Update UI Header & Modal
+        if (typeof window.muatTampilanProfilHeader === 'function') {
+            window.muatTampilanProfilHeader();
+        }
+        window.tutupModalRegistrasiUser();
+
+        // 5. Alert Sukses & Load Data Utama
+        const pesanAlert = isUserBaru 
+            ? `Profil baru "${namaUser}" berhasil dibuat!` 
+            : `Berhasil masuk ke profil "${namaUser}"!`;
+
+        if (typeof window.tampilAlert === 'function') {
+            window.tampilAlert(pesanAlert, "success");
+        } else {
+            alert(pesanAlert);
+        }
+        
+        if (typeof window.muatDataUtama === 'function') {
+            window.muatDataUtama(targetUserId);
+        }
+    }
+
+    /**
+     * Kosongkan Seluruh Tampilan UI Data saat Tidak Ada User / Logout
+     */
+    window.resetTampilanKosong = function() {
+        // Reset Header Profil
+        window.muatTampilanProfilHeader();
+
+        // Reset Total Saldo / Finansial
+        const elSaldo = document.getElementById('total-saldo');
+        if (elSaldo) elSaldo.textContent = "Rp 0";
+
+        // Reset List Transaksi / Riwayat Slip jika ada
+        const containerRiwayat = document.getElementById('container-riwayat-slip');
+        if (containerRiwayat) {
+            containerRiwayat.innerHTML = `<div class="text-center text-gray-400 py-6">Silakan masuk profil untuk melihat data.</div>`;
+        }
+
+        // Reset Form Input Profil
+        const inputNama = document.getElementById('reg-nama-user');
+        if (inputNama) inputNama.value = "";
+        window.currentFotoBase64 = "";
+        window.tampilkanFotoPreview("");
+    };
+
+    /**
+     * KELUAR / LOGOUT USER (Tombol Keluar)
+     */
+    window.prosesKeluarUser = function() {
+        // 1. Hapus identitas user aktif di LocalStorage
+        localStorage.removeItem('dompetq_user_id');
+        localStorage.removeItem('dompetq_user_name');
+        localStorage.removeItem('dompetq_user_photo');
+
+        // 2. Kosongkan tampilan layar
+        window.resetTampilanKosong();
+
+        // 3. Tampilkan Alert Informasi
+        if (typeof window.tampilAlert === 'function') {
+            window.tampilAlert("Berhasil keluar dari profil. Silakan pilih atau daftar profil baru.", "info");
+        }
+
+        // 4. Biarkan Modal Profil Tetap Terbuka
+        const modal = document.getElementById('modal-reg-user');
+        if (modal) modal.classList.remove('hidden');
+    };
+
+    // =================================================================
+    // 6. SIMPAN DATA SLIP / TRANSAKSI SPESIFIK USER
+    // =================================================================
+    window.simpanDataOcrWithUser = async function() {
+        const userId = window.getActiveUserId();
+        
+        if (!userId) {
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Profil belum terdaftar/masuk! Silakan atur profil terlebih dahulu.", "warning");
+            }
+            window.bukaModalRegistrasiUser();
+            return;
+        }
+
+        try {
+            const jenis = document.getElementById('jenis-slip')?.value || "Slip Gaji";
+            const periode = document.getElementById('ocr-periode')?.value || "";
+            const pendapatan = document.getElementById('ocr-pendapatan')?.value || "0";
+            const potongan = document.getElementById('ocr-potongan')?.value || "0";
+            const nettoPembulatan = document.getElementById('ocr-netto-pembulatan')?.value || "0";
+
+            if (!pendapatan || pendapatan === '0') {
+                if (typeof window.tampilAlert === 'function') {
+                    window.tampilAlert("Nominal pendapatan tidak boleh kosong!", "warning");
+                }
+                return;
+            }
+
+            // Simpan ke: users/{userId}/rekap_finansial
+            const subKoleksiRef = collection(window.db, 'users', userId, 'rekap_finansial');
+            await addDoc(subKoleksiRef, {
+                jenis: jenis,
+                periode: periode,
+                pendapatan: pendapatan,
+                potongan: potongan,
+                netto: nettoPembulatan,
+                createdAt: serverTimestamp()
+            });
+
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Data slip berhasil tersimpan ke Firestore!", "success");
+            }
+
+            if (typeof window.tutupModalOcr === 'function') {
+                window.tutupModalOcr();
+            }
+
+            if (typeof window.muatRiwayatSlip === 'function') {
+                window.muatRiwayatSlip(userId);
+            }
+
+        } catch (error) {
+            console.error("Gagal simpan slip:", error);
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Gagal menyimpan slip: " + error.message, "error");
+            }
+        }
+    };
+
+    // =================================================================
+    // 7. INISIALISASI SAAT HALAMAN SELESAI LOAD
+    // =================================================================
+    window.inisialisasiUserPerangkat = function() {
+        const currentUserId = window.getActiveUserId();
+
+        if (!currentUserId) {
+            // Jika belum masuk user mana pun: reset tampilan & buka modal profil
+            window.resetTampilanKosong();
+            window.bukaModalRegistrasiUser();
+        } else {
+            console.log("Perangkat aktif dengan User ID:", currentUserId);
+            window.muatTampilanProfilHeader();
+
+            if (typeof window.muatDataUtama === 'function') {
+                window.muatDataUtama(currentUserId);
+            }
+        }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.inisialisasiUserPerangkat();
+    });
+</script>
+
+
+<script>
+
+  //Fungsi untuk menampilkan tanggal saat ini dalam format Bahasa Indonesia
+  function updateDate() {
+    const today = new Date();
+    const options = { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    };
+    
+    // Format tanggal otomatis Bahasa Indonesia (contoh: Rabu, 2 Sep 2026)
+    const formattedDate = today.toLocaleDateString('id-ID', options);
+    
+    document.getElementById('current-date').textContent = formattedDate;
+  }
+
+  // Jalankan fungsi saat halaman dimuat
+  updateDate();
+
+  // Elemen Month Selector Utama
+  const btnPrevMonthMain = document.getElementById('btn-prev-month-main');
+  const btnNextMonthMain = document.getElementById('btn-next-month-main');
+  const labelMonthMain = document.getElementById('label-month-main');
+
+  // Fungsi pembantu update tampilan teks bulan di UI utama
+  function updateMainMonthDisplay(date) {
+    const formattedMonth = date.toLocaleDateString('id-ID', {
+      month: 'long',
+      year: 'numeric'
+    });
+    if (labelMonthMain) {
+      labelMonthMain.textContent = formattedMonth.toUpperCase();
+    }
+  }
+
+  // 1. Klik Tombol Kiri (Bulan Sebelumnya)
+  btnPrevMonthMain?.addEventListener('click', () => {
+    selectedDate.setMonth(selectedDate.getMonth() - 1);
+    currDate = new Date(selectedDate);
+    updateMainMonthDisplay(selectedDate);
+    // Panggil fungsi render ulang data transaksi bulan ini jika ada
+  });
+
+  // 2. Klik Tombol Kanan (Bulan Berikutnya)
+  btnNextMonthMain?.addEventListener('click', () => {
+    selectedDate.setMonth(selectedDate.getMonth() + 1);
+    currDate = new Date(selectedDate);
+    updateMainMonthDisplay(selectedDate);
+    // Panggil fungsi render ulang data transaksi bulan ini jika ada
+  });
+
+  // 3. Klik Teks Bulan (Buka Modal Kalender)
+  labelMonthMain?.addEventListener('click', () => {
+    currentMode = 'days';
+    renderCalendar();
+    modalKalender.classList.remove('hidden');
+  });
+
+
+  // =================================================================
+  // CUSTOM ALERT & CONFIRM MODAL ENGINE (DOMPETQ DARK THEME)
+  // =================================================================
+
+  /**
+   * Tampilkan Custom Alert menggantikan alert() bawaan
+   * @param {string} pesan - Pesan yang ingin ditampilkan
+   * @param {string} tipe - 'info' | 'success' | 'warning' | 'error'
+   * @param {string} judul - Judul modal (opsional)
+   */
+  window.tampilAlert = function(pesan, tipe = 'info', judul = null) {
+      return new Promise((resolve) => {
+          const modal = document.getElementById('modal-alert-custom');
+          const elTitle = document.getElementById('alert-title');
+          const elMsg = document.getElementById('alert-message');
+          const elIconBg = document.getElementById('alert-icon-bg');
+          const elIconFa = document.getElementById('alert-icon-fa');
+          const btnOk = document.getElementById('alert-btn-ok');
+
+          elMsg.innerText = pesan;
+          elTitle.innerText = judul || (tipe === 'success' ? 'Berhasil' : tipe === 'error' ? 'Gagal' : tipe === 'warning' ? 'Peringatan' : 'Informasi');
+
+          // Reset Class Icon Warna
+          elIconBg.className = "w-12 h-12 rounded-full mx-auto flex items-center justify-center text-lg font-bold border ";
+          elIconFa.className = "fa-solid ";
+
+          if (tipe === 'success') {
+              elIconBg.classList.add('bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-400');
+              elIconFa.classList.add('fa-circle-check');
+          } else if (tipe === 'error') {
+              elIconBg.classList.add('bg-rose-500/10', 'border-rose-500/20', 'text-rose-400');
+              elIconFa.classList.add('fa-circle-xmark');
+          } else if (tipe === 'warning') {
+              elIconBg.classList.add('bg-amber-500/10', 'border-amber-500/20', 'text-amber-400');
+              elIconFa.classList.add('fa-triangle-exclamation');
+          } else {
+              elIconBg.classList.add('bg-[#b5f234]/10', 'border-[#b5f234]/20', 'text-[#b5f234]');
+              elIconFa.classList.add('fa-circle-info');
+          }
+
+          modal.classList.remove('hidden');
+
+          const handlerOk = () => {
+              modal.classList.add('hidden');
+              btnOk.removeEventListener('click', handlerOk);
+              resolve(true);
+          };
+
+          btnOk.onclick = handlerOk;
+      });
+  };
+
+  /**
+   * Tampilkan Custom Confirm Dialog menggantikan confirm() bawaan
+   * @param {string} pesan - Pertanyaan / instruksi konfirmasi
+   * @param {string} judul - Judul modal konfirmasi (opsional)
+   * @returns {Promise<boolean>} returns true jika 'Ya', false jika 'Batal'
+   */
+  window.tampilKonfirmasi = function(pesan, judul = "Konfirmasi Tindakan") {
+      return new Promise((resolve) => {
+          const modal = document.getElementById('modal-confirm-custom');
+          const elTitle = document.getElementById('confirm-title');
+          const elMsg = document.getElementById('confirm-message');
+          const btnYes = document.getElementById('confirm-btn-yes');
+          const btnCancel = document.getElementById('confirm-btn-cancel');
+
+          elTitle.innerText = judul;
+          elMsg.innerText = pesan;
+
+          modal.classList.remove('hidden');
+
+          const bersihkan = () => {
+              modal.classList.add('hidden');
+              btnYes.onclick = null;
+              btnCancel.onclick = null;
+          };
+
+          btnYes.onclick = () => {
+              bersihkan();
+              resolve(true);
+          };
+
+          btnCancel.onclick = () => {
+              bersihkan();
+              resolve(false);
+          };
+      });
+  };
+
+  
+  <!-- SCRIPT PENGHUBUNG TOMBOL & MODAL -->
+  const btnArsip = document.getElementById('btn-arsip-slip');
+  const modalArsip = document.getElementById('modal-arsip-slip');
+  const btnCloseArsip = document.getElementById('btn-close-arsip');
+  const btnCloseArsipFooter = document.getElementById('btn-close-arsip-footer');
+
+  // Buka Modal
+  btnArsip.addEventListener('click', () => {
+    modalArsip.classList.remove('hidden');
+  });
+
+  // Tutup Modal
+  const closeModal = () => modalArsip.classList.add('hidden');
+  btnCloseArsip.addEventListener('click', closeModal);
+  btnCloseArsipFooter.addEventListener('click', closeModal);
+
+  // Tutup jika klik luar modal
+  modalArsip.addEventListener('click', (e) => {
+    if (e.target === modalArsip) closeModal();
+  });
+
+
+  <!-- SCRIPT PENGHUBUNG MODAL KALENDER -->
+  // State Tanggal
+  let currDate = new Date(); // Bulan & Tahun yang sedang dilihat
+  let selectedDate = new Date(); // Tanggal yang sedang dipilih
+  let currentMode = 'days'; // 'days', 'months', 'years'
+  let yearRangeStart = currDate.getFullYear() - 5;
+
+  const monthNames = [
+    'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+  ];
+
+  // DOM Elements
+  const modalKalender = document.getElementById('modal-kalender');
+  const btnOpenCalendar = document.getElementById('btn-open-calendar');
+  const btnCloseKalender = document.getElementById('btn-close-kalender');
+  const btnBatalKalender = document.getElementById('btn-batal-kalender');
+  const btnSimpanKalender = document.getElementById('btn-simpan-kalender');
+  const btnToday = document.getElementById('btn-today');
+
+  const calTitleBtn = document.getElementById('cal-title-btn');
+  const calTitleText = document.getElementById('cal-title-text');
+  const calPrevBtn = document.getElementById('cal-prev-btn');
+  const calNextBtn = document.getElementById('cal-next-btn');
+
+  const viewDays = document.getElementById('view-days');
+  const viewMonths = document.getElementById('view-months');
+  const viewYears = document.getElementById('view-years');
+  const daysContainer = document.getElementById('days-container');
+
+  // Render Tampilan Kalender Utama
+  function renderCalendar() {
+    if (currentMode === 'days') {
+      viewDays.classList.remove('hidden');
+      viewMonths.classList.add('hidden');
+      viewYears.classList.add('hidden');
+      
+      calTitleText.textContent = `${monthNames[currDate.getMonth()]} ${currDate.getFullYear()}`;
+      renderDays();
+    } else if (currentMode === 'months') {
+      viewDays.classList.add('hidden');
+      viewMonths.classList.remove('hidden');
+      viewYears.classList.add('hidden');
+      
+      calTitleText.textContent = `${currDate.getFullYear()}`;
+      renderMonths();
+    } else if (currentMode === 'years') {
+      viewDays.classList.add('hidden');
+      viewMonths.classList.add('hidden');
+      viewYears.classList.remove('hidden');
+      
+      calTitleText.textContent = `${yearRangeStart} - ${yearRangeStart + 11}`;
+      renderYears();
+    }
+  }
+
+  // Render Hari
+  function renderDays() {
+    daysContainer.innerHTML = '';
+    const year = currDate.getFullYear();
+    const month = currDate.getMonth();
+
+    const firstDayIndex = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+    const prevLastDate = new Date(year, month, 0).getDate();
+
+    // Tanggal bulan lalu (Abu-abu)
+    for (let x = firstDayIndex; x > 0; x--) {
+      const dayNum = prevLastDate - x + 1;
+      const btn = document.createElement('div');
+      btn.className = 'py-1.5 text-slate-600 rounded-lg text-xs cursor-not-allowed';
+      btn.textContent = dayNum;
+      daysContainer.appendChild(btn);
+    }
+
+    // Tanggal bulan ini
+    for (let i = 1; i <= lastDate; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const isSelected = selectedDate.getDate() === i && 
+                         selectedDate.getMonth() === month && 
+                         selectedDate.getFullYear() === year;
+
+      btn.className = `py-1.5 rounded-lg text-xs transition cursor-pointer font-semibold ${
+        isSelected 
+          ? 'bg-[#b5f234] text-slate-950 font-bold shadow-md' 
+          : 'text-slate-200 hover:bg-slate-800'
+      }`;
+      btn.textContent = i;
+      btn.addEventListener('click', () => {
+        selectedDate = new Date(year, month, i);
+        renderDays();
+      });
+      daysContainer.appendChild(btn);
+    }
+  }
+
+  // Render Bulan
+  function renderMonths() {
+    viewMonths.innerHTML = '';
+    monthNames.forEach((name, idx) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const isCurrentMonth = currDate.getMonth() === idx;
+      btn.className = `py-3 rounded-xl transition font-semibold ${
+        isCurrentMonth 
+          ? 'bg-[#b5f234] text-slate-950 font-bold' 
+          : 'bg-slate-900 text-slate-300 hover:bg-slate-800'
+      }`;
+      btn.textContent = name.substring(0, 3);
+      btn.addEventListener('click', () => {
+        currDate.setMonth(idx);
+        currentMode = 'days';
+        renderCalendar();
+      });
+      viewMonths.appendChild(btn);
+    });
+  }
+
+  // Render Tahun
+  function renderYears() {
+    viewYears.innerHTML = '';
+    for (let y = yearRangeStart; y < yearRangeStart + 12; y++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      const isCurrentYear = currDate.getFullYear() === y;
+      btn.className = `py-3 rounded-xl transition font-semibold ${
+        isCurrentYear 
+          ? 'bg-[#b5f234] text-slate-950 font-bold' 
+          : 'bg-slate-900 text-slate-300 hover:bg-slate-800'
+      }`;
+      btn.textContent = y;
+      btn.addEventListener('click', () => {
+        currDate.setFullYear(y);
+        currentMode = 'months';
+        renderCalendar();
+      });
+      viewYears.appendChild(btn);
+    }
+  }
+
+  // Klik Judul untuk zoom-out (Hari -> Bulan -> Tahun)
+  calTitleBtn.addEventListener('click', () => {
+    if (currentMode === 'days') currentMode = 'months';
+    else if (currentMode === 'months') currentMode = 'years';
+    renderCalendar();
+  });
+
+  // Tombol Panah (Up/Down)
+  calPrevBtn.addEventListener('click', () => {
+    if (currentMode === 'days') currDate.setMonth(currDate.getMonth() - 1);
+    else if (currentMode === 'months') currDate.setFullYear(currDate.getFullYear() - 1);
+    else if (currentMode === 'years') yearRangeStart -= 12;
+    renderCalendar();
+  });
+
+  calNextBtn.addEventListener('click', () => {
+    if (currentMode === 'days') currDate.setMonth(currDate.getMonth() + 1);
+    else if (currentMode === 'months') currDate.setFullYear(currDate.getFullYear() + 1);
+    else if (currentMode === 'years') yearRangeStart += 12;
+    renderCalendar();
+  });
+
+  // Buka Modal & Reset View
+  btnOpenCalendar?.addEventListener('click', () => {
+    currentMode = 'days';
+    renderCalendar();
+    modalKalender.classList.remove('hidden');
+  });
+
+  // Tutup Modal
+  const hideCalModal = () => modalKalender.classList.add('hidden');
+  btnCloseKalender.addEventListener('click', hideCalModal);
+  btnBatalKalender.addEventListener('click', hideCalModal);
+
+  // Tombol Hari Ini
+  btnToday.addEventListener('click', () => {
+    selectedDate = new Date();
+    currDate = new Date();
+    currentMode = 'days';
+    renderCalendar();
+  });
+
+  // Terapkan Pilihan Tanggal ke Hero Card
+  btnSimpanKalender.addEventListener('click', () => {
+    const formattedDate = selectedDate.toLocaleDateString('id-ID', {
+      weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
+    });
+    const formattedMonth = selectedDate.toLocaleDateString('id-ID', {
+      month: 'long', year: 'numeric'
+    });
+
+    // Update Teks Tanggal & Bulan di UI utama
+    const currentDateSpan = document.getElementById('current-date');
+    if (currentDateSpan) currentDateSpan.textContent = formattedDate;
+
+    const monthSelectorSpan = document.querySelector('.bg-slate-950\\/5 span');
+    if (monthSelectorSpan) monthSelectorSpan.textContent = formattedMonth.toUpperCase();
+
+    hideCalModal();
+  });
+
+
+  
+  // Elemen-elemen Modal Detail Pemasukan
+  const btnDetailMasuk = document.getElementById('btn-detail-masuk');
+  const modalDetailMasuk = document.getElementById('modal-detail-masuk');
+  const btnCloseModalMasuk = document.getElementById('btn-close-modal-masuk');
+  const btnDoneModalMasuk = document.getElementById('btn-done-modal-masuk');
+  const modalMasukPeriode = document.getElementById('modal-masuk-periode');
+  const modalMasukTotal = document.getElementById('modal-masuk-total');
+  const listDetailPemasukan = document.getElementById('list-detail-pemasukan');
+
+  // 1. Fungsi Buka Modal Detail Masuk
+  btnDetailMasuk?.addEventListener('click', () => {
+    if (modalDetailMasuk) {
+      // Set teks periode bulan sesuai bulan yang sedang aktif
+      const formattedPeriod = selectedDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+      if (modalMasukPeriode) modalMasukPeriode.textContent = formattedPeriod;
+
+      // Tampilkan modal
+      modalDetailMasuk.classList.remove('hidden');
+
+      // Render data transaksi pemasukan
+      renderDetailPemasukan();
+    }
+  });
+
+  // 2. Fungsi Tutup Modal
+  const closeModalMasuk = () => {
+    modalDetailMasuk?.classList.add('hidden');
+  };
+
+  btnCloseModalMasuk?.addEventListener('click', closeModalMasuk);
+  btnDoneModalMasuk?.addEventListener('click', closeModalMasuk);
+
+  // Tutup modal jika area luar (backdrop) diklik
+  modalDetailMasuk?.addEventListener('click', (e) => {
+    if (e.target === modalDetailMasuk) closeModalMasuk();
+  });
+
+  // 3. Fungsi Render Daftar Detail Pemasukan
+  function renderDetailPemasukan() {
+    if (!listDetailPemasukan) return;
+
+    // Filter data transaksi tipe 'masuk' berdasarkan bulan & tahun yang aktif
+    const currentMonth = selectedDate.getMonth();
+    const currentYear = selectedDate.getFullYear();
+
+    // Contoh array transaksi (sesuaikan dengan nama variabel array transaksi di app Anda, misal: transactions)
+    const incomeList = (window.transactions || []).filter(item => {
+      const tDate = new Date(item.date);
+      return item.type === 'masuk' && 
+            tDate.getMonth() === currentMonth && 
+            tDate.getFullYear() === currentYear;
+    });
+
+    // Hitung Total Pemasukan
+    const totalIncome = incomeList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    if (modalMasukTotal) {
+      modalMasukTotal.textContent = `Rp ${totalIncome.toLocaleString('id-ID')}`;
+    }
+
+    // Render List Item
+    if (incomeList.length === 0) {
+      listDetailPemasukan.innerHTML = `
+        <div class="text-center py-8 text-slate-500 space-y-2">
+          <i class="fa-solid fa-receipt text-3xl opacity-40"></i>
+          <p class="text-xs">Belum ada catatan pemasukan pada bulan ini.</p>
+        </div>`;
+    } else {
+      listDetailPemasukan.innerHTML = incomeList.map(item => `
+        <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3 rounded-xl border border-slate-700/40 flex items-center justify-between gap-3 transition-colors">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs shrink-0">
+              <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="truncate">
+              <h5 class="text-xs font-bold text-white truncate">${item.category || 'Pemasukan'}</h5>
+              <p class="text-[10px] text-slate-400 truncate">${item.note || '-'}</p>
+              <span class="text-[9px] text-slate-500">${new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            </div>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="text-xs font-extrabold text-emerald-400">+Rp ${Number(item.amount).toLocaleString('id-ID')}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  // =================================================================
+  // ENGINE OCR & MODAL CONTROLLER (DOMPETQ)
+  // =================================================================
+
+  // Variabel Cache Gambar Base64
+  let globalCompressedImageBase64 = null;
+
+  // Helper Alert Sederhana (fallback jika belum ada fungsi alert custom)
+  if (typeof window.tampilAlert !== 'function') {
+      window.tampilAlert = function(pesan, tipe = 'info') {
+          alert(`[${tipe.toUpperCase()}] ${pesan}`);
+      };
+  }
+
+  // Handler Buka & Tutup Modal OCR
+  window.bukaModalOcr = function() {
+      window.resetFormOcr();
+      const modal = document.getElementById('modal-ocr');
+      if (modal) modal.classList.remove('hidden');
+  };
+
+  window.tutupModalOcr = function() {
+      const modal = document.getElementById('modal-ocr');
+      if (modal) modal.classList.add('hidden');
+      window.resetFormOcr();
+  };
+
+  window.tutupModal = window.tutupModalOcr; // Alias backward-compatibility
+
+  // Handler saat jenis slip diubah
+  window.handleJenisSlipChange = function() {
+      const jenis = document.getElementById('jenis-slip').value;
+      const stepInput = document.getElementById('step-input');
+      const stepKonfirmasi = document.getElementById('step-konfirmasi');
+      
+      if (stepKonfirmasi) stepKonfirmasi.classList.add('hidden');
+      
+      if (jenis === 'lainnya') {
+          if (stepInput) stepInput.classList.add('hidden');
+          if (stepKonfirmasi) stepKonfirmasi.classList.remove('hidden');
+          
+          document.getElementById('label-pendapatan').innerText = "Input Pendapatan Manual";
+          document.getElementById('label-bersih').innerText = "Total Bersih";
+          document.getElementById('box-potongan').classList.remove('hidden');
+          
+          document.getElementById('ocr-pendapatan').value = "";
+          document.getElementById('ocr-potongan').value = "";
+          document.getElementById('ocr-bersih').value = "";
+          document.getElementById('ocr-netto-pembulatan').value = "";
+      } else {
+          if (stepInput) stepInput.classList.remove('hidden');
+      }
+  };
+
+  // Dekompresi Kunci API
+  function dapatkanKunciRahasia() {
+      const kunciTersamar = "QVEuQWI4Uk42STl0QndtS1pNaVB6VXM5V184dEd6WG1hb1FiemFKeWxiTlU0RWZNQjdaVkE="; 
+      return atob(kunciTersamar);
+  }
+
+  // Proses OCR Dokumen dengan Gemini AI
+  window.prosesOcrDokumen = async function() {
+      const fileInput = document.getElementById('input-foto');
+      const jenisKategori = document.getElementById('jenis-slip').value;
+      
+      if (!fileInput.files || fileInput.files.length === 0) return;
+      const file = fileInput.files[0];
+
+      document.getElementById('step-input').classList.add('hidden');
+      document.getElementById('step-jenis-dokumen').style.opacity = "0.4";
+      document.getElementById('step-loading').classList.remove('hidden');
+      document.getElementById('loading-text').innerText = "Gemini Vision AI sedang memverifikasi struktur dokumen...";
+
+      try {
+          const compressedBase64 = await kompresGambarKeBase64(file, 850);
+          globalCompressedImageBase64 = compressedBase64;
+          
+          const base64RawData = compressedBase64.split(',')[1];
+          const apiKey = dapatkanKunciRahasia();
+
+          const promptInstruksi = `
+              Bertindaklah sebagai AI OCR Reader anti-fraud berakurasi tinggi untuk aplikasi DompetQ. 
+              Analisis komponen gambar slip ini berdasarkan kategori target: "${jenisKategori}".
+              
+              Aturan Ekstraksi & Validasi:
+              1. Periksa Validasi: Apakah gambar dokumen ini BENAR dan COCOK untuk kategori "${jenisKategori}"? 
+              - Jika jenisKategori "gaji" -> Harus berupa Slip Gaji bulanan lengkap.
+              - Jika jenisKategori "thr" -> Harus berupa Slip Tunjangan Hari Raya (THR).
+              - Jika jenisKategori "ksp" -> Harus berupa Slip Koperasi/Pendapatan sampingan terkait.
+              Kembalikan status "apakahValid" dengan true jika sesuai, dan false jika tidak cocok/salah dokumen.
+              
+              2. Ekstrak Periode: Cari teks penanda periode (contoh: "Februari 2026" atau "Periode 2026"). Format wajib diubah menjadi 'YYYY-MM' (contoh: '2026-02'). 
+              - Jika target kategori adalah "thr" dan dokumen hanya menuliskan tahun saja (misal: "Periode 2026"), set otomatis bulannya ke April ('04').
+              - Jika tidak terdeteksi sama sekali, gunakan default bulan berjalan saat ini: "2026-07".
+              
+              3. Ekstrak Nominal Pendapatan: Ambil nilai angka murni dari "Total Pendapatan", "THR", atau komponen "TOTAL" sesuai jenis slip.
+              
+              4. Ekstrak Nominal Potongan: Ambil nilai angka murni dari "Total Potongan", "PPh 21", atau komponen "PENYESUAIAN" (jika tidak ditemukan potongan/nol, isi 0).
+              
+              Wajib merespons HANYA dengan objek JSON mentah terstruktur berikut tanpa pembungkus markdown (\`\`\`json ... \`\`\`):
+              {
+                "apakahValid": true,
+                "periode": "YYYY-MM",
+                "pendapatan": 4980350,
+                "potongan": 470414
+              }
+          `;
+
+          const urlEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+          const response = await fetch(urlEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  contents: [{
+                      parts: [
+                          { text: promptInstruksi },
+                          { inlineData: { mimeType: "image/jpeg", data: base64RawData } }
+                      ]
+                  }]
+              })
+          });
+
+          if (!response.ok) throw new Error(`Google Gemini Gateway bermasalah dengan status: ${response.status}`);
+
+          const resultData = await response.json();
+          const textResponse = resultData.candidates[0].content.parts[0].text;
+          
+          // Anti Markdown Wrapper Filter
+          const cleanJsonStr = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+          const dataHasilExtract = JSON.parse(cleanJsonStr);
+
+          if (!dataHasilExtract.apakahValid) {
+              tampilAlert(`Ditolak! Gambar tidak sesuai kategori: ${jenisKategori.toUpperCase()}`, "error");
+              window.tutupModalOcr();
+              return;
+          }
+
+          document.getElementById('step-loading').classList.add('hidden');
+          document.getElementById('step-konfirmasi').classList.remove('hidden');
+
+          const previewImg = document.getElementById('ocr-preview-img');
+          if (previewImg) {
+              previewImg.src = compressedBase64;
+              previewImg.classList.remove('hidden');
+          }
+
+          document.getElementById('ocr-pendapatan').value = (dataHasilExtract.pendapatan || 0).toLocaleString('id-ID');
+          document.getElementById('ocr-potongan').value = (dataHasilExtract.potongan || 0).toLocaleString('id-ID');
+          
+          const inputPeriodeUi = document.getElementById('ocr-periode');
+          if (inputPeriodeUi && dataHasilExtract.periode) {
+              inputPeriodeUi.value = dataHasilExtract.periode;
+          }
+
+          window.hitungNetto();
+          tampilAlert("Berhasil memvalidasi Slip dengan Gemini AI!", "success");
+
+      } catch (err) {
+          console.error("Gemini Core Vision Error:", err);
+          tampilAlert("Gagal mengekstrak komponen dokumen melalui sistem AI.", "error");
+          window.tutupModalOcr();
+      }
+  };
+
+  // Logika Kalkulasi Netto & Pembulatan Ratusan Kebawah
+  window.hitungNetto = function() {
+      const elPendapatan = document.getElementById('ocr-pendapatan');
+      const elPotongan = document.getElementById('ocr-potongan');
+
+      if (elPendapatan && document.activeElement === elPendapatan) {
+          let murni = elPendapatan.value.replace(/[^0-9]/g, '');
+          elPendapatan.value = murni === "" ? "" : parseInt(murni, 10).toLocaleString('id-ID');
+      }
+      if (elPotongan && document.activeElement === elPotongan) {
+          let murni = elPotongan.value.replace(/[^0-9]/g, '');
+          elPotongan.value = murni === "" ? "" : parseInt(murni, 10).toLocaleString('id-ID');
+      }
+
+      const pendapatan = elPendapatan ? (parseInt(elPendapatan.value.replace(/[^0-9]/g, ''), 10) || 0) : 0;
+      const potongan = elPotongan ? (parseInt(elPotongan.value.replace(/[^0-9]/g, ''), 10) || 0) : 0;
+      
+      const nettoAsli = pendapatan - potongan;
+      
+      // Pembulatan ke bawah ke RATUSAN terdekat (Membuang 2 digit terakhir)
+      let hasilPembulatan = 0;
+      if (nettoAsli > 0) {
+          hasilPembulatan = Math.floor(nettoAsli / 100) * 100;
+      } else {
+          hasilPembulatan = nettoAsli;
+      }
+
+      const elNetto = document.getElementById('ocr-bersih');
+      const elPembulatan = document.getElementById('ocr-netto-pembulatan');
+
+      if (elNetto) elNetto.value = nettoAsli.toLocaleString('id-ID');
+      if (elPembulatan) elPembulatan.value = hasilPembulatan.toLocaleString('id-ID');
+  };
+
+  // Formatter Helper
+  window.formatInputRibuan = function(inputEl) {
+      if (!inputEl) return;
+      let murni = inputEl.value.replace(/[^0-9]/g, '');
+      inputEl.value = murni === "" ? "" : parseInt(murni, 10).toLocaleString('id-ID');
+  };
+
+  // Reset Form OCR
+  window.resetFormOcr = function() {
+      globalCompressedImageBase64 = null;
+      
+      const fileInput = document.getElementById('input-foto');
+      if (fileInput) fileInput.value = "";
+      
+      const jenisSlip = document.getElementById('jenis-slip');
+      if (jenisSlip) jenisSlip.value = "gaji";
+
+      const inputPeriodeUi = document.getElementById('ocr-periode');
+      if (inputPeriodeUi) {
+          const skr = new Date();
+          const thn = skr.getFullYear();
+          const bln = String(skr.getMonth() + 1).padStart(2, '0');
+          inputPeriodeUi.value = `${thn}-${bln}`;
+      }
+
+      const ocrPendapatan = document.getElementById('ocr-pendapatan');
+      const ocrPotongan = document.getElementById('ocr-potongan');
+      const ocrBersih = document.getElementById('ocr-bersih');
+      const ocrPembulatan = document.getElementById('ocr-netto-pembulatan');
+      
+      if (ocrPendapatan) ocrPendapatan.value = "";
+      if (ocrPotongan) ocrPotongan.value = "";
+      if (ocrBersih) ocrBersih.value = "";
+      if (ocrPembulatan) ocrPembulatan.value = "";
+
+      const previewImg = document.getElementById('ocr-preview-img');
+      if (previewImg) {
+          previewImg.src = "";
+          previewImg.classList.add('hidden');
+      }
+
+      const stepInput = document.getElementById('step-input');
+      const stepJenis = document.getElementById('step-jenis-dokumen');
+      const stepLoading = document.getElementById('step-loading');
+      const stepKonfirmasi = document.getElementById('step-konfirmasi');
+
+      if (stepInput) stepInput.classList.remove('hidden');
+      if (stepJenis) stepJenis.style.opacity = "1";
+      if (stepLoading) stepLoading.classList.add('hidden');
+      if (stepKonfirmasi) stepKonfirmasi.classList.add('hidden');
+  };
+
+  // Utility Kompresi Gambar Canvas
+  function kompresGambarKeBase64(file, maxDimension) {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = function(e) {
+              const img = new Image();
+              img.src = e.target.result;
+              img.onload = function() {
+                  const canvas = document.createElement('canvas');
+                  let width = img.width;
+                  let height = img.height;
+
+                  if (width > height) {
+                      if (width > maxDimension) { height *= maxDimension / width; width = maxDimension; }
+                  } else {
+                      if (height > maxDimension) { width *= maxDimension / height; height = maxDimension; }
+                  }
+
+                  canvas.width = width;
+                  canvas.height = height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0, width, height);
+                  resolve(canvas.toDataURL('image/jpeg', 0.70));
+              };
+          };
+          reader.onerror = err => reject(err);
+      });
+  }
+
+  // Simpan Data Flat & Integrasi Firebase (+1 Bulan Buku Finansial)
+  window.simpanDataOcr = async function() {
+      const jenisKategori = document.getElementById('jenis-slip').value;
+      const pendapatan = parseInt((document.getElementById('ocr-pendapatan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
+      const potongan = parseInt((document.getElementById('ocr-potongan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
+      const netto = parseInt((document.getElementById('ocr-netto-pembulatan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
+
+      const inputPeriode = document.getElementById('ocr-periode');
+      let periodeAsliTeks = "Juni 2026";
+      let bulanAsliIndex = 5; 
+      let tahunAsliAngka = 2026;
+
+      const namaBulanIndo = [
+          "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+          "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+      ];
+
+      if (inputPeriode && inputPeriode.value) {
+          const [tahun, bulan] = inputPeriode.value.split('-');
+          tahunAsliAngka = parseInt(tahun, 10);
+          bulanAsliIndex = parseInt(bulan, 10) - 1;
+          periodeAsliTeks = `${namaBulanIndo[bulanAsliIndex]} ${tahunAsliAngka}`;
+      }
+
+      // Aturan Main: Geser +1 Bulan untuk Target Pembukuan Finansial
+      let bulanTargetIndex = bulanAsliIndex + 1;
+      let tahunTargetAngka = tahunAsliAngka;
+
+      if (bulanTargetIndex > 11) { 
+          bulanTargetIndex = 0;
+          tahunTargetAngka += 1;
+      }
+
+      let periodeBukuTeks = `${namaBulanIndo[bulanTargetIndex]} ${tahunTargetAngka}`;
+      let formatPeriodeClean = `${namaBulanIndo[bulanTargetIndex].toLowerCase()}_${tahunTargetAngka}`;
+
+      if (pendapatan <= 0) {
+          tampilAlert("Gagal menyimpan! Nominal pendapatan tidak boleh nol.", "warning");
+          return;
+      }
+
+      if (!window.auth || !window.auth.currentUser) {
+          tampilAlert("Sesi login tidak ditemukan. Silakan login terlebih dahulu.", "error");
+          return;
+      }
+
+      const userAktif = window.auth.currentUser;
+      let namaUserSistem = "user_dompetq";
+      if (userAktif.email && userAktif.email.includes("@")) {
+          namaUserSistem = userAktif.email.split('@')[0];
+      }
+
+      try {
+          tampilAlert("Menghubungkan ke Firebase...", "info");
+          const userToken = await userAktif.getIdToken(true);
+          const formatKategoriClean = jenisKategori.trim().toLowerCase();
+          const keyTransaksi = `${formatKategoriClean}_${formatPeriodeClean}`;
+
+          const projectId = window.firebaseConfig?.projectId || "dompetq-app";
+          let rtdbHost = window.firebaseConfig?.databaseURL 
+              ? window.firebaseConfig.databaseURL.replace(/^https?:\/\//, '').replace(/\/$/, '')
+              : "dompetq-app-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+          // 1. Simpan Gambar ke Firebase Realtime Database
+          if (globalCompressedImageBase64) {
+              let endpointRtdb = `https://${rtdbHost}/${keyTransaksi}.json?auth=${userToken}`;
+              try {
+                  await fetch(endpointRtdb, {
+                      method: 'PUT',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                          tipeSlip: jenisKategori,
+                          berkasGambar: globalCompressedImageBase64,
+                          diunggahPada: new Date().toISOString(),
+                          namaUser: namaUserSistem,
+                          keteranganAsli: `Slip Asli Periode ${periodeAsliTeks}`
+                      })
+                  });
+              } catch (rtdbErr) {
+                  console.error("Error Simpan RTDB:", rtdbErr);
+              }
+          }
+
+          // 2. Simpan Rekap Finansial ke Firestore
+          const endpointFirestore = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/rekap_finansial/${keyTransaksi}`;
+
+          const payloadFirestore = {
+              fields: {
+                  kategori: { stringValue: jenisKategori },
+                  keterangan: { stringValue: `Pemasukan Slip ${jenisKategori.toUpperCase()} (${periodeAsliTeks})` }, 
+                  periode: { stringValue: periodeBukuTeks },
+                  pendapatan: { integerValue: pendapatan.toString() },
+                  potongan: { integerValue: potongan.toString() },
+                  totalBersihNetto: { integerValue: netto.toString() },
+                  referenceKeyImage: { stringValue: keyTransaksi },
+                  waktuTransaksi: { timestampValue: new Date().toISOString() },
+                  namaUser: { stringValue: namaUserSistem }
+              }
+          };
+
+          const responFirestore = await fetch(endpointFirestore, {
+              method: 'PATCH',
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${userToken}`
+              },
+              body: JSON.stringify(payloadFirestore)
+          });
+
+          if (!responFirestore.ok) {
+              const errTxt = await responFirestore.text();
+              throw new Error(`Firestore Error: ${responFirestore.status} - ${errTxt}`);
+          }
+          
+          tampilAlert(`Sukses! ${jenisKategori.toUpperCase()} (${periodeAsliTeks}) dialokasikan ke Pembukuan Bulan ${periodeBukuTeks}.`, "success");
+          window.tutupModalOcr();
+
+          if (typeof window.muatRekapFinansialDashboard === 'function') {
+              await window.muatRekapFinansialDashboard(userAktif.uid);
+          } else if (typeof window.inisialisasiAplikasi === 'function') {
+              await window.inisialisasiAplikasi();
+          }
+
+      } catch (error) {
+          console.error("Firebase API Sync Error:", error);
+          tampilAlert(`Gagal Sinkronisasi Firebase: ${error.message}`, "error");
+      }
+  };
+
+
+
+
+</script>  
+
+</body>
+</html>
