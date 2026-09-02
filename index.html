@@ -8,6 +8,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- PWA & Favicon Meta Tags -->
+  <link rel="icon" type="image/png" href="./logo.png">
+  <link rel="apple-touch-icon" href="./logo.png">
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#b5f234">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -73,27 +80,27 @@
         </div>
       </div>
 
-      <!-- Action Buttons Grid (Ikut Melar) -->
-      <div class="grid grid-cols-4 gap-2 md:gap-4 pt-1">
-        <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-          <i class="fa-solid fa-file-invoice text-xs md:text-base text-[#b5f234] mb-1"></i>
-          <span class="text-[9px] md:text-xs font-bold">Upload Slip</span>
-        </button>
+      <!-- Action Buttons Grid (3 Tombol) -->
+      <div class="grid grid-cols-3 gap-2 md:gap-4 pt-1">
         
-        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition">
+        <!-- Tombol Masuk (Menggabungkan Pemasukan & Upload Slip) -->
+        <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
           <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
           <span class="text-[9px] md:text-xs font-bold">Masuk</span>
         </button>
 
-        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition">
+        <!-- Tombol Keluar -->
+        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
           <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
           <span class="text-[9px] md:text-xs font-bold">Keluar</span>
         </button>
 
-        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition">
+        <!-- Tombol Laporan -->
+        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
           <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
           <span class="text-[9px] md:text-xs font-bold">Laporan</span>
         </button>
+
       </div>
 
     </div>
@@ -397,7 +404,7 @@
                     <i class="fa-solid fa-right-from-bracket text-[11px]"></i> Keluar
                 </button>
                 <button type="button" onclick="prosesDaftarUserPerangkat()" class="w-full py-2.5 px-3 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 font-bold rounded-xl text-xs shadow-lg flex items-center justify-center gap-1.5 transition cursor-pointer">
-                    <i class="fa-solid fa-floppy-disk text-[11px]"></i> Masuk / Simpan
+                    <i class="fa-solid fa-floppy-disk text-[11px]"></i> Masuk / Buat Baru
                 </button>
             </div>
 
@@ -960,14 +967,18 @@
         // 2. Kosongkan tampilan layar
         window.resetTampilanKosong();
 
-        // 3. Tampilkan Alert Informasi
+        // 3. TUTUP MODAL REGISTRASI PROFIL DULUAN
+        if (typeof window.tutupModalRegistrasiUser === 'function') {
+            window.tutupModalRegistrasiUser();
+        } else {
+            const modal = document.getElementById('modal-reg-user');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // 4. Tampilkan Alert Informasi (Modal profil sudah tertutup)
         if (typeof window.tampilAlert === 'function') {
             window.tampilAlert("Berhasil keluar dari profil. Silakan pilih atau daftar profil baru.", "info");
         }
-
-        // 4. Biarkan Modal Profil Tetap Terbuka
-        const modal = document.getElementById('modal-reg-user');
-        if (modal) modal.classList.remove('hidden');
     };
 
     // =================================================================
@@ -1931,6 +1942,14 @@
 
 
 
+  //<!-- PWA Service Worker -->
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then((reg) => console.log('✅ [PWA] Service Worker aktif:', reg.scope))
+        .catch((err) => console.error('❌ [PWA] Gagal:', err));
+    });
+  }
 
 </script>  
 
