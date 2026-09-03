@@ -18,7 +18,7 @@
   <style>
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background-color: #0b0f0c;
+      background-color: #0b0f0ce5;
     }
   </style>
 </head>
@@ -27,135 +27,141 @@
   <!-- WRAPPER UTAMA: Lebar Melar (Fluid up to 6xl) & Tetap 1 Kolom Ke Bawah -->
   <div class="max-w-6xl mx-auto space-y-4">
 
-    <!-- HERO ISLAND: CARD ATAS HIJAU LIME -->
-    <div class="bg-[#b5f234] text-slate-950 rounded-[2.5rem] p-5 md:p-7 shadow-lg relative overflow-hidden">
-      
-      <!-- Profile & Top Icons -->
-      <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2.5">
-          <button id="btn-arsip-slip" type="button" class="w-9 h-9 rounded-full bg-slate-900 text-[#b5f234] flex items-center justify-center font-bold text-sm hover:scale-105 active:scale-95 transition shadow-sm cursor-pointer" title="Buka Arsip Slip">
-            <i class="fa-solid fa-wallet text-sm"></i>
-          </button>
-          <div>
-            <h1 class="font-bold text-sm md:text-base leading-none text-slate-900">DompetQ</h1>
-            <span id="current-date" class="text-[10px] md:text-xs text-slate-700 font-medium">--</span>
+      <!-- HERO ISLAND: CARD ATAS HIJAU LIME -->
+      <div class="bg-[#b5f234] text-slate-950 rounded-[2.5rem] p-5 md:p-7 shadow-lg relative overflow-hidden">
+        
+        <!-- Profile & Top Icons -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-2.5">
+            <button id="btn-arsip-slip" type="button" class="w-9 h-9 rounded-full bg-slate-900 text-[#b5f234] flex items-center justify-center font-bold text-sm hover:scale-105 active:scale-95 transition shadow-sm cursor-pointer" title="Buka Arsip Slip">
+              <i class="fa-solid fa-wallet text-sm"></i>
+            </button>
+            <div>
+              <h1 class="font-bold text-sm md:text-base leading-none text-slate-900">DompetQ</h1>
+              <span id="current-date" class="text-[10px] md:text-xs text-slate-700 font-medium">--</span>
+            </div>
+          </div>
+          <div class="flex gap-1.5">
+            <!-- TOMBOL SHORTCUT KALENDER -->
+            <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
+              <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
+            </button>
+            <!-- TOMBOL SHORTCUT PROFIL USER -->
+            <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
+                <i class="fa-regular fa-user text-xs md:text-sm"></i>
+            </button>
           </div>
         </div>
-        <div class="flex gap-1.5">
-          <!-- TOMBOL SHORTCUT KALENDER -->
-          <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
-            <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
+
+        <!-- Month Selector -->
+        <div class="flex items-center justify-between my-2 bg-slate-950/5 py-1.5 px-4 rounded-full">
+          <button id="btn-prev-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
+            <i class="fa-solid fa-chevron-left"></i>
           </button>
-          <!-- TOMBOL SHORTCUT PROFIL USER -->
-          <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
-              <i class="fa-regular fa-user text-xs md:text-sm"></i>
+          
+          <span id="label-month-main" class="text-[11px] md:text-xs font-bold tracking-wider text-slate-800 uppercase cursor-pointer hover:underline">
+            SEPTEMBER 2026
+          </span>
+          
+          <button id="btn-next-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
+            <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
+
+        <!-- Total Saldo -->
+        <div class="my-6">
+          <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
+          <!-- TAMBAHKAN id="total-saldo" DI SINI -->
+          <h2 id="total-saldo" class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
+          
+          <div class="mt-3 inline-block bg-slate-950/10 px-3 py-1 rounded-full">
+            <p class="text-[10px] md:text-xs text-slate-800 font-medium">
+              Sisa Bulan Lalu: <span class="font-bold text-slate-950">Rp 0</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Buttons Grid (3 Tombol) -->
+        <div class="grid grid-cols-3 gap-2 md:gap-4 pt-1">
+          
+          <!-- Tombol Masuk (Menggabungkan Pemasukan & Upload Slip) -->
+          <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+            <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
+            <span class="text-[9px] md:text-xs font-bold">Masuk</span>
+          </button>
+
+          <!-- Tombol Keluar -->
+          <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+            <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
+            <span class="text-[9px] md:text-xs font-bold">Keluar</span>
+          </button>
+
+          <!-- Tombol Laporan di Dashboard -->
+          <button onclick="bukaModalLaporan()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+              <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
+              <span class="text-[9px] md:text-xs font-bold">Laporan</span>
+          </button>
+
+        </div>
+
       </div>
 
-      <!-- Month Selector -->
-      <div class="flex items-center justify-between my-2 bg-slate-950/5 py-1.5 px-4 rounded-full">
-        <button id="btn-prev-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
-          <i class="fa-solid fa-chevron-left"></i>
-        </button>
+      <!-- SUB-PULAU: PEMASUKAN & PENGELUARAN (PULAU KEDUA) -->
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-[#0b0f0ce5] border border-[#b5f234] p-4 md:p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <p class="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider">Pemasukan</p>
+            <!-- TAMBAHKAN id="total-pemasukan" DI SINI -->
+            <p id="total-pemasukan" class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+          </div>
+          <!-- Tombol Panah Masuk (Buka Detail Slip Masuk) -->
+          <button id="btn-detail-masuk" type="button" class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs md:text-sm hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer" title="Lihat Detail Pemasukan Bulan Ini">
+            <i class="fa-solid fa-arrow-down"></i>
+          </button>
+        </div>
+
+        <div class="bg-[#0b0f0ce5] border border-[#b5f234] p-4 md:p-5 rounded-2xl flex items-center justify-between">
+          <div>
+            <p class="text-[10px] md:text-xs font-bold text-rose-400 uppercase tracking-wider">Pengeluaran</p>
+            <!-- TAMBAHKAN id="total-pengeluaran" DI SINI -->
+            <p id="total-pengeluaran" class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+          </div>
+          <div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs md:text-sm">
+            <i class="fa-solid fa-arrow-up"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS SECTION (PULAU KETIGA UTAMA) -->
+      <div class="bg-[#0b0f0ce5] rounded-3xl p-5 md:p-7 border border-[#b5f234]">
         
-        <span id="label-month-main" class="text-[11px] md:text-xs font-bold tracking-wider text-slate-800 uppercase cursor-pointer hover:underline">
-          SEPTEMBER 2026
-        </span>
-        
-        <button id="btn-next-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
-      </div>
-
-      <!-- Total Saldo -->
-      <div class="my-6">
-        <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
-        <h2 class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
-        
-        <div class="mt-3 inline-block bg-slate-950/10 px-3 py-1 rounded-full">
-          <p class="text-[10px] md:text-xs text-slate-800 font-medium">
-            Sisa Bulan Lalu: <span class="font-bold text-slate-950">Rp 0</span>
-          </p>
+        <!-- Title & Filter -->
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider">Riwayat Transaksi Terbaru</h3>
+          <button class="text-[11px] md:text-xs font-bold text-[#b5f234] hover:underline">Filter</button>
         </div>
-      </div>
 
-      <!-- Action Buttons Grid (3 Tombol) -->
-      <div class="grid grid-cols-3 gap-2 md:gap-4 pt-1">
-        
-        <!-- Tombol Masuk (Menggabungkan Pemasukan & Upload Slip) -->
-        <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-          <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
-          <span class="text-[9px] md:text-xs font-bold">Masuk</span>
-        </button>
-
-        <!-- Tombol Keluar -->
-        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-          <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
-          <span class="text-[9px] md:text-xs font-bold">Keluar</span>
-        </button>
-
-        <!-- Tombol Laporan -->
-        <button class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-          <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
-          <span class="text-[9px] md:text-xs font-bold">Laporan</span>
-        </button>
-
-      </div>
-
-    </div>
-
-    <!-- SUB-PULAU: PEMASUKAN & PENGELUARAN (PULAU KEDUA) -->
-    <div class="grid grid-cols-2 gap-3">
-      <div class="bg-[#141a16] border border-emerald-950/60 p-4 md:p-5 rounded-2xl flex items-center justify-between">
-        <div>
-          <p class="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider">Pemasukan</p>
-          <p class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+        <!-- Quick Category Chips -->
+        <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-none">
+          <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#b5f234] text-slate-950">Semua</button>
+          <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pemasukan</button>
+          <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pengeluaran</button>
+          <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Servis</button>
         </div>
-        <!-- Tombol Panah Masuk (Buka Detail Slip Masuk) -->
-        <button id="btn-detail-masuk" type="button" class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs md:text-sm hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer" title="Lihat Detail Pemasukan Bulan Ini">
-          <i class="fa-solid fa-arrow-down"></i>
-        </button>
-      </div>
 
-      <div class="bg-[#1a1415] border border-rose-950/60 p-4 md:p-5 rounded-2xl flex items-center justify-between">
-        <div>
-          <p class="text-[10px] md:text-xs font-bold text-rose-400 uppercase tracking-wider">Pengeluaran</p>
-          <p class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+        <!-- TAMBAHKAN id="container-riwayat-slip" PADA CONTAINER RIWAYAT INI -->
+        <div id="container-riwayat-slip">
+          <!-- Empty State Default -->
+          <div class="text-center py-10 md:py-14">
+            <div class="w-14 h-14 bg-slate-800/60 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-500">
+              <i class="fa-solid fa-receipt text-2xl"></i>
+            </div>
+            <p class="text-xs md:text-sm font-bold text-slate-400">Belum Ada Transaksi</p>
+            <p class="text-[10px] md:text-xs text-slate-500 mt-1">Catatan bulan ini masih kosong.</p>
+          </div>
         </div>
-        <div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs md:text-sm">
-          <i class="fa-solid fa-arrow-up"></i>
-        </div>
-      </div>
-    </div>
 
-    <!-- TRANSACTIONS SECTION (PULAU KETIGA UTAMA) -->
-    <div class="bg-[#121614] rounded-3xl p-5 md:p-7 border border-slate-800/80">
-      
-      <!-- Title & Filter -->
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider">Riwayat Transaksi</h3>
-        <button class="text-[11px] md:text-xs font-bold text-[#b5f234] hover:underline">Filter</button>
       </div>
-
-      <!-- Quick Category Chips -->
-      <div class="flex gap-2 overflow-x-auto pb-2 mb-4 scrollbar-none">
-        <button class="px-4 py-1.5 rounded-full text-xs font-bold bg-[#b5f234] text-slate-950">Semua</button>
-        <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pemasukan</button>
-        <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Pengeluaran</button>
-        <button class="px-4 py-1.5 rounded-full text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">Servis</button>
-      </div>
-
-      <!-- Empty State -->
-      <div class="text-center py-10 md:py-14">
-        <div class="w-14 h-14 bg-slate-800/60 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-500">
-          <i class="fa-solid fa-receipt text-2xl"></i>
-        </div>
-        <p class="text-xs md:text-sm font-bold text-slate-400">Belum Ada Transaksi</p>
-        <p class="text-[10px] md:text-xs text-slate-500 mt-1">Catatan bulan ini masih kosong.</p>
-      </div>
-
-    </div>
 
   </div>
 
@@ -577,6 +583,33 @@
     </div>
 
 
+    <!-- Modal Laporan Lengkap -->
+    <div id="modal-laporan" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#121714] border border-slate-800 rounded-3xl w-full max-w-md p-5 text-white max-h-[85vh] flex flex-col">
+            <!-- Header Modal -->
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-chart-pie text-[#b5f234]"></i> Laporan Mutasi Lengkap
+                </h3>
+                <button onclick="tutupModalLaporan()" class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
+                <button onclick="filterLaporan('7hari')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">7 Hari</button>
+                <button onclick="filterLaporan('30hari')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">30 Hari</button>
+                <button onclick="filterLaporan('90hari')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">90 Hari</button>
+                <button onclick="filterLaporan('bulan_ini')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">Bulan Ini</button>
+                <button onclick="filterLaporan('tahun_ini')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">Tahun Ini</button>
+                <button onclick="filterLaporan('semua')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">Semua</button>
+            </div>
+
+            <!-- Container List Transaksi Lengkap -->
+            <div id="container-laporan-lengkap" class="overflow-y-auto flex-1 pr-1">
+                <!-- Data terisi lewat JavaScript -->
+            </div>
+        </div>
+    </div>
 
 
 
@@ -596,6 +629,7 @@
         getDocs, 
         query, 
         where, 
+        orderBy,
         serverTimestamp 
     } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -633,10 +667,16 @@
     window.fbGetDocs = getDocs;
     window.fbQuery = query;
     window.fbWhere = where;
+    window.fbOrderBy = orderBy;
     window.fbServerTimestamp = serverTimestamp;
 
     // Variable penampung sementara foto profil base64
     window.currentFotoBase64 = "";
+
+    // Helper Format Rupiah
+    window.formatRupiah = function(angka) {
+        return 'Rp ' + Number(angka || 0).toLocaleString('id-ID');
+    };
 
     // =================================================================
     // 4. USER ENGINE TANPA AUTH (MULTI-USER LOCALSTORAGE & FIRESTORE)
@@ -761,7 +801,7 @@
     };
 
     // =================================================================
-    // 5. PROSES DAFTAR / LOGOUT USER ENGINE (VERIFIKASI NAMA + ALERT CUSTOM)
+    // 5. PROSES DAFTAR / LOGOUT USER ENGINE
     // =================================================================
 
     // Simpan / Update / Cek Dokumen users/{userId}
@@ -789,9 +829,7 @@
             const q = query(usersRef, where('nama_profil', '==', namaUser));
             const querySnapshot = await getDocs(q);
 
-            // ---------------------------------------------------------
             // SKENARIO 1: NAMA DITEMUKAN (LANGSUNG LOGIN KE AKUN LAMA)
-            // ---------------------------------------------------------
             if (!querySnapshot.empty) {
                 const docFound = querySnapshot.docs[0];
                 targetUserId = docFound.id;
@@ -806,9 +844,7 @@
                 return;
             }
 
-            // ---------------------------------------------------------
-            // SKENARIO 2: NAMA TIDAK DITEMUKAN (TAMPILKAN MODAL KONFIRMASI KUSTOM)
-            // ---------------------------------------------------------
+            // SKENARIO 2: NAMA TIDAK DITEMUKAN (TAMPILKAN MODAL KONFIRMASI)
             window.tampilkanModalKonfirmasiNama(namaUser, fotoProfilFinal);
 
         } catch (error) {
@@ -825,11 +861,9 @@
      * Modal Dialog Konfirmasi Custom saat Nama Tidak Ditemukan
      */
     window.tampilkanModalKonfirmasiNama = function(namaUser, fotoProfilFinal) {
-        // Hapus modal lama jika ada yang tertinggal
         const modalLama = document.getElementById('modal-konfirmasi-nama');
         if (modalLama) modalLama.remove();
 
-        // Inject Elemen Modal bertema Dark/Lime DompetQ
         const modalHTML = `
         <div id="modal-konfirmasi-nama" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[90] flex items-center justify-center p-4">
             <div class="bg-[#121614] border border-slate-700 rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center space-y-4 animate-in fade-in zoom-in duration-200">
@@ -863,14 +897,12 @@
 
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Action 1: Setuju Buat Profil Baru
         document.getElementById('btn-buat-profil-baru').onclick = async function() {
             document.getElementById('modal-konfirmasi-nama').remove();
             const targetUserId = buatCustomUserId(namaUser);
             await eksekusiSimpanUser(targetUserId, namaUser, fotoProfilFinal, true);
         };
 
-        // Action 2: Ketik Ulang (Cuma tutup dialog, modal registrasi tetap terbuka)
         document.getElementById('btn-ketik-ulang').onclick = function() {
             document.getElementById('modal-konfirmasi-nama').remove();
         };
@@ -935,17 +967,21 @@
      * Kosongkan Seluruh Tampilan UI Data saat Tidak Ada User / Logout
      */
     window.resetTampilanKosong = function() {
-        // Reset Header Profil
         window.muatTampilanProfilHeader();
 
-        // Reset Total Saldo / Finansial
-        const elSaldo = document.getElementById('total-saldo');
+        // Reset Total Saldo / Finansial ke Rp 0
+        const elSaldo = document.getElementById('total-saldo') || document.querySelector('h1.text-3xl, h1.text-4xl');
+        const elMasuk = document.getElementById('total-pemasukan');
+        const elKeluar = document.getElementById('total-pengeluaran');
+        
         if (elSaldo) elSaldo.textContent = "Rp 0";
+        if (elMasuk) elMasuk.textContent = "Rp 0";
+        if (elKeluar) elKeluar.textContent = "Rp 0";
 
-        // Reset List Transaksi / Riwayat Slip jika ada
-        const containerRiwayat = document.getElementById('container-riwayat-slip');
+        // Reset List Transaksi
+        const containerRiwayat = document.getElementById('container-riwayat-slip') || document.getElementById('list-transaksi');
         if (containerRiwayat) {
-            containerRiwayat.innerHTML = `<div class="text-center text-gray-400 py-6">Silakan masuk profil untuk melihat data.</div>`;
+            containerRiwayat.innerHTML = `<div class="text-center text-slate-500 py-8 text-xs">Silakan masuk profil untuk melihat data.</div>`;
         }
 
         // Reset Form Input Profil
@@ -956,18 +992,15 @@
     };
 
     /**
-     * KELUAR / LOGOUT USER (Tombol Keluar)
+     * KELUAR / LOGOUT USER
      */
     window.prosesKeluarUser = function() {
-        // 1. Hapus identitas user aktif di LocalStorage
         localStorage.removeItem('dompetq_user_id');
         localStorage.removeItem('dompetq_user_name');
         localStorage.removeItem('dompetq_user_photo');
 
-        // 2. Kosongkan tampilan layar
         window.resetTampilanKosong();
 
-        // 3. TUTUP MODAL REGISTRASI PROFIL DULUAN
         if (typeof window.tutupModalRegistrasiUser === 'function') {
             window.tutupModalRegistrasiUser();
         } else {
@@ -975,14 +1008,397 @@
             if (modal) modal.classList.add('hidden');
         }
 
-        // 4. Tampilkan Alert Informasi (Modal profil sudah tertutup)
         if (typeof window.tampilAlert === 'function') {
             window.tampilAlert("Berhasil keluar dari profil. Silakan pilih atau daftar profil baru.", "info");
         }
     };
+    
+
+    // Helper untuk mendapatkan nama idTransaksi saldo bulan lalu
+    function getTargetSaldoLaluId(activePeriodUI) {
+        if (!activePeriodUI) return "";
+
+        const daftarBulan = [
+            "januari", "februari", "maret", "april", "mei", "juni",
+            "juli", "agustus", "september", "oktober", "november", "desember"
+        ];
+
+        const parts = activePeriodUI.trim().toLowerCase().split(" ");
+        if (parts.length < 2) return "";
+
+        const namaBulanAktif = parts[0];
+        let tahun = parseInt(parts[1], 10);
+
+        const idxBulanAktif = daftarBulan.indexOf(namaBulanAktif);
+        if (idxBulanAktif === -1) return "";
+
+        let idxBulanLalu = idxBulanAktif - 1;
+        if (idxBulanLalu < 0) {
+            idxBulanLalu = 11;
+            tahun -= 1;
+        }
+
+        const namaBulanLalu = daftarBulan[idxBulanLalu];
+        return `saldo_lalu_${namaBulanLalu}_${tahun}`;
+    }
+
+    // Helper Konversi String Teks UI ke Key Standar (contoh: "SEPTEMBER 2026" -> "SEPTEMBER 2026")
+    function getActivePeriodFromUI() {
+        const elLabel = document.getElementById('label-month-main');
+        if (!elLabel) return "";
+        return elLabel.textContent.trim().toUpperCase(); // "SEPTEMBER 2026"
+    }
+
+    // Helper Normalisasi Periode Firestore
+    function normalizePeriod(periodStr) {
+        if (!periodStr) return "";
+        return periodStr.trim().toUpperCase(); // "SEPTEMBER 2026"
+    }
+
+    // HELPER OTOMATIS HITUNG & BUAT DOKUMEN SALDO LALU
+    async function periksaDanAutoKunciSaldoLalu(activeUserId, activePeriodUI, snapRekap) {
+        const targetSaldoLaluId = getTargetSaldoLaluId(activePeriodUI);
+        if (!targetSaldoLaluId) return 0;
+
+        let docEksis = false;
+        let nominalSaldoLalu = 0;
+
+        // 1. Cek apakah dokumen saldo_lalu_xxx sudah ada di Firestore
+        snapRekap.forEach(docSnap => {
+            const idTrans = (docSnap.data().idTransaksi || docSnap.id || "").toLowerCase();
+            if (idTrans === targetSaldoLaluId) {
+                docEksis = true;
+                nominalSaldoLalu = Number(docSnap.data().totalBersihNetto || 0);
+            }
+        });
+
+        // Jika dokumen sudah pernah dibuat sebelumnya, langsung pakai nilainya
+        if (docEksis) return nominalSaldoLalu;
+
+        // =================================================================
+        // VALIDASI WAKTU REAL-TIME PERANGKAT
+        // =================================================================
+        const parts = activePeriodUI.trim().toLowerCase().split(" ");
+        const daftarBulan = [
+            "januari", "februari", "maret", "april", "mei", "juni",
+            "juli", "agustus", "september", "oktober", "november", "desember"
+        ];
+        
+        let idxBulanTargetLalu = daftarBulan.indexOf(parts[0]) - 1;
+        let thnTargetLalu = parseInt(parts[1], 10);
+        if (idxBulanTargetLalu < 0) { 
+            idxBulanTargetLalu = 11; 
+            thnTargetLalu -= 1; 
+        }
+
+        // Ambil Waktu Real-time Perangkat Saat Ini
+        const sekarang = new Date();
+        const bulanSekarangRealtime = sekarang.getMonth(); // 0-11
+        const tahunSekarangRealtime = sekarang.getFullYear();
+
+        // Hitung "Batas Akhir Waktu": Bulan target yang mau dikunci harus BERADA SEBELUM bulan berjalan riil
+        // Contoh: Jika sekarang SEP 2026, maka bulan target (AGU 2026) < SEP 2026 -> BOLEH DIKUNCI.
+        // Jika user buka OKT 2026, maka targetnya (SEP 2026) == SEP 2026 (belum selesai) -> DITOLAK / TIDAK DIKUNCI.
+        const kriteriaWaktuTarget = thnTargetLalu * 12 + idxBulanTargetLalu;
+        const kriteriaWaktuRealtime = tahunSekarangRealtime * 12 + bulanSekarangRealtime;
+
+        if (kriteriaWaktuTarget >= kriteriaWaktuRealtime) {
+            console.warn(`🛑 Penguncian dibatalkan: Periode bulan lalu untuk "${activePeriodUI}" belum berlalu secara real-time!`);
+            return 0; // Jangan buat dokumen di Firestore jika bulannya belum selesai secara nyata
+        }
+
+        // =================================================================
+        // JIKA WAKTU BENAR-BENAR SUDAH BERLALU -> HITUNG & TULIS KE FIRESTORE
+        // =================================================================
+        const namaPeriodeLaluStr = `${daftarBulan[idxBulanTargetLalu].toUpperCase()} ${thnTargetLalu}`;
+
+        let totalMasukLalu = 0;
+        let totalKeluarLalu = 0;
+
+        snapRekap.forEach(docSnap => {
+            const data = docSnap.data();
+            const rawPeriode = normalizePeriod(data.periode);
+            const idTrans = (data.idTransaksi || docSnap.id || "").toLowerCase();
+            const nominalNetto = Number(data.totalBersihNetto || 0);
+
+            if (idTrans.startsWith('saldo_lalu_')) return;
+
+            if (rawPeriode === namaPeriodeLaluStr) {
+                const isPemasukan = idTrans.startsWith('gaji') || 
+                                    idTrans.startsWith('ksp') || 
+                                    idTrans.startsWith('thr') || 
+                                    idTrans.startsWith('lainnya');
+
+                const isPengeluaran = idTrans.startsWith('mutasi') || 
+                                    idTrans.startsWith('out');
+
+                if (isPemasukan) totalMasukLalu += Math.abs(nominalNetto);
+                if (isPengeluaran) totalKeluarLalu += Math.abs(nominalNetto);
+            }
+        });
+
+        const saldoAkhirTerkunci = totalMasukLalu - totalKeluarLalu;
+
+        try {
+            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', targetSaldoLaluId);
+            await window.fbSetDoc(docRef, {
+                idTransaksi: targetSaldoLaluId,
+                periode: namaPeriodeLaluStr,
+                keterangan: `Amankan sisa saldo otomatis dari penutupan periode ${namaPeriodeLaluStr.toLowerCase()}`,
+                totalBersihNetto: saldoAkhirTerkunci,
+                uid: activeUserId,
+                diperbaruiPada: new Date().toISOString()
+            }, { merge: true });
+
+            console.log(`✅ Auto-Kunci Berhasil Ditulis: ${targetSaldoLaluId} = Rp ${saldoAkhirTerkunci}`);
+        } catch (err) {
+            console.error("❌ Gagal simpan kunci saldo lalu:", err);
+        }
+
+        return saldoAkhirTerkunci;
+    }
 
     // =================================================================
-    // 6. SIMPAN DATA SLIP / TRANSAKSI SPESIFIK USER
+    // 6. MUAT DATA UTAMA DARI FIRESTORE UNTUK USER AKTIF
+    // =================================================================
+    window.muatDataUtama = async function(userId) {
+        const activeUserId = userId || window.getActiveUserId();
+
+        if (!activeUserId) {
+            console.warn("⚠️ Tidak ada user aktif.");
+            if (typeof window.resetTampilanKosong === 'function') window.resetTampilanKosong();
+            if (typeof window.bukaModalRegistrasiUser === 'function') window.bukaModalRegistrasiUser();
+            return;
+        }
+
+        const activePeriodUI = getActivePeriodFromUI();
+        const targetSaldoLaluId = getTargetSaldoLaluId(activePeriodUI);
+
+        console.log(`📥 Memuat Data | Periode UI: "${activePeriodUI}" | Target Saldo Lalu: "${targetSaldoLaluId}"`);
+
+        let totalPemasukanBulanIni = 0;
+        let totalPengeluaranBulanIni = 0;
+        let listTransaksiBulanIni = [];
+
+        try {
+            const rekapRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_finansial');
+            const snapRekap = await window.fbGetDocs(rekapRef);
+
+            // A. PERIKSA & TULIS AUTOMATIS DOKUMEN SALDO LALU JIKA BELUM ADA
+            const sisaBulanLaluCatatan = await periksaDanAutoKunciSaldoLalu(activeUserId, activePeriodUI, snapRekap);
+
+            // B. PROSES PEMASUKAN & PENGELUARAN BULAN AKTIF
+            snapRekap.forEach(docSnap => {
+                const data = docSnap.data();
+                const idTrans = (data.idTransaksi || docSnap.id || "").toLowerCase();
+                const rawPeriode = normalizePeriod(data.periode);
+                const nominalNetto = Number(data.totalBersihNetto || 0);
+
+                // Abaikan semua dokumen catatan saldo lalu
+                if (idTrans.startsWith('saldo_lalu_')) return;
+
+                if (rawPeriode === activePeriodUI) {
+                    const isPemasukan = idTrans.startsWith('gaji') || 
+                                        idTrans.startsWith('ksp') || 
+                                        idTrans.startsWith('thr') || 
+                                        idTrans.startsWith('lainnya');
+
+                    const isPengeluaran = idTrans.startsWith('mutasi') || 
+                                        idTrans.startsWith('out');
+
+                    if (isPemasukan) {
+                        totalPemasukanBulanIni += Math.abs(nominalNetto);
+                        listTransaksiBulanIni.push({ ...data, tipe: 'pemasukan' });
+                    } else if (isPengeluaran) {
+                        totalPengeluaranBulanIni += Math.abs(nominalNetto);
+                        listTransaksiBulanIni.push({ ...data, tipe: 'pengeluaran' });
+                    }
+                }
+            });
+
+            // C. HITUNG TOTAL SALDO SAAT INI (MURNI BULAN INI SAJA)
+            const totalSaldoSaatIni = totalPemasukanBulanIni - totalPengeluaranBulanIni;
+
+            // D. UPDATE TAMPILAN UI
+            const elSaldo = document.getElementById('total-saldo');
+            if (elSaldo) elSaldo.textContent = window.formatRupiah(totalSaldoSaatIni);
+
+            const elSisaLaluSpan = document.querySelector('#total-saldo + div span, div.my-6 span.font-bold');
+            if (elSisaLaluSpan) {
+                elSisaLaluSpan.textContent = window.formatRupiah(sisaBulanLaluCatatan);
+            }
+
+            const elMasuk = document.getElementById('total-pemasukan');
+            const elKeluar = document.getElementById('total-pengeluaran');
+            if (elMasuk) elMasuk.textContent = window.formatRupiah(totalPemasukanBulanIni);
+            if (elKeluar) elKeluar.textContent = window.formatRupiah(totalPengeluaranBulanIni);
+
+            if (typeof window.renderListRiwayat === 'function') {
+                window.renderListRiwayat(listTransaksiBulanIni);
+            }
+
+        } catch (error) {
+            console.error("❌ Gagal memuat data keuangan:", error);
+        }
+    };
+
+    /**
+     * Helper Render Daftar Riwayat Transaksi
+     */
+    window.renderListRiwayat = function(items) {
+        const container = document.getElementById('container-riwayat-slip');
+        if (!container) return;
+
+        if (!items || items.length === 0) {
+            container.innerHTML = `
+            <div class="text-center py-10">
+                <p class="text-xs font-bold text-slate-400">Belum Ada Transaksi</p>
+                <p class="text-[10px] text-slate-500 mt-1">Tidak ada catatan pada periode ini.</p>
+            </div>`;
+            return;
+        }
+
+        // Helper ekstraksi Date object dari waktuTransaksi / timestamp
+        const getDateObject = (item) => {
+            if (item.waktuTransaksi) {
+                if (typeof item.waktuTransaksi.toDate === 'function') {
+                    return item.waktuTransaksi.toDate();
+                }
+                const parsed = new Date(item.waktuTransaksi);
+                if (!isNaN(parsed.getTime())) return parsed;
+            }
+            // Fallback angka timestamp unik di akhir ID
+            const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
+            if (matchDigits) return new Date(parseInt(matchDigits[0], 10));
+
+            if (item.diperbaruiPada) return new Date(item.diperbaruiPada);
+
+            return new Date(0); // Epoch jika kosong
+        };
+
+        // 1. URUTKAN DATA TERBARU DI ATAS
+        const dataTersortir = [...items].sort((a, b) => getDateObject(b) - getDateObject(a));
+
+        // 2. FILTER DATA 10 HARI TERAKHIR UNTUK DASHBOARD
+        const batas10HariLalu = new Date();
+        batas10HariLalu.setDate(batas10HariLalu.getDate() - 10);
+        batas10HariLalu.setHours(0, 0, 0, 0);
+
+        const dataUtama = dataTersortir.filter(item => {
+            const tgl = getDateObject(item);
+            if (tgl.getTime() === 0) return true;
+            return tgl >= batas10HariLalu;
+        });
+
+        if (dataUtama.length === 0) {
+            container.innerHTML = `
+            <div class="text-center py-10">
+                <p class="text-xs font-bold text-slate-400">Tidak Ada Transaksi 10 Hari Terakhir</p>
+                <p class="text-[10px] text-slate-500 mt-1">Gunakan menu Laporan untuk melihat riwayat lengkap.</p>
+            </div>`;
+            return;
+        }
+
+        window.semuaDataLaporan = dataTersortir;
+
+        // 3. KELOMPOKKAN DATA BERDASARKAN TANGGAL (GROUP BY DATE)
+        const kelompokTanggal = {};
+        const opsiFormatTgl = { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' };
+
+        dataUtama.forEach(item => {
+            const objTgl = getDateObject(item);
+            // String kunci grup, contoh: "Kamis, 03 Sep 2026"
+            const labelTanggal = objTgl.getTime() > 0 
+                ? objTgl.toLocaleDateString('id-ID', opsiFormatTgl) 
+                : 'Lainnya';
+
+            if (!kelompokTanggal[labelTanggal]) {
+                kelompokTanggal[labelTanggal] = [];
+            }
+            kelompokTanggal[labelTanggal].push(item);
+        });
+
+        // 4. RENDER TAMPILAN STYLE GOPAY
+        let html = '';
+
+        for (const [tglHeader, listTransaksi] of Object.entries(kelompokTanggal)) {
+            html += `
+            <div class="mb-4">
+                <!-- Header Group Tanggal -->
+                <div class="text-[11px] font-bold text-slate-400 mb-2 px-1 tracking-wide">
+                    ${tglHeader}
+                </div>
+                
+                <div class="bg-[#121714] border border-[#b5f234] rounded-2xl p-2 space-y-1">`;
+
+            listTransaksi.forEach(item => {
+              const nominal = Math.abs(Number(item.totalBersihNetto || 0));
+
+              // Deteksi tipe transaksi dari field tipe, ID, atau kategori
+              const tipeStr = (item.tipe || '').toLowerCase();
+              const idTransStr = (item.idTransaksi || '').toLowerCase();
+              const katStr = (item.kategori || '').toLowerCase();
+
+              const isMasuk = tipeStr === 'pemasukan' || idTransStr.startsWith('gaji') || idTransStr.startsWith('ksp') || idTransStr.startsWith('thr');
+              const isMutasi = tipeStr === 'mutasi' || katStr.includes('mutasi') || idTransStr.startsWith('mutasi');
+
+              // Default: Pengeluaran (Rose / Merah)
+              let styleBgIcon = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+              let styleIkon = 'fa-arrow-up';
+              let styleTeksNominal = 'text-rose-400';
+              let tandaNominal = '-';
+
+              if (isMasuk) {
+                  // Pemasukan (Emerald / Hijau)
+                  styleBgIcon = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                  styleIkon = 'fa-arrow-down';
+                  styleTeksNominal = 'text-emerald-400';
+                  tandaNominal = '+';
+              } else if (isMutasi) {
+                  // Mutasi / Transfer (Sky / Biru)
+                  styleBgIcon = 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+                  styleIkon = 'fas fa-exchange-alt';
+                  styleTeksNominal = 'text-sky-400';
+                  tandaNominal = '-';
+              }
+
+              // Penyesuaian Field Tampilan
+              const judulKategori = (item.kategori || item.idTransaksi || 'Transaksi').toUpperCase();
+              const subKeterangan = item.keterangan || '-';
+
+              html += `
+                  <div class="flex items-center justify-between p-2.5 hover:bg-slate-800/30 rounded-xl transition">
+                      <div class="flex items-center gap-3">
+                          <div class="w-9 h-9 rounded-xl flex items-center justify-center border ${styleBgIcon}">
+                              <i class="fa-solid ${styleIkon} text-xs"></i>
+                          </div>
+                          <div>
+                              <!-- Judul Kategori Mengikuti Warna Tipe Transaksi -->
+                              <div class="text-xs font-extrabold ${styleTeksNominal} tracking-wide">${judulKategori}</div>
+                              <!-- Keterangan Transaksi (Tetap Slate/Abu-abu) -->
+                              <div class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">${subKeterangan}</div>
+                          </div>
+                      </div>
+                      
+                      <!-- Nominal Netto Sesuai Warna Tipe Transaksi -->
+                      <div class="text-right">
+                          <div class="text-xs font-black ${styleTeksNominal}">
+                              ${tandaNominal} ${window.formatRupiah(nominal)}
+                          </div>
+                      </div>
+                  </div>`;
+          });
+
+            html += `
+                </div>
+            </div>`;
+        }
+
+        container.innerHTML = html;
+    };
+
+    // =================================================================
+    // 7. SIMPAN DATA SLIP / TRANSAKSI SPESIFIK USER
     // =================================================================
     window.simpanDataOcrWithUser = async function() {
         const userId = window.getActiveUserId();
@@ -1028,9 +1444,8 @@
                 window.tutupModalOcr();
             }
 
-            if (typeof window.muatRiwayatSlip === 'function') {
-                window.muatRiwayatSlip(userId);
-            }
+            // Refresh Tampilan Data Utama
+            window.muatDataUtama(userId);
 
         } catch (error) {
             console.error("Gagal simpan slip:", error);
@@ -1041,28 +1456,52 @@
     };
 
     // =================================================================
-    // 7. INISIALISASI SAAT HALAMAN SELESAI LOAD
+    // 8. INISIALISASI SAAT HALAMAN SELESAI LOAD
     // =================================================================
     window.inisialisasiUserPerangkat = function() {
         const currentUserId = window.getActiveUserId();
 
         if (!currentUserId) {
-            // Jika belum masuk user mana pun: reset tampilan & buka modal profil
             window.resetTampilanKosong();
             window.bukaModalRegistrasiUser();
         } else {
             console.log("Perangkat aktif dengan User ID:", currentUserId);
             window.muatTampilanProfilHeader();
-
-            if (typeof window.muatDataUtama === 'function') {
-                window.muatDataUtama(currentUserId);
-            }
+            window.muatDataUtama(currentUserId);
         }
     };
 
     document.addEventListener('DOMContentLoaded', () => {
         window.inisialisasiUserPerangkat();
     });
+
+    // =================================================================
+    // SCRIPT MIGRASI SEKALIPAKAI (HAPUS SETELAH DIGUNAKAN)
+    // =================================================================
+    window.jalankanMigrasiUser = async function() {
+        const srcId = '7NK4cAVLrDNjgywwUKyaCFZOZFM2';
+        const targetId = 'ARIA_20260902_130744';
+        console.log(`🔄 Memulai migrasi data dari ${srcId} ke ${targetId}...`);
+
+        try {
+            const subCols = ['rekap_finansial', 'pengaturan_aplikasi', 'transaksi'];
+
+            for (const col of subCols) {
+                const subRef = collection(db, 'users', srcId, col);
+                const snap = await getDocs(subRef);
+                if (!snap.empty) {
+                    console.log(`📦 Salin sub-koleksi: ${col} (${snap.size} dokumen)...`);
+                    for (const d of snap.docs) {
+                        await setDoc(doc(db, 'users', targetId, col, d.id), d.data(), { merge: true });
+                    }
+                }
+            }
+            console.log("✅ MIGRASI SELESAI SUKSES! Silakan refresh browser.");
+            alert("Migrasi Data Berhasil!");
+        } catch (e) {
+            console.error("❌ Gagal migrasi:", e);
+        }
+    };
 </script>
 
 
@@ -1105,25 +1544,51 @@
 
   // 1. Klik Tombol Kiri (Bulan Sebelumnya)
   btnPrevMonthMain?.addEventListener('click', () => {
+    // Set tanggal ke 1 terlebih dahulu untuk mencegah bug overflow bulan (misal dari 31 Agt ke Feb)
+    selectedDate.setDate(1); 
     selectedDate.setMonth(selectedDate.getMonth() - 1);
-    currDate = new Date(selectedDate);
+    
+    if (typeof currDate !== 'undefined') {
+      currDate = new Date(selectedDate);
+    }
+
+    // 1. Update teks UI (misal: "AGUSTUS 2026")
     updateMainMonthDisplay(selectedDate);
-    // Panggil fungsi render ulang data transaksi bulan ini jika ada
+
+    // 2. Render Ulang Data dari Firestore
+    if (typeof window.muatDataUtama === 'function') {
+      window.muatDataUtama();
+    }
   });
 
   // 2. Klik Tombol Kanan (Bulan Berikutnya)
   btnNextMonthMain?.addEventListener('click', () => {
+    // Set tanggal ke 1 terlebih dahulu untuk mencegah bug overflow bulan
+    selectedDate.setDate(1); 
     selectedDate.setMonth(selectedDate.getMonth() + 1);
-    currDate = new Date(selectedDate);
+    
+    if (typeof currDate !== 'undefined') {
+      currDate = new Date(selectedDate);
+    }
+
+    // 1. Update teks UI (misal: "OKTOBER 2026")
     updateMainMonthDisplay(selectedDate);
-    // Panggil fungsi render ulang data transaksi bulan ini jika ada
+
+    // 2. Render Ulang Data dari Firestore
+    if (typeof window.muatDataUtama === 'function') {
+      window.muatDataUtama();
+    }
   });
 
   // 3. Klik Teks Bulan (Buka Modal Kalender)
   labelMonthMain?.addEventListener('click', () => {
     currentMode = 'days';
-    renderCalendar();
-    modalKalender.classList.remove('hidden');
+    if (typeof renderCalendar === 'function') {
+      renderCalendar();
+    }
+    if (typeof modalKalender !== 'undefined' && modalKalender) {
+      modalKalender.classList.remove('hidden');
+    }
   });
 
 
@@ -1939,6 +2404,96 @@
           tampilAlert(`Gagal Sinkronisasi Firebase: ${error.message}`, "error");
       }
   };
+
+
+  // Buka Modal Laporan
+  window.bukaModalLaporan = function() {
+      const modal = document.getElementById('modal-laporan');
+      if (modal) {
+          modal.classList.remove('hidden');
+          window.filterLaporan('30hari'); // Default tampilkan 30 Hari
+      }
+  };
+
+  // Tutup Modal Laporan
+  window.tutupModalLaporan = function() {
+      const modal = document.getElementById('modal-laporan');
+      if (modal) modal.classList.add('hidden');
+  };
+
+  // Filter Data Laporan Lengkap
+  window.filterLaporan = function(tipeFilter) {
+      const container = document.getElementById('container-laporan-lengkap');
+      if (!container || !window.semuaDataLaporan) return;
+
+      const sekarang = new Date();
+      let dataHasilFilter = [...window.semuaDataLaporan];
+
+      const getTimestamp = (item) => {
+          if (item.waktuTransaksi) {
+              if (typeof item.waktuTransaksi.toDate === 'function') return item.waktuTransaksi.toDate().getTime();
+              const p = new Date(item.waktuTransaksi).getTime();
+              if (!isNaN(p)) return p;
+          }
+          const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
+          return matchDigits ? parseInt(matchDigits[0], 10) : 0;
+      };
+
+      if (tipeFilter === '7hari') {
+          const batas = new Date(); batas.setDate(sekarang.getDate() - 7);
+          dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
+      } else if (tipeFilter === '30hari') {
+          const batas = new Date(); batas.setDate(sekarang.getDate() - 30);
+          dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
+      } else if (tipeFilter === '90hari') {
+          const batas = new Date(); batas.setDate(sekarang.getDate() - 90);
+          dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
+      } else if (tipeFilter === 'bulan_ini') {
+          dataHasilFilter = dataHasilFilter.filter(item => {
+              const tgl = new Date(getTimestamp(item));
+              return tgl.getMonth() === sekarang.getMonth() && tgl.getFullYear() === sekarang.getFullYear();
+          });
+      } else if (tipeFilter === 'tahun_ini') {
+          dataHasilFilter = dataHasilFilter.filter(item => {
+              const tgl = new Date(getTimestamp(item));
+              return tgl.getFullYear() === sekarang.getFullYear();
+          });
+      }
+
+      if (dataHasilFilter.length === 0) {
+          container.innerHTML = `<div class="text-center py-8"><p class="text-xs font-bold text-slate-400">Tidak ada data untuk filter ini</p></div>`;
+          return;
+      }
+
+      let html = '';
+      dataHasilFilter.forEach(item => {
+          const isMasuk = item.tipe === 'pemasukan';
+          const nominal = Math.abs(Number(item.totalBersihNetto || 0));
+          const judul = item.keterangan || item.kategori || item.idTransaksi;
+          const subJudul = item.periode || '';
+
+          html += `
+          <div class="flex items-center justify-between p-3 bg-slate-900 border border-slate-800 rounded-xl mb-2">
+              <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg flex items-center justify-center ${isMasuk ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
+                      <i class="fa-solid ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
+                  </div>
+                  <div>
+                      <div class="text-xs font-bold text-slate-200">${judul}</div>
+                      <div class="text-[9px] text-slate-400">${subJudul}</div>
+                  </div>
+              </div>
+              <div class="text-right">
+                  <div class="text-xs font-bold ${isMasuk ? 'text-emerald-400' : 'text-rose-400'}">
+                      ${isMasuk ? '+' : '-'} ${window.formatRupiah(nominal)}
+                  </div>
+              </div>
+          </div>`;
+      });
+
+      container.innerHTML = html;
+  };
+
 
 
 
