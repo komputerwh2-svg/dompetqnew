@@ -582,24 +582,40 @@
       </div>
     </div>
 
-    <!-- MODAL FULLSCREEN PENGELUARAN (50:50 SPLIT) -->
+    <!-- MODAL FULLSCREEN PENGELUARAN (REVISED FULL) -->
     <div id="modal-pengeluaran" class="fixed inset-0 bg-[#0c100d] z-50 hidden flex-col overflow-hidden">
         
-        <!-- HEADER MODAL (FIXED TOP) -->
-        <div class="flex items-center justify-between px-4 py-3 border-b border-[#b5f234] bg-[#121714] shrink-0">
-            <button onclick="tutupModalPengeluaran()" class="w-8 h-8 flex items-center justify-center text-rose-400 hover:text-white">
-                <i class="fas fa-times text-lg"></i>
-            </button>
-            <span class="text-[11px] font-bold text-[#b5f234] tracking-wider">CATAT PENGELUARAN</span>
-            <button onclick="bukaPengaturanPengeluaran()" class="w-8 h-8 flex items-center justify-center text-[#b5f234] hover:text-slate-300">
-                <i class="fas fa-cog text-base"></i>
+        <!-- HEADER MODAL -->
+        <div class="px-5 py-3.5 border-b border-[#b5f234]/40 flex items-center justify-between bg-[#141a16] shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold shadow-md shadow-[#b5f234]/20">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white leading-none">Catat Pengeluaran</h3>
+                    <span class="text-[10px] text-slate-400">Pilih Kategori, Isi catatan, dan Nominal Pengeluaran</span>
+                </div>
+            </div>
+            <!-- Hanya Tombol Close di Header Atas -->
+            <button onclick="tutupModalPengeluaran()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Tutup">
+                <i class="fa-solid fa-xmark text-sm"></i>
             </button>
         </div>
 
-        <!-- BAGIAN 1: AREA KATEGORI (50% TINGGI LAYAR) -->
-        <div class="h-1/2 flex flex-col p-4 border-b border-[#b5f234] overflow-hidden">
-            <div class="flex justify-between items-center mb-2 shrink-0">
-                <span class="text-[11px] font-bold text-[#b5f234] tracking-wider">PILIH KATEGORI PENGELUARAN</span>
+        <!-- BAGIAN 1: AREA KATEGORI (40% TINGGI LAYAR) -->
+        <div class="h-[40%] flex flex-col p-4 border-b border-[#b5f234]/30 overflow-hidden bg-[#0c100d]">
+            
+            <!-- SUB-HEADER DENGAN TOMBOL KELOLA DILENGKAPI LABEL -->
+            <div class="flex justify-between items-center mb-2.5 shrink-0">
+                <span class="text-[11px] font-bold text-[#b5f234] tracking-wider uppercase flex items-center gap-1.5">
+                    <i class="fas fa-th-large text-[10px]"></i> Pilih Kategori Pengeluaran
+                </span>
+                
+                <!-- Tombol Pengaturan dengan Ikon + Label -->
+                <button onclick="bukaPengaturanPengeluaran()" class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[#b5f234] hover:text-white text-[10px] font-bold transition-all border border-[#b5f234]/30 cursor-pointer">
+                    <i class="fa-solid fa-gear text-xs"></i>
+                    <span>KELOLA KATEGORI & CATATAN CEPAT</span>
+                </button>
             </div>
             
             <!-- Grid Scrollable jika item kategori banyak -->
@@ -608,115 +624,118 @@
             </div>
         </div>
 
-        <!-- BAGIAN 2: BAR CATATAN CEPAT + INPUT + KALKULATOR (50% TINGGI LAYAR) -->
-        <div class="h-1/2 flex flex-col justify-between bg-[#121714] p-3 space-y-2">
+        <!-- BAGIAN 2: BAR CATATAN CEPAT + INPUT + KALKULATOR (60% TINGGI LAYAR) -->
+        <div class="h-[60%] flex flex-col justify-between bg-[#121714] p-4 space-y-3">
             
             <!-- 1. BARIS HORIZONTAL ISI CATATAN CEPAT (QUICK NOTES) -->
-            <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 shrink-0" id="container-quick-notes">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 shrink-0" id="container-quick-notes">
                 <!-- Render Quick Notes via JavaScript -->
             </div>
 
             <!-- 2. INPUT CATATAN & DISPLAY NOMINAL -->
-            <div class="space-y-1.5 shrink-0">
-                <div class="flex items-center gap-2 bg-slate-900/90 border border-[#b5f234] rounded-xl px-3 py-1">
-                    <i class="fas fa-pen text-[10px] text-slate-500"></i>
-                    <input type="text" id="input-keterangan-pengeluaran" placeholder="Catatan pengeluaran..." class="w-full bg-transparent text-xs text-slate-200 focus:outline-none">
+            <div class="space-y-2 shrink-0">
+                <div class="flex items-center gap-2.5 bg-slate-900/90 border border-[#b5f234] rounded-xl px-3.5 py-2 shadow-inner">
+                    <i class="fas fa-pen text-xs text-[#b5f234]"></i>
+                    <input type="text" id="input-keterangan-pengeluaran" placeholder="Catatan pengeluaran..." class="w-full bg-transparent text-xs text-slate-200 focus:outline-none placeholder-slate-500">
                 </div>
 
                 <!-- DISPLAY NUMERIK -->
-                <div class="bg-slate-900/90 border border-[#b5f234] rounded-xl px-3 py-1.5 text-right">
+                <div class="bg-slate-900/90 border border-[#b5f234] rounded-xl px-3.5 py-2 text-right shadow-inner">
                     <div id="calc-expression" class="text-[10px] text-slate-400 min-h-[14px] font-mono tracking-wider overflow-x-auto"></div>
                     <div class="flex items-center justify-between">
-                        <span id="calc-display" class="text-xl font-black text-white tracking-tight">0</span>
+                        <span id="calc-display" class="text-2xl font-black text-white tracking-tight">0</span>
                     </div>
                 </div>
             </div>
 
             <!-- 3. KEYPAD KALKULATOR COMPACT (GRID 4x4) -->
-            <div class="grid grid-cols-4 gap-1.5 text-slate-100 font-bold text-xs flex-1">
+            <div class="grid grid-cols-4 gap-2 text-slate-100 font-bold text-xs flex-1">
                 <!-- Row 1 -->
-                <button onclick="calcPress('C')" class="bg-slate-800/60 active:bg-slate-700 text-rose-400 border-[#b5f234] rounded-lg font-black">C</button>
-                <button onclick="calcPress('/')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border-[#b5f234] rounded-lg"><i class="fas fa-divide"></i></button>
-                <button onclick="calcPress('*')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border-[#b5f234] rounded-lg"><i class="fas fa-times"></i></button>
-                <button onclick="calcPress('DEL')" class="bg-slate-800/60 active:bg-slate-700 text-amber-400 border-[#b5f234] rounded-lg"><i class="fas fa-backspace"></i></button>
+                <button onclick="calcPress('C')" class="bg-slate-800/60 active:bg-slate-700 text-rose-400 border border-slate-700 hover:border-[#b5f234] rounded-xl font-black transition-colors">C</button>
+                <button onclick="calcPress('/')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border border-slate-700 hover:border-[#b5f234] rounded-xl transition-colors"><i class="fas fa-divide"></i></button>
+                <button onclick="calcPress('*')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border border-slate-700 hover:border-[#b5f234] rounded-xl transition-colors"><i class="fas fa-times"></i></button>
+                <button onclick="calcPress('DEL')" class="bg-slate-800/60 active:bg-slate-700 text-amber-400 border border-slate-700 hover:border-[#b5f234] rounded-xl transition-colors"><i class="fas fa-backspace"></i></button>
 
                 <!-- Row 2 -->
-                <button onclick="calcPress('7')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">7</button>
-                <button onclick="calcPress('8')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">8</button>
-                <button onclick="calcPress('9')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">9</button>
-                <button onclick="calcPress('-')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border-[#b5f234] rounded-lg"><i class="fas fa-minus"></i></button>
+                <button onclick="calcPress('7')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">7</button>
+                <button onclick="calcPress('8')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">8</button>
+                <button onclick="calcPress('9')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">9</button>
+                <button onclick="calcPress('-')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border border-slate-700 hover:border-[#b5f234] rounded-xl transition-colors"><i class="fas fa-minus"></i></button>
 
                 <!-- Row 3 -->
-                <button onclick="calcPress('4')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">4</button>
-                <button onclick="calcPress('5')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">5</button>
-                <button onclick="calcPress('6')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">6</button>
-                <button onclick="calcPress('+')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border-[#b5f234] rounded-lg"><i class="fas fa-plus"></i></button>
+                <button onclick="calcPress('4')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">4</button>
+                <button onclick="calcPress('5')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">5</button>
+                <button onclick="calcPress('6')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">6</button>
+                <button onclick="calcPress('+')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border border-slate-700 hover:border-[#b5f234] rounded-xl transition-colors"><i class="fas fa-plus"></i></button>
 
                 <!-- Row 4 -->
-                <button onclick="calcPress('1')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">1</button>
-                <button onclick="calcPress('2')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">2</button>
-                <button onclick="calcPress('3')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">3</button>
-                <button onclick="simpanTransaksiPengeluaran()" id="btn-simpan-calc" class="row-span-2 bg-rose-500 hover:bg-rose-600 active:bg-rose-700 text-white rounded-lg flex items-center justify-center text-base shadow-lg shadow-rose-500/30">
+                <button onclick="calcPress('1')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">1</button>
+                <button onclick="calcPress('2')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">2</button>
+                <button onclick="calcPress('3')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">3</button>
+                <button onclick="simpanTransaksiPengeluaran()" id="btn-simpan-calc" class="row-span-2 bg-[#b5f234] hover:bg-[#a0d82d] active:bg-[#8ec225] text-slate-950 rounded-xl flex items-center justify-center text-lg font-bold shadow-lg shadow-[#b5f234]/20 transition-all">
                     <i class="fas fa-check"></i>
                 </button>
 
                 <!-- Row 5 -->
-                <button onclick="calcPress('0')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg">0</button>
-                <button onclick="calcPress('000')" class="bg-slate-800/30 active:bg-slate-700 border-[#b5f234] rounded-lg text-[10px] font-bold text-slate-300">000</button>
-                <button onclick="calcPress('=')" class="bg-emerald-500/20 active:bg-emerald-500/40 text-emerald-400 border border-emerald-500/30 rounded-lg font-black">=</button>
+                <button onclick="calcPress('0')" class="bg-slate-800/30 active:bg-slate-700 text-white border border-slate-800 hover:border-[#b5f234] rounded-xl transition-colors">0</button>
+                <button onclick="calcPress('000')" class="bg-slate-800/30 active:bg-slate-700 border border-slate-800 hover:border-[#b5f234] rounded-xl text-[10px] font-bold text-slate-300 transition-colors">000</button>
+                <button onclick="calcPress('=')" class="bg-emerald-500/20 active:bg-emerald-500/40 text-emerald-400 border border-emerald-500/30 rounded-xl font-black transition-colors">=</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL PENGATURAN PENGELUARAN (REPLACEMENT UNTUK PROMPT) -->
-    <div id="modal-pengaturan-pengeluaran" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
-        <div class="bg-[#121714] border border-[#b5f234] w-full max-w-sm rounded-2xl p-4 flex flex-col gap-4 text-slate-200">
-            <div class="flex items-center justify-between border-b border-[#b5f234] pb-2">
+    <!-- MODAL PENGATURAN PENGELUARAN (REVISED FULL) -->
+    <div id="modal-pengaturan-pengeluaran" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-[#121714] border border-[#b5f234] w-full max-w-sm max-h-[85vh] rounded-2xl p-4 flex flex-col gap-4 text-slate-200 shadow-2xl">
+            
+            <!-- HEADER MODAL -->
+            <div class="flex items-center justify-between border-b border-[#b5f234] pb-2 shrink-0">
                 <h3 class="text-xs font-bold tracking-wider text-slate-300 uppercase flex items-center gap-2">
-                    <i class="fas fa-cog text-rose-400"></i> Kelola Kategori & Catatan
+                    <i class="fas fa-cog text-[#b5f234]"></i> Kelola Kategori & Catatan
                 </h3>
-                <button onclick="tutupPengaturanPengeluaran()" class="text-slate-400 hover:text-white">
+                <button onclick="tutupPengaturanPengeluaran()" class="text-slate-400 hover:text-white transition-colors">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
             <!-- TAB NAVIGASI PENGATURAN -->
-            <div class="flex gap-2 border-b border-[#b5f234] pb-2 text-xs">
-                <button id="tab-btn-kategori" onclick="switchTabPengaturan('kategori')" class="px-3 py-1 font-bold rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30">Kategori</button>
-                <button id="tab-btn-quicknote" onclick="switchTabPengaturan('quicknote')" class="px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white">Catatan Cepat</button>
+            <div class="flex gap-2 border-b border-[#b5f234]/40 pb-2 text-xs shrink-0">
+                <button id="tab-btn-kategori" onclick="switchTabPengaturan('kategori')" class="px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors">TAMBAH KATEGORI</button>
+                <button id="tab-btn-quicknote" onclick="switchTabPengaturan('quicknote')" class="px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors">CATATAN CEPAT</button>
             </div>
 
             <!-- KONTEN TAB 1: KELOLA KATEGORI -->
-            <div id="tab-content-kategori" class="flex flex-col gap-3">
-                <div class="flex gap-2">
-                    <input type="text" id="input-kategori-baru" placeholder="Nama Kategori Baru..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500">
-                    <button onclick="tambahKategoriViaModal()" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold flex items-center gap-1">
-                        <i class="fas fa-plus"></i> Tambah
+            <div id="tab-content-kategori" class="flex flex-col gap-3 min-h-0 overflow-hidden">
+                <div class="flex gap-2 shrink-0">
+                    <input type="text" id="input-kategori-baru" placeholder="Nama Kategori Baru..." class="flex-1 bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#b5f234]">
+                    <button onclick="tambahKategoriViaModal()" class="px-3 py-1.5 bg-[#b5f234] hover:bg-[#a0d82d] text-black rounded-xl text-xs font-bold flex items-center gap-1 transition-colors">
+                        <i class="fas fa-plus"></i> TAMBAH
                     </button>
                 </div>
-                <div id="list-kelola-kategori" class="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                <div id="list-kelola-kategori" class="overflow-y-auto space-y-1.5 pr-1 flex-1">
                     <!-- Rendered via JS -->
                 </div>
             </div>
 
             <!-- KONTEN TAB 2: KELOLA CATATAN CEPAT -->
-            <div id="tab-content-quicknote" class="hidden flex-col gap-3">
-                <div class="flex gap-2">
-                    <input type="text" id="input-quicknote-baru" placeholder="Catatan Cepat Baru..." class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-rose-500">
-                    <button onclick="tambahQuickNoteViaModal()" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold flex items-center gap-1">
-                        <i class="fas fa-plus"></i> Tambah
+            <div id="tab-content-quicknote" class="hidden flex-col gap-3 min-h-0 overflow-hidden">
+                <div class="flex gap-2 shrink-0">
+                    <input type="text" id="input-quicknote-baru" placeholder="Catatan Cepat Baru..." class="flex-1 bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#b5f234]">
+                    <button onclick="tambahQuickNoteViaModal()" class="px-3 py-1.5 bg-[#b5f234] hover:bg-[#a0d82d] text-black rounded-xl text-xs font-bold flex items-center gap-1 transition-colors">
+                        <i class="fas fa-plus"></i> TAMBAH
                     </button>
                 </div>
-                <div id="list-kelola-quicknote" class="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                <div id="list-kelola-quicknote" class="overflow-y-auto space-y-1.5 pr-1 flex-1">
                     <!-- Rendered via JS -->
                 </div>
             </div>
+
         </div>
     </div>
 
 
     <!-- Modal Laporan Lengkap -->
-    <div id="modal-laporan" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div id="modal-laporan" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-[#121714] border border-slate-800 rounded-3xl w-full max-w-md p-5 text-white max-h-[85vh] flex flex-col">
             <!-- Header Modal -->
             <div class="flex items-center justify-between mb-4">
@@ -1064,22 +1083,48 @@
 
         await setDoc(userDocRef, payloadUser, { merge: true });
 
-        // 3. Buat Config Default jika Baru
+        // 3. Buat Config & Kategori Default jika User Baru
         if (isUserBaru) {
+            // Buat Dokumen Config Default
             const configRef = doc(window.db, 'users', targetUserId, 'pengaturan_aplikasi', 'config');
             await setDoc(configRef, {
                 tema: 'dark',
                 dibuatPada: serverTimestamp()
             });
+
+            // Buat Dokumen Kategori Default awal jika belum ada
+            const kategoriRef = doc(window.db, 'users', targetUserId, 'pengaturan_aplikasi', 'kategori');
+            const defaultKategori = typeof listKategoriPengeluaran !== 'undefined' && listKategoriPengeluaran.length > 0 
+                ? listKategoriPengeluaran 
+                : [
+                    { id: 'makan_minum', nama: 'Makan & Minum', icon: 'fa-utensils' },
+                    { id: 'belanja', nama: 'Belanja', icon: 'fa-cart-shopping' },
+                    { id: 'transportasi', nama: 'Transportasi', icon: 'fa-car' }
+                ];
+
+            await setDoc(kategoriRef, {
+                listKategori: defaultKategori,
+                diperbaruiPada: new Date().toISOString()
+            }, { merge: true });
         }
 
-        // 4. Update UI Header & Modal
+        // 4. Muat Data Kategori milik User Aktif
+        if (typeof window.muatKategoriPengeluaran === 'function') {
+            await window.muatKategoriPengeluaran(targetUserId);
+        }
+
+        // Panggil saat registrasi user baru / pindah profil
+        if (typeof window.muatQuickNotes === 'function') {
+            await window.muatQuickNotes(targetUserId);
+        }
+
+        // 5. Update UI Header & Modal
         if (typeof window.muatTampilanProfilHeader === 'function') {
             window.muatTampilanProfilHeader();
         }
         window.tutupModalRegistrasiUser();
 
-        // 5. Alert Sukses & Load Data Utama
+        // 6. Alert Sukses & Load Data Utama
         const pesanAlert = isUserBaru 
             ? `Profil baru "${namaUser}" berhasil dibuat!` 
             : `Berhasil masuk ke profil "${namaUser}"!`;
@@ -1096,50 +1141,70 @@
     }
 
     /**
-     * Kosongkan Seluruh Tampilan UI Data saat Tidak Ada User / Logout
+     * RESET TAMPILAN DAN VARIABLE MEMORI KETIKA TIDAK ADA USER / LOGOUT
      */
     window.resetTampilanKosong = function() {
-        window.muatTampilanProfilHeader();
+        // 1. Kosongkan Variabel Memori JS
+        if (typeof listQuickNotes !== 'undefined') listQuickNotes = [];
+        if (typeof listKategoriPengeluaran !== 'undefined') listKategoriPengeluaran = [];
 
-        // Reset Total Saldo / Finansial ke Rp 0
-        const elSaldo = document.getElementById('total-saldo') || document.querySelector('h1.text-3xl, h1.text-4xl');
+        // 2. Reset DOM Quick Notes (Modal Kelola & Bar Tombol Cepat)
+        const listQuickModalEl = document.getElementById('list-kelola-quicknote');
+        if (listQuickModalEl) {
+            listQuickModalEl.innerHTML = '<p class="text-slate-500 text-xs italic text-center py-2">Belum ada catatan cepat.</p>';
+        }
+
+        if (typeof renderQuickNotes === 'function') {
+            renderQuickNotes();
+        }
+
+        // 3. Reset DOM Grid Kategori Pengeluaran
+        if (typeof renderKategoriPengeluaran === 'function') {
+            renderKategoriPengeluaran();
+        }
+
+        // 4. Reset Element Saldo & Transaksi UI
+        const elSaldo = document.getElementById('total-saldo');
         const elMasuk = document.getElementById('total-pemasukan');
         const elKeluar = document.getElementById('total-pengeluaran');
         
-        if (elSaldo) elSaldo.textContent = "Rp 0";
-        if (elMasuk) elMasuk.textContent = "Rp 0";
-        if (elKeluar) elKeluar.textContent = "Rp 0";
+        if (elSaldo) elSaldo.textContent = 'Rp 0';
+        if (elMasuk) elMasuk.textContent = 'Rp 0';
+        if (elKeluar) elKeluar.textContent = 'Rp 0';
 
-        // Reset List Transaksi
-        const containerRiwayat = document.getElementById('container-riwayat-slip') || document.getElementById('list-transaksi');
-        if (containerRiwayat) {
-            containerRiwayat.innerHTML = `<div class="text-center text-slate-500 py-8 text-xs">Silakan masuk profil untuk melihat data.</div>`;
+        if (typeof window.renderListRiwayat === 'function') {
+            window.renderListRiwayat([]);
         }
-
-        // Reset Form Input Profil
-        const inputNama = document.getElementById('reg-nama-user');
-        if (inputNama) inputNama.value = "";
-        window.currentFotoBase64 = "";
-        window.tampilkanFotoPreview("");
     };
 
     /**
-     * KELUAR / LOGOUT USER
+     * KELUAR / LOGOUT USER (Hapus Semua Cache LocalStorage & Reset UI)
      */
     window.prosesKeluarUser = function() {
+        // 1. Hapus Semua Data User Aktif di LocalStorage
         localStorage.removeItem('dompetq_user_id');
         localStorage.removeItem('dompetq_user_name');
         localStorage.removeItem('dompetq_user_photo');
+        localStorage.removeItem('dompetq_quick_notes');
+        localStorage.removeItem('dompetq_kategori_pengeluaran');
 
+        // 2. Clear UI dan Variabel Global
         window.resetTampilanKosong();
 
-        if (typeof window.tutupModalRegistrasiUser === 'function') {
-            window.tutupModalRegistrasiUser();
-        } else {
-            const modal = document.getElementById('modal-reg-user');
-            if (modal) modal.classList.add('hidden');
+        // 3. Reset Header Profil ke Tampilan Kosong/Awal
+        if (typeof window.muatTampilanProfilHeader === 'function') {
+            window.muatTampilanProfilHeader();
         }
 
+        // 4. Buka Modal Registrasi / Pilih User
+        if (typeof window.bukaModalRegistrasiUser === 'function') {
+            window.bukaModalRegistrasiUser();
+        } else {
+            const modal = document.getElementById('modal-reg-user');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        // 5. Tampilkan Notifikasi
         if (typeof window.tampilAlert === 'function') {
             window.tampilAlert("Berhasil keluar dari profil. Silakan pilih atau daftar profil baru.", "info");
         }
@@ -1294,13 +1359,27 @@
     // 6. MUAT DATA UTAMA DARI FIRESTORE UNTUK USER AKTIF
     // =================================================================
     window.muatDataUtama = async function(userId) {
-        const activeUserId = userId || window.getActiveUserId();
+        const activeUserId = userId || (window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id'));
 
         if (!activeUserId) {
             console.warn("⚠️ Tidak ada user aktif.");
             if (typeof window.resetTampilanKosong === 'function') window.resetTampilanKosong();
             if (typeof window.bukaModalRegistrasiUser === 'function') window.bukaModalRegistrasiUser();
             return;
+        }
+
+        // 0. SINKRONISASI & MUAT KATEGORI TERLEBIH DAHULU
+        if (typeof window.muatKategoriPengeluaran === 'function') {
+            try {
+                await window.muatKategoriPengeluaran(activeUserId);
+            } catch (errKat) {
+                console.warn("⚠️ Gagal memuat kategori saat load data utama:", errKat);
+            }
+        }
+
+        // Panggil di langkah muat/sinkronisasi awal
+        if (typeof window.muatQuickNotes === 'function') {
+            await window.muatQuickNotes(activeUserId);
         }
 
         const activePeriodUI = getActivePeriodFromUI();
@@ -1316,7 +1395,7 @@
             const rekapRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_finansial');
             const snapRekap = await window.fbGetDocs(rekapRef);
 
-            // A. PERIKSA & TULIS AUTOMATIS DOKUMEN SALDO LALU JIKA BELUM ADA
+            // A. PERIKSA & TULIS OTOMATIS DOKUMEN SALDO LALU JIKA BELUM ADA
             const sisaBulanLaluCatatan = await periksaDanAutoKunciSaldoLalu(activeUserId, activePeriodUI, snapRekap);
 
             // B. PROSES PEMASUKAN & PENGELUARAN BULAN AKTIF
@@ -1629,7 +1708,7 @@
                 }
             }
             console.log("✅ MIGRASI SELESAI SUKSES! Silakan refresh browser.");
-            alert("Migrasi Data Berhasil!");
+            window.tampilAlert("Migrasi Data Berhasil!");
         } catch (e) {
             console.error("❌ Gagal migrasi:", e);
         }
@@ -2547,17 +2626,17 @@
 
     // DATA KATEGORI (LocalStorage)
     let listKategoriPengeluaran = JSON.parse(localStorage.getItem('dompetq_kategori_pengeluaran')) || [
-        { id: 'makan', nama: 'Makanan & Minuman', icon: 'fa-utensils' },
-        { id: 'belanja', nama: 'Belanja', icon: 'fa-bag-shopping' },
-        { id: 'transport', nama: 'Kendaraan', icon: 'fa-car' },
-        { id: 'tagihan', nama: 'Tagihan', icon: 'fa-file-invoice-dollar' },
-        { id: 'hiburan', nama: 'Hiburan', icon: 'fa-gamepad' },
-        { id: 'kesehatan', nama: 'Kesehatan', icon: 'fa-heart-pulse' },
+        { id: 'KONSUMSI', nama: 'Makanan & Minuman', icon: 'fa-utensils' },
+        { id: 'BELANJA', nama: 'Belanja', icon: 'fa-bag-shopping' },
+        { id: 'KENDARAAN', nama: 'Kendaraan', icon: 'fa-car' },
+        { id: 'TAGIHAN', nama: 'Tagihan', icon: 'fa-file-invoice-dollar' },
+        { id: 'HIBURAN', nama: 'Hiburan', icon: 'fa-gamepad' },
+        { id: 'KESEHATAN', nama: 'Kesehatan', icon: 'fa-heart-pulse' },
     ];
 
     // DATA CATATAN CEPAT (Quick Notes)
     let listQuickNotes = JSON.parse(localStorage.getItem('dompetq_quick_notes')) || [
-        'Makan (A)', 'Makan (P)', 'Pakan Kucing', 'Bensin', 'Parkir', 'Galon'
+        'Makan', 'Minum', 'Bensin', 'Parkir', 'Galon'
     ];
 
     // BUKA MODAL FULLSCREEN
@@ -2660,16 +2739,20 @@
         const contentNote = document.getElementById('tab-content-quicknote');
 
         if (tab === 'kategori') {
-            btnKat.className = "px-3 py-1 font-bold rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30";
-            btnNote.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white";
-            contentKat.classList.remove('hidden');
-            contentNote.classList.add('hidden');
+            btnKat.className = "px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors";
+            btnNote.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors";
+            
+            contentKat.className = "flex flex-col gap-3 min-h-0 overflow-hidden";
+            contentNote.className = "hidden";
+            
             renderKelolaKategori();
         } else {
-            btnNote.className = "px-3 py-1 font-bold rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30";
-            btnKat.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white";
-            contentNote.classList.remove('hidden');
-            contentKat.classList.add('hidden');
+            btnNote.className = "px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors";
+            btnKat.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors";
+            
+            contentNote.className = "flex flex-col gap-3 min-h-0 overflow-hidden";
+            contentKat.className = "hidden";
+            
             renderKelolaQuickNotes();
         }
     };
@@ -2682,7 +2765,7 @@
         let html = '';
         listKategoriPengeluaran.forEach((kat, idx) => {
             html += `
-                <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-slate-800 text-xs">
+                <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-[#b5f234] text-xs">
                     <div class="flex items-center gap-2 text-slate-300">
                         <i class="fas ${kat.icon} text-rose-400"></i>
                         <span>${kat.nama}</span>
@@ -2697,11 +2780,10 @@
         listEl.innerHTML = html || `<p class="text-slate-500 text-xs italic text-center py-2">Belum ada kategori.</p>`;
     }
 
-    // FUNGSI SINKRONISASI KE FIRESTORE (DOKUMEN BUKAN/BARU: kategori)
+    // FUNGSI SINKRONISASI KE FIRESTORE (DOKUMEN: kategori)
     async function simpanKategoriKeFirestore() {
         try {
-            // Ambil User ID aktif
-            const userId = window.currentUserDocId || localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID');
+            const userId = window.getActiveUserId ? window.getActiveUserId() : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID'));
             
             if (!userId) {
                 console.warn("User ID tidak ditemukan. Data hanya tersimpan di lokal.");
@@ -2713,25 +2795,60 @@
                 diperbaruiPada: new Date().toISOString()
             };
 
-            // 1. Jika aplikasi menggunakan wrapper fungsi global simpanDataKeFirestore
-            if (typeof window.simpanDataKeFirestore === 'function') {
+            // Menggunakan reference Firestore Modular yang di-expose ke window
+            if (window.db && window.fbDoc && window.fbSetDoc) {
+                const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "kategori");
+                await window.fbSetDoc(docRef, dataKategori, { merge: true });
+                console.log("✅ Data kategori berhasil disimpan ke Firestore (users/.../pengaturan_aplikasi/kategori)");
+            } else if (typeof window.simpanDataKeFirestore === 'function') {
                 await window.simpanDataKeFirestore({
                     path: `users/${userId}/pengaturan_aplikasi/kategori`,
                     data: dataKategori
                 });
-            } 
-            // 2. Jika menggunakan Firestore Modular SDK v9+
-            else if (window.db && typeof doc === 'function' && typeof setDoc === 'function') {
-                const docRef = doc(window.db, "users", userId, "pengaturan_aplikasi", "kategori");
-                await setDoc(docRef, dataKategori, { merge: true });
             }
-            
-            console.log("Kategori berhasil disimpan ke dokumen 'kategori'");
         } catch (err) {
-            console.error("Gagal menyimpan dokumen kategori ke Firestore:", err);
-            await window.tampilAlert("Gagal sinkronisasi ke cloud: " + err.message, "error");
+            console.error("❌ Gagal menyimpan dokumen kategori ke Firestore:", err);
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert("Gagal sinkronisasi kategori ke cloud: " + err.message, "error");
+            }
         }
     }
+
+    // FUNGSI MUAT KATEGORI DARI FIRESTORE / LOCALSTORAGE
+    window.muatKategoriPengeluaran = async function(userIdParam) {
+        const userId = userIdParam || (window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id'));
+        
+        // 1. Coba ambil dari Firestore jika user online/terdaftar
+        if (userId && window.db && window.fbDoc && window.fbGetDoc) {
+            try {
+                const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "kategori");
+                const docSnap = await window.fbGetDoc(docRef);
+                
+                if (docSnap.exists() && docSnap.data().listKategori) {
+                    listKategoriPengeluaran = docSnap.data().listKategori;
+                    localStorage.setItem('dompetq_kategori_pengeluaran', JSON.stringify(listKategoriPengeluaran));
+                    renderKelolaKategori();
+                    if (typeof renderGridKategori === 'function') renderGridKategori();
+                    return;
+                }
+            } catch (err) {
+                console.warn("Gagal memuat kategori dari Firestore, beralih ke cache lokal:", err);
+            }
+        }
+
+        // 2. Fallback ke LocalStorage jika offline atau Firestore kosong
+        const localData = localStorage.getItem('dompetq_kategori_pengeluaran');
+        if (localData) {
+            try {
+                listKategoriPengeluaran = JSON.parse(localData);
+            } catch (e) {
+                console.error("Error parse JSON kategori lokal:", e);
+            }
+        }
+        
+        renderKelolaKategori();
+        if (typeof renderGridKategori === 'function') renderGridKategori();
+    };
 
     // TAMBAH KATEGORI VIA MODAL
     window.tambahKategoriViaModal = async function() {
@@ -2739,12 +2856,23 @@
         const nama = input ? input.value.trim() : '';
 
         if (!nama) {
-            await window.tampilAlert("Nama kategori tidak boleh kosong!", "warning");
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert("Nama kategori tidak boleh kosong!", "warning");
+            }
+            return;
+        }
+
+        // Cek duplikasi nama
+        const duplikat = listKategoriPengeluaran.some(k => k.nama.toUpperCase() === nama.toUpperCase());
+        if (duplikat) {
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert(`Kategori "${nama}" sudah ada!`, "warning");
+            }
             return;
         }
 
         listKategoriPengeluaran.push({
-            id: nama.toLowerCase().replace(/\s+/g, '_'),
+            id: nama.toUpperCase().replace(/\s+/g, '_'),
             nama: nama,
             icon: 'fa-tags'
         });
@@ -2752,13 +2880,16 @@
         // 1. Simpan Lokal
         localStorage.setItem('dompetq_kategori_pengeluaran', JSON.stringify(listKategoriPengeluaran));
         
-        // 2. Simpan ke Firestore (Dokumen: kategori)
+        // 2. Simpan ke Firestore
         await simpanKategoriKeFirestore();
 
         input.value = '';
         renderKelolaKategori();
-        renderGridKategori();
-        await window.tampilAlert(`Kategori "${nama}" berhasil ditambahkan!`, "success");
+        if (typeof renderGridKategori === 'function') renderGridKategori();
+        
+        if (typeof window.tampilAlert === 'function') {
+            await window.tampilAlert(`Kategori "${nama}" berhasil ditambahkan!`, "success");
+        }
     };
 
     // HAPUS KATEGORI VIA MODAL
@@ -2770,14 +2901,89 @@
             // 1. Simpan Lokal
             localStorage.setItem('dompetq_kategori_pengeluaran', JSON.stringify(listKategoriPengeluaran));
             
-            // 2. Simpan ke Firestore (Dokumen: kategori)
+            // 2. Simpan ke Firestore
             await simpanKategoriKeFirestore();
 
-            if (calcState.selectedKategori === kat.nama) calcState.selectedKategori = null;
+            if (typeof calcState !== 'undefined' && calcState.selectedKategori === kat.nama) {
+                calcState.selectedKategori = null;
+            }
+            
             renderKelolaKategori();
-            renderGridKategori();
-            await window.tampilAlert(`Kategori "${kat.nama}" telah dihapus.`, "info");
+            if (typeof renderGridKategori === 'function') renderGridKategori();
+            
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert(`Kategori "${kat.nama}" telah dihapus.`, "info");
+            }
         }
+    };
+
+    // FUNGSI SINKRONISASI QUICK NOTES KE FIRESTORE (DOKUMEN: CATATAN_CEPAT)
+    async function simpanQuickNotesKeFirestore() {
+        try {
+            const userId = window.getActiveUserId ? window.getActiveUserId() : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID'));
+            
+            if (!userId) {
+                console.warn("User ID tidak ditemukan. Quick Note hanya tersimpan di lokal.");
+                return;
+            }
+
+            const dataQuickNotes = {
+                listQuickNotes: listQuickNotes,
+                diperbaruiPada: new Date().toISOString()
+            };
+
+            if (window.db && window.fbDoc && window.fbSetDoc) {
+                const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "catatan_cepat");
+                await window.fbSetDoc(docRef, dataQuickNotes, { merge: true });
+                console.log("✅ Data Quick Notes berhasil disimpan ke Firestore (users/.../pengaturan_aplikasi/catatan_cepat)");
+            } else if (typeof window.simpanDataKeFirestore === 'function') {
+                await window.simpanDataKeFirestore({
+                    path: `users/${userId}/pengaturan_aplikasi/catatan_cepat`,
+                    data: dataQuickNotes
+                });
+            }
+        } catch (err) {
+            console.error("❌ Gagal menyimpan dokumen catatan_cepat ke Firestore:", err);
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert("Gagal sinkronisasi catatan cepat ke cloud: " + err.message, "error");
+            }
+        }
+    }
+
+    // FUNGSI MUAT QUICK NOTES DARI FIRESTORE / LOCALSTORAGE
+    window.muatQuickNotes = async function(userIdParam) {
+        const userId = userIdParam || (window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id'));
+        
+        // 1. Coba ambil dari Firestore jika user online/terdaftar
+        if (userId && window.db && window.fbDoc && window.fbGetDoc) {
+            try {
+                const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "catatan_cepat");
+                const docSnap = await window.fbGetDoc(docRef);
+                
+                if (docSnap.exists() && docSnap.data().listQuickNotes) {
+                    listQuickNotes = docSnap.data().listQuickNotes;
+                    localStorage.setItem('dompetq_quick_notes', JSON.stringify(listQuickNotes));
+                    renderKelolaQuickNotes();
+                    if (typeof renderQuickNotes === 'function') renderQuickNotes();
+                    return;
+                }
+            } catch (err) {
+                console.warn("Gagal memuat Quick Notes dari Firestore, beralih ke cache lokal:", err);
+            }
+        }
+
+        // 2. Fallback ke LocalStorage jika offline atau dokumen Firestore belum ada
+        const localData = localStorage.getItem('dompetq_quick_notes');
+        if (localData) {
+            try {
+                listQuickNotes = JSON.parse(localData);
+            } catch (e) {
+                console.error("Error parse JSON Quick Notes lokal:", e);
+            }
+        }
+        
+        renderKelolaQuickNotes();
+        if (typeof renderQuickNotes === 'function') renderQuickNotes();
     };
 
     // KELOLA QUICK NOTE DI MODAL
@@ -2788,7 +2994,7 @@
         let html = '';
         listQuickNotes.forEach((note, idx) => {
             html += `
-                <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-slate-800 text-xs">
+                <div class="flex items-center justify-between bg-slate-900/60 p-2 rounded-xl border border-[#b5f234] text-xs">
                     <span class="text-slate-300">${note}</span>
                     <button onclick="hapusQuickNoteIndex(${idx})" class="w-6 h-6 flex items-center justify-center text-rose-400 hover:text-rose-300 bg-rose-500/10 rounded-lg border border-rose-500/20">
                         <i class="fas fa-trash-alt text-[10px]"></i>
@@ -2800,31 +3006,55 @@
         listEl.innerHTML = html || `<p class="text-slate-500 text-xs italic text-center py-2">Belum ada catatan cepat.</p>`;
     }
 
+    // TAMBAH QUICK NOTE VIA MODAL
     window.tambahQuickNoteViaModal = async function() {
         const input = document.getElementById('input-quicknote-baru');
         const note = input ? input.value.trim() : '';
 
         if (!note) {
-            await window.tampilAlert("Catatan cepat tidak boleh kosong!", "warning");
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert("Catatan cepat tidak boleh kosong!", "warning");
+            } else {
+                alert("Catatan cepat tidak boleh kosong!");
+            }
             return;
         }
 
         listQuickNotes.push(note);
+
+        // 1. Simpan Lokal
         localStorage.setItem('dompetq_quick_notes', JSON.stringify(listQuickNotes));
+        
+        // 2. Simpan ke Firestore (dokumen: CATATAN_CEPAT)
+        await simpanQuickNotesKeFirestore();
+
         input.value = '';
         renderKelolaQuickNotes();
-        renderQuickNotes();
-        await window.tampilAlert(`Catatan "${note}" berhasil ditambahkan!`, "success");
+        if (typeof renderQuickNotes === 'function') renderQuickNotes();
+
+        if (typeof window.tampilAlert === 'function') {
+            await window.tampilAlert(`Catatan "${note}" berhasil ditambahkan!`, "success");
+        }
     };
 
+    // HAPUS QUICK NOTE VIA MODAL
     window.hapusQuickNoteIndex = async function(idx) {
         const note = listQuickNotes[idx];
         if (note) {
             listQuickNotes.splice(idx, 1);
+
+            // 1. Simpan Lokal
             localStorage.setItem('dompetq_quick_notes', JSON.stringify(listQuickNotes));
+            
+            // 2. Simpan ke Firestore (dokumen: CATATAN_CEPAT)
+            await simpanQuickNotesKeFirestore();
+
             renderKelolaQuickNotes();
-            renderQuickNotes();
-            await window.tampilAlert(`Catatan "${note}" telah dihapus.`, "info");
+            if (typeof renderQuickNotes === 'function') renderQuickNotes();
+
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert(`Catatan "${note}" telah dihapus.`, "info");
+            }
         }
     };
 
@@ -2897,45 +3127,88 @@
     // SIMPAN TRANSAKSI PENGELUARAN KE FIRESTORE
     window.simpanTransaksiPengeluaran = async function() {
         const nominalFinal = Number(calcState.currentValue);
-        const ketInput = document.getElementById('input-keterangan-pengeluaran')?.value || '-';
+        const ketInput = document.getElementById('input-keterangan-pengeluaran')?.value.trim() || '-';
 
+        // 1. Validasi Kategori & Nominal
         if (!calcState.selectedKategori) {
             await window.tampilAlert("Silakan pilih kategori pengeluaran terlebih dahulu!", "warning");
             return;
         }
 
-        if (nominalFinal <= 0) {
+        if (isNaN(nominalFinal) || nominalFinal <= 0) {
             await window.tampilAlert("Nominal pengeluaran harus lebih besar dari 0!", "warning");
             return;
         }
 
+        // 2. Ambil User ID & Periode Aktif UI
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+        if (!activeUserId) {
+            await window.tampilAlert("Profil pengguna tidak ditemukan. Silakan pilih/daftar profil!", "error");
+            if (window.bukaModalRegistrasiUser) window.bukaModalRegistrasiUser();
+            return;
+        }
+
+        const elLabelPeriode = document.getElementById('label-month-main');
+        const periodeAktif = elLabelPeriode ? elLabelPeriode.textContent.trim().toUpperCase() : "";
+
+        // 3. Ambil ID Kategori & Format ID Unik
+        // Jika calcState.selectedKategori adalah Object, ambil properti .id, jika String pakai langsung
+        const rawKatId = (typeof calcState.selectedKategori === 'object' && calcState.selectedKategori !== null) 
+                        ? calcState.selectedKategori.id 
+                        : calcState.selectedKategori;
+                        
+        const katIdSanitized = String(rawKatId).toLowerCase().trim();
+
+        // Parse periode (contoh: "SEPTEMBER 2026" -> bulan: "september", tahun: "2026")
+        const partsPeriode = periodeAktif.toLowerCase().split(' ');
+        const bulanStr = partsPeriode[0] || 'bulan';
+        const tahunStr = partsPeriode[1] || new Date().getFullYear();
+        const timestamp = Date.now();
+
+        // ID unik menjadi: out_konsumsi_september_2026_1788432765645
+        const uniqueId = `out_${katIdSanitized}_${bulanStr}_${tahunStr}_${timestamp}`;
+
+        // 4. Susun Payload Sesuai Struktur Firestore
         const payload = {
+            idTransaksi: uniqueId,
+            uid: activeUserId,
+            periode: periodeAktif,
             tipe: 'pengeluaran',
-            kategori: calcState.selectedKategori,
+            kategori: rawKatId, // Menyimpan ID kategori (misal: "KONSUMSI")
             keterangan: ketInput,
-            totalBersihNetto: -nominalFinal,
+            totalBersihNetto: -Math.abs(nominalFinal),
             waktuTransaksi: new Date(),
             diperbaruiPada: new Date().toISOString()
         };
 
-        try {
-            const btnSimpan = document.getElementById('btn-simpan-calc');
-            btnSimpan.innerHTML = `<i class="fas fa-spinner fa-spin text-sm"></i>`;
+        const btnSimpan = document.getElementById('btn-simpan-calc');
 
-            if (window.simpanDataKeFirestore) {
+        try {
+            if (btnSimpan) btnSimpan.innerHTML = `<i class="fas fa-spinner fa-spin text-sm"></i>`;
+
+            // 5. Simpan ke Sub-Koleksi Firestore
+            if (window.db && window.fbDoc && window.fbSetDoc) {
+                const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', uniqueId);
+                await window.fbSetDoc(docRef, payload, { merge: true });
+            } else if (window.simpanDataKeFirestore) {
                 await window.simpanDataKeFirestore(payload);
-            } else {
-                console.log("Payload Pengeluaran:", payload);
             }
 
             await window.tampilAlert("Pengeluaran berhasil disimpan!", "success");
-            tutupModalPengeluaran();
-            if (window.loadDataRiwayat) window.loadDataRiwayat();
+
+            // 6. Reset & Tutup Modal
+            if (typeof resetKalkulator === 'function') resetKalkulator();
+            if (typeof tutupModalPengeluaran === 'function') tutupModalPengeluaran();
+
+            // 7. Reload Data UI
+            if (window.muatDataUtama) {
+                await window.muatDataUtama(activeUserId);
+            }
 
         } catch (err) {
+            console.error("❌ Gagal menyimpan pengeluaran:", err);
             await window.tampilAlert("Gagal menyimpan transaksi: " + err.message, "error");
         } finally {
-            const btnSimpan = document.getElementById('btn-simpan-calc');
             if (btnSimpan) btnSimpan.innerHTML = `<i class="fas fa-check"></i>`;
         }
     };
