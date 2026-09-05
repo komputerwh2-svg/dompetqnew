@@ -254,10 +254,10 @@
 
     <!-- MODAL ARSIP SLIP -->
     <div id="modal-arsip-slip" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[50] hidden flex items-center justify-center p-4">
-      <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+      <div class="bg-[#121614] border border-[#b5f234] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
         
         <!-- Header Modal -->
-        <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-[#141a16]">
+        <div class="p-5 border-b border-[#b5f234] flex items-center justify-between bg-[#141a16]">
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
               <i class="fa-solid fa-wallet"></i>
@@ -282,7 +282,7 @@
         </div>
 
         <!-- Footer Modal -->
-        <div class="p-4 border-t border-slate-800 bg-[#141a16] text-right">
+        <div class="p-4 border-t border-[#b5f234] bg-[#141a16] text-right">
           <button id="btn-close-arsip-footer" class="px-4 py-2 bg-slate-800 text-xs font-bold text-slate-300 rounded-xl hover:bg-slate-700">Tutup</button>
         </div>
 
@@ -299,15 +299,15 @@
 
     <!-- MODAL PRATINJAU SLIP GAJI / DOKUMEN -->
     <div id="modal-pratinjau-slip" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-all duration-300">
-        <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
-            <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 text-white">
+        <div class="relative bg-slate-900 border border-[#b5f234] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="flex items-center justify-between p-4 border-b border-[#b5f234] bg-slate-950 text-white">
                 <h3 class="font-bold text-sm" id="pratinjau-judul">Pratinjau Dokumen</h3>
                 <button onclick="tutupModalPratinjauSlip()" class="text-slate-400 hover:text-white text-xl">&times;</button>
             </div>
             <div class="p-4 flex-1 overflow-y-auto flex items-center justify-center custom-scrollbar">
                 <img id="pratinjau-gambar" src="" onclick="bukaZoomGambar(this.src)" class="max-w-full max-h-[60vh] object-contain rounded-lg cursor-zoom-in hover:opacity-95 transition" alt="Foto Slip Gaji">
             </div>
-            <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
+            <div class="p-3 bg-slate-950 border-t border-[#b5f234] text-right">
                 <button onclick="tutupModalPratinjauSlip()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl">Tutup</button>
             </div>
         </div>
@@ -579,10 +579,10 @@
     <!-- MODAL DETAIL SLIP PEMASUKAN BULAN INI -->
     <div id="modal-detail-masuk" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden transition-all duration-300">
       <!-- Container Modal -->
-      <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="bg-slate-900 border border-[#b5f234] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
         
         <!-- Header Modal -->
-        <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+        <div class="px-5 py-4 border-b border-[#b5f234] flex items-center justify-between bg-slate-900/50">
           <div class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
               <i class="fa-solid fa-arrow-down"></i>
@@ -598,7 +598,7 @@
         </div>
 
         <!-- Ringkasan Total Pemasukan -->
-        <div class="p-5 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 border-b border-slate-800/80">
+        <div class="p-5 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 border-b border-[#b5f234]/40">
           <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider">Total Pemasukan Bulan Ini</span>
           <h4 id="modal-masuk-total" class="text-2xl md:text-3xl font-black text-emerald-400 mt-0.5">Rp 0</h4>
         </div>
@@ -614,7 +614,7 @@
         </div>
 
         <!-- Footer Modal -->
-        <div class="p-4 border-t border-slate-800 bg-slate-900/80 flex justify-end">
+        <div class="p-4 border-t border-[#b5f234] bg-slate-900/80 flex justify-end">
           <button id="btn-done-modal-masuk" type="button" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-all cursor-pointer">
             Tutup
           </button>
@@ -2428,7 +2428,7 @@
                     }
 
                     return `
-                    <div class="bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/50 rounded-xl p-3.5 space-y-2.5 transition-all shadow-sm">
+                    <div class="bg-slate-800/60 hover:bg-slate-800/90 border border-[#b5f234] rounded-xl p-3.5 space-y-2.5 transition-all shadow-sm">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeStyle}">
@@ -2441,7 +2441,7 @@
                             </p>
                         </div>
 
-                        <div class="pt-2 border-t border-slate-700/40 text-[10px] text-slate-400 space-y-1 bg-slate-900/40 p-2 rounded-lg">
+                        <div class="pt-2 border-t border-[#b5f234] text-[10px] text-slate-400 space-y-1 bg-slate-900/40 p-2 rounded-lg">
                             <div class="flex justify-between items-center">
                                 <span><i class="fa-regular fa-clock mr-1 text-slate-500"></i> Waktu Transaksi:</span>
                                 <span class="text-slate-300 font-medium">${teksWaktuUpload}</span>
@@ -2452,7 +2452,7 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="window.bukaPratinjauSlipManual('${data.referenceKeyImage}')" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg font-semibold transition flex items-center justify-center gap-1.5 text-[11px] active:scale-98 cursor-pointer">
+                        <button type="button" onclick="window.bukaPratinjauSlipManual('${data.referenceKeyImage}')" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-[#b5f234] rounded-lg font-semibold transition flex items-center justify-center gap-1.5 text-[11px] active:scale-98 cursor-pointer">
                             <i class="fa-regular fa-image text-emerald-400"></i> Lihat Pratinjau Slip
                         </button>
                     </div>
