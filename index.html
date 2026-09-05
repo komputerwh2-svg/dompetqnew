@@ -42,15 +42,22 @@
             </div>
           </div>
           <div class="flex gap-1.5">
-            <!-- TOMBOL SHORTCUT KALENDER -->
-            <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
-              <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
-            </button>
-            <!-- TOMBOL SHORTCUT PROFIL USER -->
-            <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
-                <i class="fa-regular fa-user text-xs md:text-sm"></i>
-            </button>
-          </div>
+                <!-- WADAH RELATIVE POPUP KALENDER -->
+                <div class="relative">
+                    <!-- TOMBOL SHORTCUT KALENDER -->
+                    <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
+                    <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
+                    </button>
+
+                    <!-- KONTAINER POPOVER (Dudukan Kalender Dinamis) -->
+                    <div id="popover-calendar-container" class="absolute right-0 top-full mt-2 z-[80]"></div>
+                </div>
+
+                <!-- TOMBOL SHORTCUT PROFIL USER -->
+                <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-700 bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
+                    <i class="fa-regular fa-user text-xs md:text-sm"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Month Selector -->
@@ -236,7 +243,7 @@
     </div>
 
     <!-- MODAL ARSIP SLIP -->
-    <div id="modal-arsip-slip" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="modal-arsip-slip" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[50] hidden flex items-center justify-center p-4">
       <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
         
         <!-- Header Modal -->
@@ -274,11 +281,11 @@
 
 
     <!-- MODAL KALENDER INTERAKTIF ALA WINDOWS -->
-    <div id="modal-kalender" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-      <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col">
+    <div id="modal-kalender" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
+      <div class="bg-[#121614] border border-[#b5f234] rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col">
         
         <!-- Header Modal -->
-        <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-[#141a16]">
+        <div class="p-4 border-b border-[#b5f234] flex items-center justify-between bg-[#141a16]">
           <div class="flex items-center gap-2">
             <div class="w-7 h-7 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
               <i class="fa-regular fa-calendar"></i>
@@ -332,7 +339,7 @@
         </div>
 
         <!-- Footer Modal -->
-        <div class="p-3 border-t border-slate-800 bg-[#141a16] flex items-center justify-between">
+        <div class="p-3 border-t border-[#b5f234] bg-[#141a16] flex items-center justify-between">
           <button id="btn-today" type="button" class="text-[11px] font-bold text-[#b5f234] hover:underline px-2">
             Hari Ini
           </button>
@@ -351,10 +358,10 @@
 
     <!-- MODAL REGISTRASI / MASUK PROFIL USER (PRIVACY PRESERVED) -->
     <div id="modal-reg-user" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[70] flex items-center justify-center p-4 hidden">
-        <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col">
+        <div class="bg-[#121614] border border-[#b5f234] rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col">
             
             <!-- Header Modal -->
-            <div class="p-5 text-center bg-[#141a16] border-b border-slate-800 relative">
+            <div class="p-5 text-center bg-[#141a16] border-b border-[#b5f234] relative">
                 <button onclick="tutupModalRegistrasiUser()" class="absolute right-4 top-4 w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Tutup Modal">
                     <i class="fa-solid fa-xmark text-xs"></i>
                 </button>
@@ -420,10 +427,10 @@
 
     <!-- MODAL OCR SCANNER & SLIP (DARK THEME DOMPETQ) -->
     <div id="modal-ocr" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#121614] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+        <div class="bg-[#121614] border border-[#b5f234] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
             
             <!-- Header Modal -->
-            <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-[#141a16] flex-shrink-0">
+            <div class="p-5 border-b border-[#b5f234] flex items-center justify-between bg-[#141a16] flex-shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
                         <i class="fa-solid fa-file-invoice"></i>
@@ -445,7 +452,7 @@
                 <div id="step-jenis-dokumen" class="grid grid-cols-2 gap-3 flex-shrink-0">
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Pilih Jenis Slip:</label>
-                        <select id="jenis-slip" onchange="handleJenisSlipChange()" class="w-full px-3 py-2.5 bg-[#1a221d] border border-slate-700/80 rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition cursor-pointer">
+                        <select id="jenis-slip" onchange="handleJenisSlipChange()" class="w-full px-3 py-2.5 bg-[#1a221d] border border-[#b5f234] rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition cursor-pointer">
                             <option value="gaji" class="bg-[#121614] text-white">Slip Gaji Bulanan</option>
                             <option value="thr" class="bg-[#121614] text-white">Slip Tunjangan (THR)</option>
                             <option value="ksp" class="bg-[#121614] text-white">Slip Koperasi / KSP</option>
@@ -454,7 +461,7 @@
                     </div>
                     <div class="space-y-1.5">
                         <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Periode Slip:</label>
-                        <input type="month" id="ocr-periode" class="w-full px-3 py-2 bg-[#1a221d] border border-slate-700/80 rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition cursor-pointer">
+                        <input type="month" id="ocr-periode" class="w-full px-3 py-2 bg-[#1a221d] border border-[#b5f234] rounded-xl text-xs font-semibold text-white outline-none focus:border-[#b5f234] transition cursor-pointer">
                     </div>
                 </div>
 
@@ -762,7 +769,94 @@
         </div>
     </div>
 
+    <!-- Modal Edit Transaksi -->
+    <div id="modal-edit-transaksi" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[50] hidden flex items-center justify-center p-4">
+        <div class="bg-[#121614] border border-[#b5f234] rounded-2xl w-full max-w-md p-5 shadow-2xl space-y-4">
+            
+            <!-- Header Modal -->
+            <div class="flex items-center justify-between border-b border-[#b5f234] pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-[#b5f234]"></i> Rincian & Edit Transaksi
+                </h3>
+                <button onclick="window.tutupModalEditTransaksi()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
 
+            <!-- Ringkasan Data Lama -->
+            <div class="bg-slate-900/90 border border-[#b5f234] rounded-xl p-3.5 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div id="preview-old-icon" class="w-10 h-10 rounded-xl bg-[#b5f234]/10 text-[#b5f234] flex items-center justify-center border border-[#b5f234]/20 text-lg">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <div>
+                        <div id="preview-old-kategori" class="text-xs font-bold text-white">Kategori Lama</div>
+                        <div id="preview-old-keterangan" class="text-[11px] text-slate-300">Keterangan Lama</div>
+                        <div id="preview-old-tanggal" class="text-[10px] text-slate-400 mt-0.5">01/09/2026</div>
+                    </div>
+                </div>
+                <div id="preview-old-nominal" class="text-sm font-extrabold text-[#b5f234] whitespace-nowrap">
+                    Rp 0
+                </div>
+            </div>
+
+            <!-- Form Edit Data Baru -->
+            <div class="space-y-3 pt-1">
+                <input type="hidden" id="edit-id-transaksi">
+
+                <!-- Tanggal Baru -->
+                <div>
+                <label class="block text-[11px] font-medium text-slate-400 mb-1">Tanggal Transaksi</label>
+                <div class="relative w-full">
+                    <!-- Input Text untuk Menampilkan DD/MM/YYYY -->
+                    <input type="text" id="edit-tanggal-display" readonly 
+                    placeholder="dd/mm/yyyy" 
+                    class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#b5f234] cursor-pointer pr-9">
+                    
+                    <!-- Hidden Input untuk menyimpan format mentah YYYY-MM-DD -->
+                    <input type="hidden" id="edit-tanggal-raw">
+
+                    <!-- Tombol Buka Modal Kalender Kustom -->
+                    <button type="button" onclick="window.bukaKalenderUntukEdit()" 
+                    class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Pilih Tanggal">
+                    <i class="fa-regular fa-calendar text-xs"></i>
+                    </button>
+                </div>
+                </div>
+
+                <!-- Dropdown Kategori dari Firestore -->
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Kategori</label>
+                    <select id="edit-kategori" class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#b5f234]">
+                        <option value="">Memuat kategori...</option>
+                    </select>
+                </div>
+
+                <!-- Nominal Baru -->
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Nominal (Rp)</label>
+                    <input type="text" id="edit-nominal" class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white font-bold focus:outline-none focus:border-[#b5f234]" placeholder="0">
+                </div>
+
+                <!-- Catatan / Keterangan Baru -->
+                <div>
+                    <label class="block text-[11px] font-medium text-slate-400 mb-1">Catatan / Keterangan</label>
+                    <textarea id="edit-keterangan" rows="2" class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#b5f234]" placeholder="Keterangan transaksi..."></textarea>
+                </div>
+            </div>
+
+            <!-- 2 Tombol Aksi: Hapus Data & Perbarui Data -->
+            <div class="grid grid-cols-2 gap-3 pt-3 border-t border-[#b5f234]">
+                <button onclick="window.hapusTransaksiFirestore(document.getElementById('edit-id-transaksi').value)" class="py-2.5 px-4 bg-red-950/60 hover:bg-red-900/80 text-red-400 border border-red-800/50 rounded-xl text-xs font-semibold transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> Hapus Data
+                </button>
+                <button onclick="window.simpanPerubahanTransaksi()" class="py-2.5 px-4 bg-[#b5f234] hover:bg-[#a3dc2e] text-slate-950 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 shadow-lg shadow-[#b5f234]/10">
+                    <i class="fa-solid fa-floppy-disk"></i> Perbarui Data
+                </button>
+            </div>
+
+        </div>
+    </div>
 
   </div>
 
@@ -774,7 +868,8 @@
         getFirestore, 
         doc, 
         setDoc, 
-        getDoc, 
+        getDoc,
+        deleteDoc, 
         addDoc, 
         collection, 
         getDocs, 
@@ -813,6 +908,7 @@
     window.fbDoc = doc;
     window.fbSetDoc = setDoc;
     window.fbGetDoc = getDoc;
+    window.fbDeleteDoc = deleteDoc;
     window.fbAddDoc = addDoc;
     window.fbCollection = collection;
     window.fbGetDocs = getDocs;
@@ -1490,21 +1586,21 @@
         // 1. URUTKAN DATA TERBARU DI ATAS
         const dataTersortir = [...items].sort((a, b) => getDateObject(b) - getDateObject(a));
 
-        // 2. FILTER DATA 10 HARI TERAKHIR UNTUK DASHBOARD
-        const batas10HariLalu = new Date();
-        batas10HariLalu.setDate(batas10HariLalu.getDate() - 10);
-        batas10HariLalu.setHours(0, 0, 0, 0);
+        // 2. FILTER DATA 7 HARI TERAKHIR UNTUK DASHBOARD
+        const batas7HariLalu = new Date();
+        batas7HariLalu.setDate(batas7HariLalu.getDate() - 7);
+        batas7HariLalu.setHours(0, 0, 0, 0);
 
         const dataUtama = dataTersortir.filter(item => {
             const tgl = getDateObject(item);
             if (tgl.getTime() === 0) return true;
-            return tgl >= batas10HariLalu;
+            return tgl >= batas7HariLalu;
         });
 
         if (dataUtama.length === 0) {
             container.innerHTML = `
             <div class="text-center py-10">
-                <p class="text-xs font-bold text-slate-400">Tidak Ada Transaksi 10 Hari Terakhir</p>
+                <p class="text-xs font-bold text-slate-400">Tidak Ada Transaksi 7 Hari Terakhir</p>
                 <p class="text-[10px] text-slate-500 mt-1">Gunakan menu Laporan untuk melihat riwayat lengkap.</p>
             </div>`;
             return;
@@ -1518,7 +1614,6 @@
 
         dataUtama.forEach(item => {
             const objTgl = getDateObject(item);
-            // String kunci grup, contoh: "Kamis, 03 Sep 2026"
             const labelTanggal = objTgl.getTime() > 0 
                 ? objTgl.toLocaleDateString('id-ID', opsiFormatTgl) 
                 : 'Lainnya';
@@ -1543,62 +1638,59 @@
                 <div class="bg-[#121714] border border-[#b5f234] rounded-2xl p-2 space-y-1">`;
 
             listTransaksi.forEach(item => {
-              const nominal = Math.abs(Number(item.totalBersihNetto || 0));
+                const nominal = Math.abs(Number(item.totalBersihNetto || 0));
 
-              // Deteksi tipe transaksi dari field tipe, ID, atau kategori
-              const tipeStr = (item.tipe || '').toLowerCase();
-              const idTransStr = (item.idTransaksi || '').toLowerCase();
-              const katStr = (item.kategori || '').toLowerCase();
+                // Deteksi tipe transaksi
+                const tipeStr = (item.tipe || '').toLowerCase();
+                const idTransStr = (item.idTransaksi || '').toLowerCase();
+                const katStr = (item.kategori || '').toLowerCase();
 
-              const isMasuk = tipeStr === 'pemasukan' || idTransStr.startsWith('gaji') || idTransStr.startsWith('ksp') || idTransStr.startsWith('thr');
-              const isMutasi = tipeStr === 'mutasi' || katStr.includes('mutasi') || idTransStr.startsWith('mutasi');
+                const isMasuk = tipeStr === 'pemasukan' || idTransStr.startsWith('gaji') || idTransStr.startsWith('ksp') || idTransStr.startsWith('thr');
+                const isMutasi = tipeStr === 'mutasi' || katStr.includes('mutasi') || idTransStr.startsWith('mutasi');
 
-              // Default: Pengeluaran (Rose / Merah)
-              let styleBgIcon = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
-              let styleIkon = 'fa-arrow-up';
-              let styleTeksNominal = 'text-rose-400';
-              let tandaNominal = '-';
+                let styleBgIcon = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+                let styleIkon = 'fa-arrow-up';
+                let styleTeksNominal = 'text-rose-400';
+                let tandaNominal = '-';
 
-              if (isMasuk) {
-                  // Pemasukan (Emerald / Hijau)
-                  styleBgIcon = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
-                  styleIkon = 'fa-arrow-down';
-                  styleTeksNominal = 'text-emerald-400';
-                  tandaNominal = '+';
-              } else if (isMutasi) {
-                  // Mutasi / Transfer (Sky / Biru)
-                  styleBgIcon = 'bg-sky-500/10 text-sky-400 border-sky-500/20';
-                  styleIkon = 'fas fa-exchange-alt';
-                  styleTeksNominal = 'text-sky-400';
-                  tandaNominal = '-';
-              }
+                if (isMasuk) {
+                    styleBgIcon = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                    styleIkon = 'fa-arrow-down';
+                    styleTeksNominal = 'text-emerald-400';
+                    tandaNominal = '+';
+                } else if (isMutasi) {
+                    styleBgIcon = 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+                    styleIkon = 'fas fa-exchange-alt';
+                    styleTeksNominal = 'text-sky-400';
+                    tandaNominal = '-';
+                }
 
-              // Penyesuaian Field Tampilan
-              const judulKategori = (item.kategori || item.idTransaksi || 'Transaksi').toUpperCase();
-              const subKeterangan = item.keterangan || '-';
+                const judulKategori = (item.kategori || item.idTransaksi || 'Transaksi').toUpperCase();
+                const subKeterangan = item.keterangan || '-';
 
-              html += `
-                  <div class="flex items-center justify-between p-2.5 hover:bg-slate-800/30 rounded-xl transition">
-                      <div class="flex items-center gap-3">
-                          <div class="w-9 h-9 rounded-xl flex items-center justify-center border ${styleBgIcon}">
-                              <i class="fa-solid ${styleIkon} text-xs"></i>
-                          </div>
-                          <div>
-                              <!-- Judul Kategori Mengikuti Warna Tipe Transaksi -->
-                              <div class="text-xs font-extrabold ${styleTeksNominal} tracking-wide">${judulKategori}</div>
-                              <!-- Keterangan Transaksi (Tetap Slate/Abu-abu) -->
-                              <div class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">${subKeterangan}</div>
-                          </div>
-                      </div>
-                      
-                      <!-- Nominal Netto Sesuai Warna Tipe Transaksi -->
-                      <div class="text-right">
-                          <div class="text-xs font-black ${styleTeksNominal}">
-                              ${tandaNominal} ${window.formatRupiah(nominal)}
-                          </div>
-                      </div>
-                  </div>`;
-          });
+                // Escape payload data untuk dikirim ke fungsi onclick
+                const safeItemStr = encodeURIComponent(JSON.stringify(item));
+
+                html += `
+                    <div onclick="window.bukaModalEditTransaksi('${safeItemStr}')" 
+                        class="flex items-center justify-between p-2.5 hover:bg-slate-800/50 rounded-xl transition cursor-pointer active:scale-[0.99]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl flex items-center justify-center border ${styleBgIcon}">
+                                <i class="fa-solid ${styleIkon} text-xs"></i>
+                            </div>
+                            <div>
+                                <div class="text-xs font-extrabold ${styleTeksNominal} tracking-wide">${judulKategori}</div>
+                                <div class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">${subKeterangan}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-right">
+                            <div class="text-xs font-black ${styleTeksNominal}">
+                                ${tandaNominal} ${window.formatRupiah(nominal)}
+                            </div>
+                        </div>
+                    </div>`;
+            });
 
             html += `
                 </div>
@@ -1685,6 +1777,74 @@
     document.addEventListener('DOMContentLoaded', () => {
         window.inisialisasiUserPerangkat();
     });
+
+    // =================================================================
+    // 7. SINKRONISASI UPDATE & HAPUS TRANSAKSI KE FIRESTORE
+    // =================================================================
+
+    /**
+     * Hapus Transaksi dari Firestore
+     * @param {string} docId - Document ID / idTransaksi yang ingin dihapus
+     */
+    window.hapusTransaksiFirestore = async function(docId) {
+        const activeUserId = window.getActiveUserId();
+        if (!activeUserId) {
+            await window.tampilAlert("Silakan login/pilih akun terlebih dahulu!", "warning");
+            return;
+        }
+
+        const konfirmasi = await window.tampilKonfirmasi("Apakah Anda yakin ingin menghapus catatan transaksi ini?", "Hapus Transaksi");
+        if (!konfirmasi) return;
+
+        try {
+            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', docId);
+            await window.fbDeleteDoc(docRef);
+
+            await window.tampilAlert("Data transaksi berhasil dihapus!", "success");
+            
+            // Re-sync UI secara otomatis
+            await window.muatDataUtama(activeUserId);
+        } catch (err) {
+            console.error("❌ Gagal menghapus transaksi:", err);
+            await window.tampilAlert("Gagal menghapus data: " + err.message, "error");
+        }
+    };
+
+    /**
+     * Simpan / Update Transaksi ke Firestore (Tambah Baru atau Edit)
+     * @param {string} docId - ID dokumen jika Mode Edit (opsional, kosongkan jika baru)
+     * @param {Object} dataTransaksi - Payload data yang akan disimpan
+     */
+    window.simpanTransaksiFirestore = async function(docId, dataTransaksi) {
+        const activeUserId = window.getActiveUserId();
+        if (!activeUserId) {
+            await window.tampilAlert("Sesi login berakhir. Silakan pilih akun!", "warning");
+            return;
+        }
+
+        try {
+            const targetDocId = docId || (dataTransaksi.idTransaksi || "out_" + Date.now());
+            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', targetDocId);
+
+            const payload = {
+                ...dataTransaksi,
+                idTransaksi: targetDocId,
+                uid: activeUserId,
+                diperbaruiPada: new Date().toISOString(),
+                lastUpdated: window.fbServerTimestamp()
+            };
+
+            await window.fbSetDoc(docRef, payload, { merge: true });
+
+            await window.tampilAlert("Transaksi berhasil disimpan!", "success");
+
+            // Re-sync UI secara otomatis
+            await window.muatDataUtama(activeUserId);
+        } catch (err) {
+            console.error("❌ Gagal menyimpan transaksi:", err);
+            await window.tampilAlert("Gagal menyimpan transaksi: " + err.message, "error");
+        }
+    };
 
     // =================================================================
     // SCRIPT MIGRASI SEKALIPAKAI (HAPUS SETELAH DIGUNAKAN)
@@ -3211,6 +3371,323 @@
         } finally {
             if (btnSimpan) btnSimpan.innerHTML = `<i class="fas fa-check"></i>`;
         }
+    };
+
+
+
+    // =================================================================
+    // STATE & MANAJEMEN MODAL EDIT TRANSAKSI (UI & LOGIC)
+    // =================================================================
+
+    // State untuk menyimpan item yang sedang diedit
+    window.currentEditItem = null;
+
+    /**
+     * Helper Memformat Object Date/Timestamp ke DD/MM/YYYY
+     */
+    function formatKeDDMMYYYY(dateObj) {
+        if (!dateObj || isNaN(dateObj.getTime())) return '-';
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const year = dateObj.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    /**
+     * Helper Memformat Object Date/Timestamp ke YYYY-MM-DD (untuk input[type="date"])
+     */
+    function formatKeYYYYMMDD(dateObj) {
+        if (!dateObj || isNaN(dateObj.getTime())) return '';
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Variable Global Penanda Target Pemilihan Kalender ('hero' atau 'edit')
+    window.calendarTarget = 'hero'; 
+
+    /**
+     * Buka Modal Kalender Kustom Khusus Mode Edit
+     */
+    window.bukaKalenderUntukEdit = function() {
+    window.calendarTarget = 'edit';
+    
+    // Ambil tanggal saat ini di form edit jika ada
+    const rawVal = document.getElementById('edit-tanggal-raw')?.value;
+    if (rawVal) {
+        const [y, m, d] = rawVal.split('-').map(Number);
+        if (y && m && d) {
+        selectedDate = new Date(y, m - 1, d);
+        currDate = new Date(y, m - 1, d);
+        }
+    } else {
+        selectedDate = new Date();
+        currDate = new Date();
+    }
+
+    currentMode = 'days';
+    if (typeof renderCalendar === 'function') renderCalendar();
+    modalKalender.classList.remove('hidden');
+    };
+
+    /**
+     * Perbarui Event Listener Tombol Simpan/Terapkan di Kalender
+     */
+    btnSimpanKalender.addEventListener('click', () => {
+    if (window.calendarTarget === 'edit') {
+        // 1. Format ke DD/MM/YYYY untuk Tampilan Visual Form
+        const dd = String(selectedDate.getDate()).padStart(2, '0');
+        const mm = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const yyyy = selectedDate.getFullYear();
+        
+        const displayElem = document.getElementById('edit-tanggal-display');
+        const rawElem = document.getElementById('edit-tanggal-raw');
+
+        if (displayElem) displayElem.value = `${dd}/${mm}/${yyyy}`;
+        if (rawElem) rawElem.value = `${yyyy}-${mm}-${dd}`;
+
+    } else {
+        // Mode Default (Hero Card Utama)
+        const formattedDate = selectedDate.toLocaleDateString('id-ID', {
+        weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
+        });
+        const formattedMonth = selectedDate.toLocaleDateString('id-ID', {
+        month: 'long', year: 'numeric'
+        });
+
+        const currentDateSpan = document.getElementById('current-date');
+        if (currentDateSpan) currentDateSpan.textContent = formattedDate;
+
+        const monthSelectorSpan = document.querySelector('.bg-slate-950\\/5 span');
+        if (monthSelectorSpan) monthSelectorSpan.textContent = formattedMonth.toUpperCase();
+    }
+
+    hideCalModal();
+    });
+
+    // Reset Target ke 'hero' saat tombol shortcut kalender utama diklik
+    btnOpenCalendar?.addEventListener('click', () => {
+    window.calendarTarget = 'hero';
+    currentMode = 'days';
+    if (typeof renderCalendar === 'function') renderCalendar();
+    modalKalender.classList.remove('hidden');
+    });
+
+    /**
+     * Memuat Opsi Kategori dari Firestore (pengaturan_aplikasi -> kategori)
+     */
+    window.muatOpsiKategoriEdit = async function(selectedKategori = '') {
+        const selectElem = document.getElementById('edit-kategori');
+        if (!selectElem) return;
+
+        selectElem.innerHTML = '<option value="">Memuat kategori...</option>';
+
+        try {
+            const activeUserId = window.getActiveUserId ? window.getActiveUserId() : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID'));
+            
+            // Ambil dokumen kategori dari Firestore
+            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'pengaturan_aplikasi', 'kategori');
+            const docSnap = await window.fbGetDoc(docRef);
+
+            selectElem.innerHTML = '';
+
+            if (docSnap.exists() && Array.isArray(docSnap.data().listKategori)) {
+                const listKategori = docSnap.data().listKategori;
+
+                listKategori.forEach(item => {
+                    const namaKategori = item.nama || item;
+                    const opt = document.createElement('option');
+                    opt.value = namaKategori;
+                    opt.textContent = namaKategori;
+
+                    if (namaKategori.toLowerCase() === String(selectedKategori).toLowerCase()) {
+                        opt.selected = true;
+                    }
+                    selectElem.appendChild(opt);
+                });
+            } else {
+                selectElem.innerHTML = '<option value="">(Belum Ada Kategori)</option>';
+            }
+        } catch (err) {
+            console.error("Gagal memuat list kategori:", err);
+            selectElem.innerHTML = '<option value="">Gagal memuat kategori</option>';
+        }
+    };
+
+    /**
+     * Buka Modal Edit Transaksi & Isi Ringkasan Data Lama
+     */
+    window.bukaModalEditTransaksi = async function(encodedItem) {
+        try {
+            const item = typeof encodedItem === 'string' ? JSON.parse(decodeURIComponent(encodedItem)) : encodedItem;
+            window.currentEditItem = item;
+
+            const modal = document.getElementById('modal-edit-transaksi');
+            if (modal) modal.classList.remove('hidden');
+
+            // Parse Tanggal dari waktuTransaksi
+            let dateObj = null;
+            const rawWaktu = item.waktuTransaksi || item.tanggal || item.createdAt;
+
+            if (rawWaktu) {
+            if (typeof rawWaktu.toDate === 'function') {
+                dateObj = rawWaktu.toDate();
+            } else if (rawWaktu.seconds) {
+                dateObj = new Date(rawWaktu.seconds * 1000);
+            } else {
+                dateObj = new Date(rawWaktu);
+            }
+            }
+
+            let displayDateString = '-';
+            let rawDateString = '';
+
+            if (dateObj && !isNaN(dateObj.getTime())) {
+            const yyyy = dateObj.getFullYear();
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            
+            displayDateString = `${dd}/${mm}/${yyyy}`;
+            rawDateString = `${yyyy}-${mm}-${dd}`;
+            }
+
+            // Set Ringkasan Data Lama
+            const nominalNilai = Math.abs(Number(item.totalBersihNetto || item.nominal || 0));
+            const isPengeluaran = (item.tipe === 'pengeluaran') || String(item.idTransaksi || item.docId || '').startsWith('out_');
+            const prefixNominal = isPengeluaran ? '- ' : '+ ';
+
+            const oldKategoriElem = document.getElementById('preview-old-kategori');
+            const oldKeteranganElem = document.getElementById('preview-old-keterangan');
+            const oldTanggalElem = document.getElementById('preview-old-tanggal');
+            const oldNominalElem = document.getElementById('preview-old-nominal');
+
+            if (oldKategoriElem) oldKategoriElem.textContent = item.kategori || 'Tanpa Kategori';
+            if (oldKeteranganElem) oldKeteranganElem.textContent = item.keterangan || '-';
+            if (oldTanggalElem) oldTanggalElem.textContent = displayDateString;
+            if (oldNominalElem) oldNominalElem.textContent = prefixNominal + 'Rp ' + nominalNilai.toLocaleString('id-ID');
+
+            // Populate Input Form Edit
+            const inputId = document.getElementById('edit-id-transaksi');
+            const inputDisplay = document.getElementById('edit-tanggal-display');
+            const inputRaw = document.getElementById('edit-tanggal-raw');
+            const inputNominal = document.getElementById('edit-nominal');
+            const inputKeterangan = document.getElementById('edit-keterangan');
+
+            if (inputId) inputId.value = item.idTransaksi || item.docId || '';
+            if (inputDisplay) inputDisplay.value = displayDateString;
+            if (inputRaw) inputRaw.value = rawDateString;
+            
+            // Format angka ke ribuan Indonesia saat diisikan ke input
+            if (inputNominal) {
+            inputNominal.value = nominalNilai ? nominalNilai.toLocaleString('id-ID') : '';
+            
+            // Pasang event handler realtime typing (jika belum terpasang)
+            if (!inputNominal.dataset.hasInputListener) {
+                inputNominal.addEventListener('input', (e) => {
+                let val = e.target.value.replace(/\D/g, ''); // Hapus non-angka
+                if (val) {
+                    e.target.value = parseInt(val, 10).toLocaleString('id-ID');
+                } else {
+                    e.target.value = '';
+                }
+                });
+                inputNominal.dataset.hasInputListener = 'true';
+            }
+            }
+
+            if (inputKeterangan) inputKeterangan.value = item.keterangan || '';
+
+            await window.muatOpsiKategoriEdit(item.kategori || '');
+
+        } catch (err) {
+            console.error("Gagal membuka modal edit:", err);
+        }
+    };
+
+    /**
+     * Tutup Modal Edit
+     */
+    window.tutupModalEditTransaksi = function() {
+        const modal = document.getElementById('modal-edit-transaksi');
+        if (modal) modal.classList.add('hidden');
+        window.currentEditItem = null;
+    };
+
+    /**
+     * Update Data Transaksi Ke Firestore
+     */
+    window.simpanPerubahanTransaksi = async function() {
+        if (!window.currentEditItem) return;
+
+        const docId = window.currentEditItem.idTransaksi || window.currentEditItem.docId;
+        const inputRawVal = document.getElementById('edit-tanggal-raw')?.value; // Format YYYY-MM-DD
+        
+        // Ambil string nominal, bersihkan karakter titik (format ribuan), lalu konversi ke angka murni
+        const rawNominalString = document.getElementById('edit-nominal')?.value || '0';
+        const cleanNominalString = rawNominalString.replace(/\./g, '').trim();
+        const inputNominal = Number(cleanNominalString);
+
+        const inputKeterangan = document.getElementById('edit-keterangan')?.value.trim() || '-';
+        const inputKategori = document.getElementById('edit-kategori')?.value || window.currentEditItem.kategori;
+
+        if (!inputRawVal) {
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert("Tanggal transaksi harus diisi!", "warning");
+            } else {
+                alert("Tanggal transaksi harus diisi!");
+            }
+            return;
+        }
+
+        if (isNaN(inputNominal) || inputNominal <= 0) {
+            if (typeof window.tampilAlert === 'function') {
+                await window.tampilAlert("Nominal harus lebih besar dari 0!", "warning");
+            } else {
+                alert("Nominal harus lebih besar dari 0!");
+            }
+            return;
+        }
+
+        const isPengeluaran = (window.currentEditItem.tipe === 'pengeluaran') || String(docId).startsWith('out_');
+        const nominalBersih = isPengeluaran ? -Math.abs(inputNominal) : Math.abs(inputNominal);
+
+        // Buat Timestamp Baru dari YYYY-MM-DD
+        const [y, m, d] = inputRawVal.split('-').map(Number);
+        const newDateObj = new Date(y, m - 1, d, 12, 0, 0);
+
+        const updatedPayload = {
+            ...window.currentEditItem,
+            kategori: inputKategori,
+            keterangan: inputKeterangan,
+            totalBersihNetto: nominalBersih,
+            waktuTransaksi: (window.fbTimestamp && typeof window.fbTimestamp.fromDate === 'function') 
+                ? window.fbTimestamp.fromDate(newDateObj) 
+                : newDateObj
+        };
+
+        if (typeof window.simpanTransaksiFirestore === 'function') {
+            await window.simpanTransaksiFirestore(docId, updatedPayload);
+        }
+        
+        if (typeof window.tutupModalEditTransaksi === 'function') {
+            window.tutupModalEditTransaksi();
+        }
+    };
+
+    /**
+     * Hapus Data Transaksi Dari Modal Edit
+     */
+    window.hapusDataTransaksi = async function() {
+        if (!window.currentEditItem) return;
+
+        const docId = window.currentEditItem.idTransaksi || window.currentEditItem.docId;
+        
+        // Tutup modal edit
+        window.tutupModalEditTransaksi();
+
+        // Hapus dokumen via helper
+        await window.hapusTransaksiFirestore(docId);
     };
 
 
