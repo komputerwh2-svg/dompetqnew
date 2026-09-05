@@ -289,6 +289,30 @@
       </div>
     </div>
 
+    <!-- LIGHTBOX ZOOM GAMBAR -->
+    <div id="lightbox-zoom" onclick="tutupZoomGambar()" class="fixed inset-0 bg-black/90 z-[10000] flex items-center justify-center p-4 hidden backdrop-blur-md cursor-zoom-out transition-all duration-300 opacity-0">
+        <button onclick="tutupZoomGambar()" class="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-light transition">&times;</button>
+        <div class="relative max-w-full max-h-[90vh] overflow-auto custom-scrollbar flex items-center justify-center" onclick="event.stopPropagation()">
+            <img id="lightbox-img" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl cursor-grab active:cursor-grabbing transition-transform duration-200 hover:scale-125" alt="Detail Dokumen Terzoom">
+        </div>
+    </div>
+
+    <!-- MODAL PRATINJAU SLIP GAJI / DOKUMEN -->
+    <div id="modal-pratinjau-slip" class="hidden fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-all duration-300">
+        <div class="relative bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-950 text-white">
+                <h3 class="font-bold text-sm" id="pratinjau-judul">Pratinjau Dokumen</h3>
+                <button onclick="tutupModalPratinjauSlip()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+            </div>
+            <div class="p-4 flex-1 overflow-y-auto flex items-center justify-center custom-scrollbar">
+                <img id="pratinjau-gambar" src="" onclick="bukaZoomGambar(this.src)" class="max-w-full max-h-[60vh] object-contain rounded-lg cursor-zoom-in hover:opacity-95 transition" alt="Foto Slip Gaji">
+            </div>
+            <div class="p-3 bg-slate-950 border-t border-slate-800 text-right">
+                <button onclick="tutupModalPratinjauSlip()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl">Tutup</button>
+            </div>
+        </div>
+    </div>
+
 
     <!-- MODAL KALENDER INTERAKTIF ALA WINDOWS -->
     <div id="modal-kalender" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
@@ -1873,34 +1897,6 @@
             await window.tampilAlert("Gagal menyimpan transaksi: " + err.message, "error");
         }
     };
-
-    // =================================================================
-    // SCRIPT MIGRASI SEKALIPAKAI (HAPUS SETELAH DIGUNAKAN)
-    // =================================================================
-    window.jalankanMigrasiUser = async function() {
-        const srcId = '7NK4cAVLrDNjgywwUKyaCFZOZFM2';
-        const targetId = 'ARIA_20260902_130744';
-        console.log(`🔄 Memulai migrasi data dari ${srcId} ke ${targetId}...`);
-
-        try {
-            const subCols = ['rekap_finansial', 'pengaturan_aplikasi', 'transaksi'];
-
-            for (const col of subCols) {
-                const subRef = collection(db, 'users', srcId, col);
-                const snap = await getDocs(subRef);
-                if (!snap.empty) {
-                    console.log(`📦 Salin sub-koleksi: ${col} (${snap.size} dokumen)...`);
-                    for (const d of snap.docs) {
-                        await setDoc(doc(db, 'users', targetId, col, d.id), d.data(), { merge: true });
-                    }
-                }
-            }
-            console.log("✅ MIGRASI SELESAI SUKSES! Silakan refresh browser.");
-            window.tampilAlert("Migrasi Data Berhasil!");
-        } catch (e) {
-            console.error("❌ Gagal migrasi:", e);
-        }
-    };
 </script>
 
 
@@ -2307,92 +2303,267 @@
 
 
   
-  // Elemen-elemen Modal Detail Pemasukan
-  const btnDetailMasuk = document.getElementById('btn-detail-masuk');
-  const modalDetailMasuk = document.getElementById('modal-detail-masuk');
-  const btnCloseModalMasuk = document.getElementById('btn-close-modal-masuk');
-  const btnDoneModalMasuk = document.getElementById('btn-done-modal-masuk');
-  const modalMasukPeriode = document.getElementById('modal-masuk-periode');
-  const modalMasukTotal = document.getElementById('modal-masuk-total');
-  const listDetailPemasukan = document.getElementById('list-detail-pemasukan');
+    // ==========================================
+    // ELEMEN MODAL DETAIL PEMASUKAN & PRATINJAU
+    // ==========================================
+    const btnDetailMasuk = document.getElementById('btn-detail-masuk');
+    const modalDetailMasuk = document.getElementById('modal-detail-masuk');
+    const btnCloseModalMasuk = document.getElementById('btn-close-modal-masuk');
+    const btnDoneModalMasuk = document.getElementById('btn-done-modal-masuk');
+    const modalMasukPeriode = document.getElementById('modal-masuk-periode');
+    const modalMasukTotal = document.getElementById('modal-masuk-total');
+    const listDetailPemasukan = document.getElementById('list-detail-pemasukan');
 
-  // 1. Fungsi Buka Modal Detail Masuk
-  btnDetailMasuk?.addEventListener('click', () => {
+    // 1. Event listener Buka Modal Detail Masuk
+    btnDetailMasuk?.addEventListener('click', async () => {
     if (modalDetailMasuk) {
-      // Set teks periode bulan sesuai bulan yang sedang aktif
-      const formattedPeriod = selectedDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-      if (modalMasukPeriode) modalMasukPeriode.textContent = formattedPeriod;
-
-      // Tampilkan modal
-      modalDetailMasuk.classList.remove('hidden');
-
-      // Render data transaksi pemasukan
-      renderDetailPemasukan();
+        // Tampilkan modal
+        modalDetailMasuk.classList.remove('hidden');
+        
+        // Render data slip dari Firestore
+        await renderDetailPemasukan();
     }
-  });
-
-  // 2. Fungsi Tutup Modal
-  const closeModalMasuk = () => {
-    modalDetailMasuk?.classList.add('hidden');
-  };
-
-  btnCloseModalMasuk?.addEventListener('click', closeModalMasuk);
-  btnDoneModalMasuk?.addEventListener('click', closeModalMasuk);
-
-  // Tutup modal jika area luar (backdrop) diklik
-  modalDetailMasuk?.addEventListener('click', (e) => {
-    if (e.target === modalDetailMasuk) closeModalMasuk();
-  });
-
-  // 3. Fungsi Render Daftar Detail Pemasukan
-  function renderDetailPemasukan() {
-    if (!listDetailPemasukan) return;
-
-    // Filter data transaksi tipe 'masuk' berdasarkan bulan & tahun yang aktif
-    const currentMonth = selectedDate.getMonth();
-    const currentYear = selectedDate.getFullYear();
-
-    // Contoh array transaksi (sesuaikan dengan nama variabel array transaksi di app Anda, misal: transactions)
-    const incomeList = (window.transactions || []).filter(item => {
-      const tDate = new Date(item.date);
-      return item.type === 'masuk' && 
-            tDate.getMonth() === currentMonth && 
-            tDate.getFullYear() === currentYear;
     });
 
-    // Hitung Total Pemasukan
-    const totalIncome = incomeList.reduce((sum, item) => sum + Number(item.amount || 0), 0);
-    if (modalMasukTotal) {
-      modalMasukTotal.textContent = `Rp ${totalIncome.toLocaleString('id-ID')}`;
+    // 2. Fungsi Tutup Modal Detail Masuk
+    const closeModalMasuk = () => {
+    modalDetailMasuk?.classList.add('hidden');
+    };
+
+    btnCloseModalMasuk?.addEventListener('click', closeModalMasuk);
+    btnDoneModalMasuk?.addEventListener('click', closeModalMasuk);
+
+    modalDetailMasuk?.addEventListener('click', (e) => {
+    if (e.target === modalDetailMasuk) closeModalMasuk();
+    });
+
+
+    // 3. Fungsi utama mengambil data Firestore dan Merender List Slip
+    async function renderDetailPemasukan() {
+        if (!listDetailPemasukan) return;
+
+        const refDate = typeof selectedDate !== 'undefined' ? selectedDate : new Date();
+        const formattedPeriod = refDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+        
+        if (modalMasukPeriode) modalMasukPeriode.textContent = formattedPeriod;
+
+        listDetailPemasukan.innerHTML = `
+            <div class="text-center py-8 text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
+                <i class="fa-solid fa-spinner fa-spin text-2xl text-emerald-400"></i>
+                <p>Membaca database Firestore...</p>
+            </div>`;
+
+        const activeUserId = typeof window.getActiveUserId === 'function' ? window.getActiveUserId() : null;
+
+        if (!activeUserId) {
+            listDetailPemasukan.innerHTML = `
+                <div class="text-center py-6 text-amber-400 text-xs">
+                    <i class="fa-solid fa-triangle-exclamation text-xl mb-1 block"></i>
+                    Profil belum dipilih. Silakan buat atau pilih akun user terlebih dahulu.
+                </div>`;
+            if (modalMasukTotal) modalMasukTotal.textContent = 'Rp 0';
+            return;
+        }
+
+        try {
+            let listDataDitemukan = [];
+
+            // Ambil seluruh dokumen yang ADA di sub-koleksi rekap_finansial (Tanpa tebak-tebakan ID / 404 error)
+            const colRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_finansial');
+            const querySnap = await window.fbGetDocs(colRef);
+
+            querySnap.forEach((doc) => {
+                const data = doc.data();
+                if (!data) return;
+
+                const keterangan = (data.keterangan || "").toLowerCase();
+                const totalNetto = parseInt(data.totalBersihNetto || 0);
+
+                // CEK PERIODE
+                const matchesPeriod = (data.periode === formattedPeriod) || 
+                                     doc.id.includes(formattedPeriod.trim().toLowerCase().replace(/\s+/g, '_'));
+
+                // FILTER HANYA TRANSAKSI PEMASUKAN:
+                // Harus mencakup kata "pemasukan" di keterangan ATAU nilai netto bernilai positif & bukan mutasi/out
+                const isPemasukan = keterangan.includes('pemasukan') || 
+                                    (totalNetto > 0 && !doc.id.startsWith('mutasi_') && !doc.id.startsWith('out_'));
+
+                if (matchesPeriod && isPemasukan) {
+                    listDataDitemukan.push({
+                        kategori: data.kategori || "GAJI",
+                        periode: data.periode || formattedPeriod,
+                        totalBersihNetto: totalNetto,
+                        referenceKeyImage: data.referenceKeyImage || doc.id,
+                        waktuTransaksi: data.waktuTransaksi || null,
+                        keterangan: data.keterangan || "-"
+                    });
+                }
+            });
+
+            const totalIncome = listDataDitemukan.reduce((sum, item) => sum + item.totalBersihNetto, 0);
+            if (modalMasukTotal) {
+                modalMasukTotal.textContent = `Rp ${totalIncome.toLocaleString('id-ID')}`;
+            }
+
+            if (listDataDitemukan.length === 0) {
+                listDetailPemasukan.innerHTML = `
+                    <div class="text-center py-8 text-slate-500 space-y-2">
+                        <i class="fa-solid fa-receipt text-3xl opacity-40"></i>
+                        <p class="text-xs">Belum ada data slip terverifikasi untuk periode <span class="font-semibold text-slate-300">${formattedPeriod}</span>.</p>
+                    </div>`;
+            } else {
+                listDetailPemasukan.innerHTML = listDataDitemukan.map(data => {
+                    const kat = data.kategori.toUpperCase();
+                    
+                    let badgeStyle = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                    if (kat === "KSP") badgeStyle = "bg-purple-500/10 text-purple-400 border-purple-500/20";
+                    if (kat === "THR") badgeStyle = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+
+                    let teksWaktuUpload = "Baru Saja";
+                    if (data.waktuTransaksi) {
+                        const dateObj = data.waktuTransaksi.toDate ? data.waktuTransaksi.toDate() : new Date(data.waktuTransaksi);
+                        teksWaktuUpload = dateObj.toLocaleString('id-ID', {
+                            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                        });
+                    }
+
+                    return `
+                    <div class="bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/50 rounded-xl p-3.5 space-y-2.5 transition-all shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border ${badgeStyle}">
+                                    ${kat}
+                                </span>
+                                <span class="text-[11px] text-slate-400 font-medium">${data.periode}</span>
+                            </div>
+                            <p class="text-sm font-black text-emerald-400">
+                                +Rp ${data.totalBersihNetto.toLocaleString('id-ID')}
+                            </p>
+                        </div>
+
+                        <div class="pt-2 border-t border-slate-700/40 text-[10px] text-slate-400 space-y-1 bg-slate-900/40 p-2 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <span><i class="fa-regular fa-clock mr-1 text-slate-500"></i> Waktu Transaksi:</span>
+                                <span class="text-slate-300 font-medium">${teksWaktuUpload}</span>
+                            </div>
+                            <div class="flex justify-between items-center gap-2">
+                                <span class="shrink-0"><i class="fa-regular fa-file-lines mr-1 text-slate-500"></i> Keterangan:</span>
+                                <span class="text-slate-200 font-semibold truncate text-right">${data.keterangan}</span>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="window.bukaPratinjauSlipManual('${data.referenceKeyImage}')" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg font-semibold transition flex items-center justify-center gap-1.5 text-[11px] active:scale-98 cursor-pointer">
+                            <i class="fa-regular fa-image text-emerald-400"></i> Lihat Pratinjau Slip
+                        </button>
+                    </div>
+                    `;
+                }).join('');
+            }
+
+        } catch (error) {
+            console.error("❌ Gagal memuat detail slip:", error);
+            listDetailPemasukan.innerHTML = `
+                <div class="text-center py-6 text-rose-400 text-xs">
+                    <i class="fa-solid fa-circle-exclamation text-xl mb-1 block"></i>
+                    Gagal membaca data dari Firestore.
+                </div>`;
+        }
     }
 
-    // Render List Item
-    if (incomeList.length === 0) {
-      listDetailPemasukan.innerHTML = `
-        <div class="text-center py-8 text-slate-500 space-y-2">
-          <i class="fa-solid fa-receipt text-3xl opacity-40"></i>
-          <p class="text-xs">Belum ada catatan pemasukan pada bulan ini.</p>
-        </div>`;
-    } else {
-      listDetailPemasukan.innerHTML = incomeList.map(item => `
-        <div class="bg-slate-800/50 hover:bg-slate-800/80 p-3 rounded-xl border border-slate-700/40 flex items-center justify-between gap-3 transition-colors">
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs shrink-0">
-              <i class="fa-solid fa-wallet"></i>
-            </div>
-            <div class="truncate">
-              <h5 class="text-xs font-bold text-white truncate">${item.category || 'Pemasukan'}</h5>
-              <p class="text-[10px] text-slate-400 truncate">${item.note || '-'}</p>
-              <span class="text-[9px] text-slate-500">${new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-            </div>
-          </div>
-          <div class="text-right shrink-0">
-            <span class="text-xs font-extrabold text-emerald-400">+Rp ${Number(item.amount).toLocaleString('id-ID')}</span>
-          </div>
-        </div>
-      `).join('');
-    }
-  }
+    // ==========================================
+    // FUNGSI PRATINJAU SLIP & LIGHTBOX (FIRESTORE)
+    // ==========================================
+    window.bukaPratinjauSlipManual = async function(keyGambar) {
+        if (!keyGambar) return;
+        
+        const activeUserId = typeof window.getActiveUserId === 'function' ? window.getActiveUserId() : null;
+
+        if (!activeUserId) {
+            if (typeof tampilAlert === 'function') {
+                tampilAlert("Silakan pilih atau aktifkan akun user terlebih dahulu.", "warning");
+            }
+            return;
+        }
+
+        try {
+            // Ambil data slip dari sub-koleksi: users/{activeUserId}/rekap_slip/{keyGambar}
+            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_slip', keyGambar);
+            const docSnap = await window.fbGetDoc(docRef);
+
+            if (docSnap.exists()) {
+                const dataSlip = docSnap.data();
+
+                if (dataSlip && dataSlip.berkasGambar) {
+                    const elModal = document.getElementById('modal-pratinjau-slip');
+                    const elImg = document.getElementById('pratinjau-gambar');
+                    const elTitle = document.getElementById('pratinjau-judul');
+
+                    if (elModal && elImg) {
+                        elImg.src = dataSlip.berkasGambar;
+                        if (elTitle) {
+                            elTitle.innerText = `Pratinjau Slip - ${dataSlip.keteranganAsli || keyGambar}`;
+                        }
+
+                        elModal.classList.remove('hidden');
+                        elModal.style.display = 'flex';
+                    }
+                } else {
+                    if (typeof tampilAlert === 'function') {
+                        tampilAlert("Gambar slip tidak ditemukan pada dokumen ini.", "warning");
+                    }
+                }
+            } else {
+                if (typeof tampilAlert === 'function') {
+                    tampilAlert("Berkas master slip tidak ditemukan di Firestore.", "warning");
+                }
+            }
+        } catch (err) {
+            console.error("Gagal memuat pratinjau dari Firestore:", err);
+            if (typeof tampilAlert === 'function') {
+                tampilAlert(`Gagal memuat gambar: ${err.message}`, "error");
+            }
+        }
+    };
+
+    window.tutupModalPratinjauSlip = function() {
+        const elModal = document.getElementById('modal-pratinjau-slip');
+        const elImg = document.getElementById('pratinjau-gambar');
+        
+        if (elModal) {
+            elModal.classList.add('hidden');
+            elModal.style.display = 'none';
+        }
+        if (elImg) {
+            elImg.src = "";
+        }
+    };
+
+    // Fungsi Lightbox Zoom Gambar
+    window.bukaZoomGambar = function(srcGambar) {
+        if (!srcGambar) return;
+        const elLightbox = document.getElementById('lightbox-zoom');
+        const elImgZoom = document.getElementById('lightbox-img');
+
+        if (elLightbox && elImgZoom) {
+            elImgZoom.src = srcGambar;
+            elLightbox.classList.remove('hidden');
+            elLightbox.classList.remove('opacity-0');
+            elLightbox.classList.add('opacity-100');
+        }
+    };
+
+    window.tutupZoomGambar = function() {
+        const elLightbox = document.getElementById('lightbox-zoom');
+        const elImgZoom = document.getElementById('lightbox-img');
+
+        if (elLightbox) {
+            elLightbox.classList.add('opacity-0');
+            setTimeout(() => {
+                elLightbox.classList.add('hidden');
+                if (elImgZoom) elImgZoom.src = "";
+            }, 200);
+        }
+    };
 
   // =================================================================
   // ENGINE OCR & MODAL CONTROLLER (DOMPETQ)
@@ -2675,134 +2846,140 @@
       });
   }
 
-  // Simpan Data Flat & Integrasi Firebase (+1 Bulan Buku Finansial)
-  window.simpanDataOcr = async function() {
-      const jenisKategori = document.getElementById('jenis-slip').value;
-      const pendapatan = parseInt((document.getElementById('ocr-pendapatan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
-      const potongan = parseInt((document.getElementById('ocr-potongan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
-      const netto = parseInt((document.getElementById('ocr-netto-pembulatan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
+    /**
+     * SIMPAN DATA OCR SLIP GAJI / KSP / THR / LAINNYA
+     * (Sesuai Struktur SDK v10 Modular & Multi-User DompetQ)
+     */
+    window.simpanDataOcr = async function() {
+        const jenisKategori = document.getElementById('jenis-slip').value;
+        const pendapatan = parseInt((document.getElementById('ocr-pendapatan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
+        const potongan = parseInt((document.getElementById('ocr-potongan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
+        const netto = parseInt((document.getElementById('ocr-netto-pembulatan').value || '').replace(/[^0-9]/g, ''), 10) || 0;
 
-      const inputPeriode = document.getElementById('ocr-periode');
-      let periodeAsliTeks = "Juni 2026";
-      let bulanAsliIndex = 5; 
-      let tahunAsliAngka = 2026;
+        const inputPeriode = document.getElementById('ocr-periode');
+        let periodeAsliTeks = "Juni 2026";
+        let bulanAsliIndex = 5; 
+        let tahunAsliAngka = 2026;
 
-      const namaBulanIndo = [
-          "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-          "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-      ];
+        const namaBulanIndo = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
 
-      if (inputPeriode && inputPeriode.value) {
-          const [tahun, bulan] = inputPeriode.value.split('-');
-          tahunAsliAngka = parseInt(tahun, 10);
-          bulanAsliIndex = parseInt(bulan, 10) - 1;
-          periodeAsliTeks = `${namaBulanIndo[bulanAsliIndex]} ${tahunAsliAngka}`;
-      }
+        if (inputPeriode && inputPeriode.value) {
+            const [tahun, bulan] = inputPeriode.value.split('-');
+            tahunAsliAngka = parseInt(tahun, 10);
+            bulanAsliIndex = parseInt(bulan, 10) - 1;
+            periodeAsliTeks = `${namaBulanIndo[bulanAsliIndex]} ${tahunAsliAngka}`;
+        }
 
-      // Aturan Main: Geser +1 Bulan untuk Target Pembukuan Finansial
-      let bulanTargetIndex = bulanAsliIndex + 1;
-      let tahunTargetAngka = tahunAsliAngka;
+        // Aturan Main: Geser +1 Bulan untuk Target Pembukuan Finansial
+        let bulanTargetIndex = bulanAsliIndex + 1;
+        let tahunTargetAngka = tahunAsliAngka;
 
-      if (bulanTargetIndex > 11) { 
-          bulanTargetIndex = 0;
-          tahunTargetAngka += 1;
-      }
+        if (bulanTargetIndex > 11) { 
+            bulanTargetIndex = 0;
+            tahunTargetAngka += 1;
+        }
 
-      let periodeBukuTeks = `${namaBulanIndo[bulanTargetIndex]} ${tahunTargetAngka}`;
-      let formatPeriodeClean = `${namaBulanIndo[bulanTargetIndex].toLowerCase()}_${tahunTargetAngka}`;
+        let periodeBukuTeks = `${namaBulanIndo[bulanTargetIndex]} ${tahunTargetAngka}`;
+        let formatPeriodeClean = `${namaBulanIndo[bulanTargetIndex].toLowerCase()}_${tahunTargetAngka}`;
 
-      if (pendapatan <= 0) {
-          tampilAlert("Gagal menyimpan! Nominal pendapatan tidak boleh nol.", "warning");
-          return;
-      }
+        if (pendapatan <= 0) {
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Gagal menyimpan! Nominal pendapatan tidak boleh nol.", "warning");
+            } else {
+                alert("Gagal menyimpan! Nominal pendapatan tidak boleh nol.");
+            }
+            return;
+        }
 
-      if (!window.auth || !window.auth.currentUser) {
-          tampilAlert("Sesi login tidak ditemukan. Silakan login terlebih dahulu.", "error");
-          return;
-      }
+        // 1. Ambil User ID Perangkat Aktif
+        const activeUserId = typeof window.getActiveUserId === 'function' 
+            ? window.getActiveUserId() 
+            : localStorage.getItem('dompetq_user_id');
 
-      const userAktif = window.auth.currentUser;
-      let namaUserSistem = "user_dompetq";
-      if (userAktif.email && userAktif.email.includes("@")) {
-          namaUserSistem = userAktif.email.split('@')[0];
-      }
+        if (!activeUserId) {
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Profil user tidak ditemukan! Silakan pilih profil terlebih dahulu.", "error");
+            } else {
+                alert("Profil user tidak ditemukan!");
+            }
+            if (typeof window.bukaModalRegistrasiUser === 'function') {
+                window.bukaModalRegistrasiUser();
+            }
+            return;
+        }
 
-      try {
-          tampilAlert("Menghubungkan ke Firebase...", "info");
-          const userToken = await userAktif.getIdToken(true);
-          const formatKategoriClean = jenisKategori.trim().toLowerCase();
-          const keyTransaksi = `${formatKategoriClean}_${formatPeriodeClean}`;
+        const formatKategoriClean = jenisKategori.trim().toLowerCase();
+        const keyTransaksi = `${formatKategoriClean}_${formatPeriodeClean}`;
 
-          const projectId = window.firebaseConfig?.projectId || "dompetq-app";
-          let rtdbHost = window.firebaseConfig?.databaseURL 
-              ? window.firebaseConfig.databaseURL.replace(/^https?:\/\//, '').replace(/\/$/, '')
-              : "dompetq-app-default-rtdb.asia-southeast1.firebasedatabase.app";
+        try {
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert("Menyimpan rekap finansial...", "info");
+            }
 
-          // 1. Simpan Gambar ke Firebase Realtime Database
-          if (globalCompressedImageBase64) {
-              let endpointRtdb = `https://${rtdbHost}/${keyTransaksi}.json?auth=${userToken}`;
-              try {
-                  await fetch(endpointRtdb, {
-                      method: 'PUT',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                          tipeSlip: jenisKategori,
-                          berkasGambar: globalCompressedImageBase64,
-                          diunggahPada: new Date().toISOString(),
-                          namaUser: namaUserSistem,
-                          keteranganAsli: `Slip Asli Periode ${periodeAsliTeks}`
-                      })
-                  });
-              } catch (rtdbErr) {
-                  console.error("Error Simpan RTDB:", rtdbErr);
-              }
-          }
+            // 2. Simpan Rekap Finansial (Tanpa String Gambar)
+            // Path: users/{activeUserId}/rekap_finansial/{keyTransaksi}
+            const docRefFinansial = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', keyTransaksi);
 
-          // 2. Simpan Rekap Finansial ke Firestore
-          const endpointFirestore = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/rekap_finansial/${keyTransaksi}`;
+            const payloadFinansial = {
+                idTransaksi: keyTransaksi,
+                kategori: jenisKategori,
+                keterangan: `Pemasukan Slip ${jenisKategori.toUpperCase()} (${periodeAsliTeks})`,
+                periode: periodeBukuTeks,
+                pendapatan: pendapatan,
+                potongan: potongan,
+                totalBersihNetto: netto,
+                referenceKeyImage: keyTransaksi,
+                uid: activeUserId,
+                diperbaruiPada: new Date().toISOString(),
+                waktuTransaksi: window.fbServerTimestamp ? window.fbServerTimestamp() : new Date().toISOString()
+            };
 
-          const payloadFirestore = {
-              fields: {
-                  kategori: { stringValue: jenisKategori },
-                  keterangan: { stringValue: `Pemasukan Slip ${jenisKategori.toUpperCase()} (${periodeAsliTeks})` }, 
-                  periode: { stringValue: periodeBukuTeks },
-                  pendapatan: { integerValue: pendapatan.toString() },
-                  potongan: { integerValue: potongan.toString() },
-                  totalBersihNetto: { integerValue: netto.toString() },
-                  referenceKeyImage: { stringValue: keyTransaksi },
-                  waktuTransaksi: { timestampValue: new Date().toISOString() },
-                  namaUser: { stringValue: namaUserSistem }
-              }
-          };
+            await window.fbSetDoc(docRefFinansial, payloadFinansial, { merge: true });
 
-          const responFirestore = await fetch(endpointFirestore, {
-              method: 'PATCH',
-              headers: { 
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${userToken}`
-              },
-              body: JSON.stringify(payloadFirestore)
-          });
+            // 3. Simpan Gambar Slip ke Sub-Koleksi Khusus: rekap_slip
+            // Path: users/{activeUserId}/rekap_slip/{keyTransaksi}
+            if (typeof globalCompressedImageBase64 !== 'undefined' && globalCompressedImageBase64) {
+                const docRefSlip = window.fbDoc(window.db, 'users', activeUserId, 'rekap_slip', keyTransaksi);
+                
+                const payloadSlip = {
+                    idSlip: keyTransaksi,
+                    berkasGambar: globalCompressedImageBase64,
+                    kategori: jenisKategori,
+                    periode: periodeBukuTeks,
+                    diunggahPada: new Date().toISOString()
+                };
 
-          if (!responFirestore.ok) {
-              const errTxt = await responFirestore.text();
-              throw new Error(`Firestore Error: ${responFirestore.status} - ${errTxt}`);
-          }
-          
-          tampilAlert(`Sukses! ${jenisKategori.toUpperCase()} (${periodeAsliTeks}) dialokasikan ke Pembukuan Bulan ${periodeBukuTeks}.`, "success");
-          window.tutupModalOcr();
+                await window.fbSetDoc(docRefSlip, payloadSlip, { merge: true });
+            }
 
-          if (typeof window.muatRekapFinansialDashboard === 'function') {
-              await window.muatRekapFinansialDashboard(userAktif.uid);
-          } else if (typeof window.inisialisasiAplikasi === 'function') {
-              await window.inisialisasiAplikasi();
-          }
+            // 4. Alert Sukses & Reload
+            const pesanSukses = `Sukses! ${jenisKategori.toUpperCase()} (${periodeAsliTeks}) dialokasikan ke Pembukuan Bulan ${periodeBukuTeks}.`;
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert(pesanSukses, "success");
+            } else {
+                alert(pesanSukses);
+            }
 
-      } catch (error) {
-          console.error("Firebase API Sync Error:", error);
-          tampilAlert(`Gagal Sinkronisasi Firebase: ${error.message}`, "error");
-      }
-  };
+            if (typeof window.tutupModalOcr === 'function') {
+                window.tutupModalOcr();
+            }
+
+            if (typeof window.muatDataUtama === 'function') {
+                await window.muatDataUtama(activeUserId);
+            }
+
+        } catch (error) {
+            console.error("❌ Gagal Simpan Data OCR ke Firestore:", error);
+            if (typeof window.tampilAlert === 'function') {
+                window.tampilAlert(`Gagal menyimpan data: ${error.message}`, "error");
+            } else {
+                alert(`Gagal menyimpan data: ${error.message}`);
+            }
+        }
+    };
 
 
   // STATE MODAL PENGELUARAN & KALKULATOR
