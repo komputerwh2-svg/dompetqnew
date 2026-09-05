@@ -77,15 +77,25 @@
 
         <!-- Total Saldo -->
         <div class="my-6">
-          <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
-          <!-- TAMBAHKAN id="total-saldo" DI SINI -->
-          <h2 id="total-saldo" class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
-          
-          <div class="mt-3 inline-block bg-slate-950/10 px-3 py-1 rounded-full">
+        <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
+        <h2 id="total-saldo" class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
+        
+        <!-- WADAH SEJAJAR (FLEX) SISA BULAN LALU & TOTAL TABUNGAN -->
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+            <!-- Kiri: Sisa Bulan Lalu -->
+            <div class="bg-slate-950/10 px-3 py-1 rounded-full">
             <p class="text-[10px] md:text-xs text-slate-800 font-medium">
-              Sisa Bulan Lalu: <span class="font-bold text-slate-950">Rp 0</span>
+                Sisa Bulan Lalu: <span id="sisa-bulan-lalu" class="font-bold text-slate-950">Rp 0</span>
             </p>
-          </div>
+            </div>
+
+            <!-- Kanan: Total Tabungan -->
+            <div class="bg-slate-950/10 px-3 py-1 rounded-full">
+            <p class="text-[10px] md:text-xs text-slate-800 font-medium">
+                Total Tabungan: <span id="total-saldo-tabungan" class="font-bold text-slate-950">Rp 0</span>
+            </p>
+            </div>
+        </div>
         </div>
 
         <!-- Action Buttons Grid (3 Tombol) -->
@@ -1259,15 +1269,20 @@
             renderKategoriPengeluaran();
         }
 
-        // 4. Reset Element Saldo & Transaksi UI
+        // 4. Reset Element Saldo, Sisa Lalu, & Transaksi UI
         const elSaldo = document.getElementById('total-saldo');
         const elMasuk = document.getElementById('total-pemasukan');
         const elKeluar = document.getElementById('total-pengeluaran');
-        
+        const elTabungan = document.getElementById('total-saldo-tabungan');
+        const elSisaLaluSpan = document.getElementById('sisa-bulan-lalu') || document.querySelector('#total-saldo + div span, div.my-6 span.font-bold');
+
         if (elSaldo) elSaldo.textContent = 'Rp 0';
         if (elMasuk) elMasuk.textContent = 'Rp 0';
         if (elKeluar) elKeluar.textContent = 'Rp 0';
+        if (elTabungan) elTabungan.textContent = 'Rp 0';
+        if (elSisaLaluSpan) elSisaLaluSpan.textContent = 'Rp 0';
 
+        // 5. Reset List Riwayat Transaksi
         if (typeof window.renderListRiwayat === 'function') {
             window.renderListRiwayat([]);
         }
@@ -1284,7 +1299,7 @@
         localStorage.removeItem('dompetq_quick_notes');
         localStorage.removeItem('dompetq_kategori_pengeluaran');
 
-        // 2. Clear UI dan Variabel Global
+        // 2. Clear UI dan Variabel Global (Termasuk reset semua angka saldo ke Rp 0)
         window.resetTampilanKosong();
 
         // 3. Reset Header Profil ke Tampilan Kosong/Awal
@@ -1292,15 +1307,15 @@
             window.muatTampilanProfilHeader();
         }
 
-        // 4. Buka Modal Registrasi / Pilih User
-        if (typeof window.bukaModalRegistrasiUser === 'function') {
-            window.bukaModalRegistrasiUser();
+        // 4. Tutup Modal Registrasi / Pilih User terlebih dahulu agar alert tidak tertutup
+        if (typeof window.tutupModalRegistrasiUser === 'function') {
+            window.tutupModalRegistrasiUser();
         } else {
             const modal = document.getElementById('modal-reg-user');
-            if (modal) modal.classList.remove('hidden');
+            if (modal) modal.classList.add('hidden');
         }
 
-        // 5. Tampilkan Notifikasi
+        // 5. Tampilkan Notifikasi Keluar
         if (typeof window.tampilAlert === 'function') {
             window.tampilAlert("Berhasil keluar dari profil. Silakan pilih atau daftar profil baru.", "info");
         }
@@ -1485,6 +1500,7 @@
 
         let totalPemasukanBulanIni = 0;
         let totalPengeluaranBulanIni = 0;
+        let totalSaldoTabunganAkomulasi = 0; // Variabel akumulasi tabungan
         let listTransaksiBulanIni = [];
 
         try {
@@ -1494,14 +1510,20 @@
             // A. PERIKSA & TULIS OTOMATIS DOKUMEN SALDO LALU JIKA BELUM ADA
             const sisaBulanLaluCatatan = await periksaDanAutoKunciSaldoLalu(activeUserId, activePeriodUI, snapRekap);
 
-            // B. PROSES PEMASUKAN & PENGELUARAN BULAN AKTIF
+            // B. PROSES PEMASUKAN, PENGELUARAN & TOTAL TABUNGAN USER AKTIF
             snapRekap.forEach(docSnap => {
                 const data = docSnap.data();
                 const idTrans = (data.idTransaksi || docSnap.id || "").toLowerCase();
                 const rawPeriode = normalizePeriod(data.periode);
                 const nominalNetto = Number(data.totalBersihNetto || 0);
+                const katName = (data.kategori || "").toLowerCase();
 
-                // Abaikan semua dokumen catatan saldo lalu
+                // Hitung Akumulasi Seluruh Saldo Tabungan Milik User (Semua Periode)
+                if (katName.startsWith('mutasi_tabungan') || idTrans.startsWith('mutasi_tabungan')) {
+                    totalSaldoTabunganAkomulasi += Math.abs(nominalNetto);
+                }
+
+                // Abaikan semua dokumen catatan saldo lalu untuk list & rekap bulanan
                 if (idTrans.startsWith('saldo_lalu_')) return;
 
                 if (rawPeriode === activePeriodUI) {
@@ -1530,9 +1552,15 @@
             const elSaldo = document.getElementById('total-saldo');
             if (elSaldo) elSaldo.textContent = window.formatRupiah(totalSaldoSaatIni);
 
-            const elSisaLaluSpan = document.querySelector('#total-saldo + div span, div.my-6 span.font-bold');
+            const elSisaLaluSpan = document.getElementById('sisa-bulan-lalu') || document.querySelector('#total-saldo + div span, div.my-6 span.font-bold');
             if (elSisaLaluSpan) {
                 elSisaLaluSpan.textContent = window.formatRupiah(sisaBulanLaluCatatan);
+            }
+
+            // Update Tampilan Total Tabungan User
+            const elTabungan = document.getElementById('total-saldo-tabungan');
+            if (elTabungan) {
+                elTabungan.textContent = window.formatRupiah(totalSaldoTabunganAkomulasi);
             }
 
             const elMasuk = document.getElementById('total-pemasukan');
