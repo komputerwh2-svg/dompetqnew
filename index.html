@@ -1666,18 +1666,22 @@
         const dataTersortir = [...items].sort((a, b) => getDateObject(b) - getDateObject(a));
         window.semuaDataLaporan = dataTersortir;
 
-        // 2. FILTER PERIODE BULAN BERJALAN (PROTEKSI DATA ANOMALI 1970)
-        const skrg = new Date();
-        const bulanIni = skrg.getMonth();
-        const tahunIni = skrg.getFullYear();
+        // 2. FILTER PERIODE SESUAI BULAN YANG DIPILIH (selectedDate / currDate)
+        // Ambil acuan dari selectedDate/currDate, jika tidak ada baru fallback ke tanggal hari ini
+        const targetDate = (typeof selectedDate !== 'undefined' && selectedDate) 
+            ? selectedDate 
+            : ((typeof currDate !== 'undefined' && currDate) ? currDate : new Date());
 
-        // Format nama bulan untuk pencocokan field `periode` (Contoh: "September 2026")
-        const namaBulanIndo = skrg.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+        const targetBulan = targetDate.getMonth();
+        const targetTahun = targetDate.getFullYear();
+
+        // Format nama bulan untuk pencocokan field `periode` (Contoh: "Agustus 2026" / "September 2026")
+        const namaBulanIndo = targetDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
         const dataBulanIni = dataTersortir.filter(item => {
             const tgl = getDateObject(item);
             
-            // PROTECTION 1: Tolak jika tanggal tidak valid / Epoch 1970 (tgl.getTime() === 0)
+            // PROTECTION 1: Tolak jika tanggal tidak valid / Epoch 1970
             if (!tgl || tgl.getTime() === 0) return false;
 
             // PROTECTION 2: Tolak jika data sampah migrasi (nominal 0 dan tidak ada keterangan)
@@ -1690,7 +1694,7 @@
                 return false;
             }
 
-            // A. Pengecekan Berdasarkan Field `periode` (Misal: slip gaji dicatat untuk "September 2026")
+            // A. Pengecekan Berdasarkan Field `periode`
             if (item.periode && typeof item.periode === 'string') {
                 const periodeClean = item.periode.trim().toLowerCase();
                 const targetPeriode = namaBulanIndo.trim().toLowerCase();
@@ -1698,8 +1702,8 @@
                 if (periodeClean === targetPeriode) return true;
             }
 
-            // B. Fallback: Pengecekan Berdasarkan Tanggal waktuTransaksi
-            return tgl.getMonth() === bulanIni && tgl.getFullYear() === tahunIni;
+            // B. Fallback: Pengecekan Berdasarkan Tanggal transaksi (waktuTransaksi)
+            return tgl.getMonth() === targetBulan && tgl.getFullYear() === targetTahun;
         });
 
         window.stateRiwayat.dataFilteredBulan = dataBulanIni;
