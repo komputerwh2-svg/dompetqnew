@@ -98,26 +98,38 @@
         </div>
         </div>
 
-        <!-- Action Buttons Grid (3 Tombol) -->
-        <div class="grid grid-cols-3 gap-2 md:gap-4 pt-1">
+        <!-- Wadah Akses Cepat dengan Background Lengkung -->
+        <div class="mt-3 bg-slate-900/10 p-2.5 rounded-2xl">
           
-          <!-- Tombol Masuk (Menggabungkan Pemasukan & Upload Slip) -->
-          <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-            <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
-            <span class="text-[9px] md:text-xs font-bold">Masuk</span>
-          </button>
+          <!-- Label Akses Cepat (Rata Kiri) -->
+          <div class="text-left mb-1.5 px-1">
+            <span class="text-[9px] md:text-[10px] font-bold tracking-widest text-slate-800 uppercase">
+              Akses Cepat
+            </span>
+          </div>
 
-          <!-- Tombol Keluar -->
-          <button onclick="bukaModalPengeluaran()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-            <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
-            <span class="text-[9px] md:text-xs font-bold">Keluar</span>
-          </button>
+          <!-- Action Buttons Grid (3 Tombol Kembali ke rounded-2xl) -->
+          <div class="grid grid-cols-3 gap-2 md:gap-4">
+            
+            <!-- Tombol Masuk -->
+            <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+              <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
+              <span class="text-[9px] md:text-xs font-bold">Masuk</span>
+            </button>
 
-          <!-- Tombol Laporan di Dashboard -->
-          <button onclick="bukaModalLaporan()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+            <!-- Tombol Keluar -->
+            <button onclick="bukaModalPengeluaran()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+              <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
+              <span class="text-[9px] md:text-xs font-bold">Keluar</span>
+            </button>
+
+            <!-- Tombol Laporan -->
+            <button onclick="bukaModalLaporan()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
               <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
               <span class="text-[9px] md:text-xs font-bold">Laporan</span>
-          </button>
+            </button>
+
+          </div>
 
         </div>
 
@@ -786,32 +798,118 @@
     </div>
 
 
-    <!-- Modal Laporan Lengkap -->
-    <div id="modal-laporan" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#121714] border border-slate-800 rounded-3xl w-full max-w-md p-5 text-white max-h-[85vh] flex flex-col">
-            <!-- Header Modal -->
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-sm font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-chart-pie text-[#b5f234]"></i> Laporan Mutasi Lengkap
-                </h3>
-                <button onclick="tutupModalLaporan()" class="text-slate-400 hover:text-white text-lg font-bold">&times;</button>
-            </div>
+    <!-- Modal Laporan Lengkap (Full Screen Theme) -->
+    <div id="modal-laporan" class="fixed inset-0 bg-[#0d120e] z-50 flex flex-col hidden overflow-hidden text-white">
+    
+    <!-- Header Modal -->
+    <div class="flex items-center justify-between p-4 md:px-8 border-b border-slate-800 bg-[#121714]">
+        <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-[#b5f234]/10 border border-[#b5f234]/20 flex items-center justify-center">
+            <i class="fa-solid fa-chart-pie text-[#b5f234] text-lg"></i>
+        </div>
+        <div>
+            <h3 class="text-base font-bold text-white">Laporan Mutasi & Keuangan</h3>
+            <p class="text-xs text-slate-400">Rekap transaksi, mutasi tabungan, dan analisis kas</p>
+        </div>
+        </div>
+        <button onclick="tutupModalLaporan()" class="w-10 h-10 rounded-2xl bg-slate-800/60 hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer">
+        <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+    </div>
 
-            <!-- Filter Bar -->
-            <div class="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-none">
-                <button onclick="filterLaporan('7hari')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">7 Hari</button>
-                <button onclick="filterLaporan('30hari')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">30 Hari</button>
-                <button onclick="filterLaporan('90hari')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">90 Hari</button>
-                <button onclick="filterLaporan('bulan_ini')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">Bulan Ini</button>
-                <button onclick="filterLaporan('tahun_ini')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">Tahun Ini</button>
-                <button onclick="filterLaporan('semua')" class="px-3 py-1.5 rounded-xl bg-slate-800 text-[10px] font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black whitespace-nowrap">Semua</button>
-            </div>
+    <!-- Area Konten Utama (Scrollable) -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6">
 
-            <!-- Container List Transaksi Lengkap -->
-            <div id="container-laporan-lengkap" class="overflow-y-auto flex-1 pr-1">
-                <!-- Data terisi lewat JavaScript -->
+        <!-- 1. Filter Bar (Periode & Tipe Transaksi) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#121714] p-4 rounded-3xl border border-slate-800/80">
+        
+        <!-- Filter Periode Waktu -->
+        <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-[#b5f234] mb-2">Periode Waktu</label>
+            <div class="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+            <button onclick="filterLaporan('7hari')" class="btn-filter-laporan px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black hover:border-[#b5f234] transition whitespace-nowrap cursor-pointer">7 Hari</button>
+            <button onclick="filterLaporan('30hari')" class="btn-filter-laporan px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black hover:border-[#b5f234] transition whitespace-nowrap cursor-pointer">30 Hari</button>
+            <button onclick="filterLaporan('bulan_ini')" class="btn-filter-laporan px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black hover:border-[#b5f234] transition whitespace-nowrap cursor-pointer">Bulan Ini</button>
+            <button onclick="filterLaporan('tahun_ini')" class="btn-filter-laporan px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black hover:border-[#b5f234] transition whitespace-nowrap cursor-pointer">Tahun Ini</button>
+            <button onclick="filterLaporan('semua')" class="btn-filter-laporan px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-bold text-slate-300 hover:bg-[#b5f234] hover:text-black hover:border-[#b5f234] transition whitespace-nowrap cursor-pointer">Semua</button>
             </div>
         </div>
+
+        <!-- Filter Jenis Transaksi & Pencarian -->
+        <div class="flex flex-col md:flex-row gap-2 items-stretch md:items-end">
+            <div class="flex-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-[#b5f234] mb-2">Jenis Transaksi</label>
+            <select id="filter-jenis-laporan" onchange="terapkanFilterLaporan()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-[#b5f234] cursor-pointer">
+                <option value="semua">Semua jenis (Pemasukan, Pengeluaran, Mutasi)</option>
+                <option value="pemasukan">Hanya Pemasukan</option>
+                <option value="pengeluaran">Hanya Pengeluaran</option>
+                <option value="mutasi">Hanya Mutasi / Tabungan</option>
+            </select>
+            </div>
+            <div class="flex-1">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-[#b5f234] mb-2">Cari Catatan</label>
+            <div class="relative">
+                <input type="text" id="cari-laporan" oninput="terapkanFilterLaporan()" placeholder="Cari transaksi..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#b5f234]">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+            </div>
+            </div>
+        </div>
+
+        </div>
+
+        <!-- 2. Ringkasan Total Kas (Summary Cards) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <!-- Total Pemasukan -->
+        <div class="bg-[#121714] p-4 rounded-2xl border border-slate-800/80 flex items-center justify-between">
+            <div>
+            <p class="text-[10px] font-bold uppercase text-slate-400">Total Pemasukan</p>
+            <h4 id="laporan-total-masuk" class="text-base font-extrabold text-emerald-400 mt-1">Rp 0</h4>
+            </div>
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-arrow-down text-xs"></i>
+            </div>
+        </div>
+
+        <!-- Total Pengeluaran -->
+        <div class="bg-[#121714] p-4 rounded-2xl border border-slate-800/80 flex items-center justify-between">
+            <div>
+            <p class="text-[10px] font-bold uppercase text-slate-400">Total Pengeluaran</p>
+            <h4 id="laporan-total-keluar" class="text-base font-extrabold text-rose-400 mt-1">Rp 0</h4>
+            </div>
+            <div class="w-8 h-8 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-400">
+            <i class="fa-solid fa-arrow-up text-xs"></i>
+            </div>
+        </div>
+
+        <!-- Selisih Bersih (Cashflow) -->
+        <div class="bg-[#121714] p-4 rounded-2xl border border-slate-800/80 flex items-center justify-between">
+            <div>
+            <p class="text-[10px] font-bold uppercase text-slate-400">Arus Kas Bersih</p>
+            <h4 id="laporan-selisih-bersih" class="text-base font-extrabold text-[#b5f234] mt-1">Rp 0</h4>
+            </div>
+            <div class="w-8 h-8 rounded-xl bg-[#b5f234]/10 flex items-center justify-center text-[#b5f234]">
+            <i class="fa-solid fa-scale-balanced text-xs"></i>
+            </div>
+        </div>
+        </div>
+
+        <!-- 3. Header List & Export Button -->
+        <div class="flex items-center justify-between pt-2">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i class="fa-solid fa-[#b5f234] fa-list"></i> Daftar Rincian Transaksi
+        </h4>
+        <button onclick="exportLaporan()" class="px-3 py-1.5 rounded-xl bg-[#b5f234] text-black font-bold text-xs flex items-center gap-2 hover:bg-[#a2dc2e] transition cursor-pointer">
+            <i class="fa-solid fa-file-arrow-down"></i> Cetak / Export
+        </button>
+        </div>
+
+        <!-- 4. Container List Transaksi Lengkap -->
+        <div id="container-laporan-lengkap" class="space-y-2 pb-6">
+        <!-- Data terisi lewat JavaScript -->
+        </div>
+
+    </div>
+
     </div>
 
     <!-- Modal Edit Transaksi -->
@@ -1838,7 +1936,7 @@
         } else {
             html += `
             <div class="text-center py-4 text-[10px] text-slate-500 border-t border-slate-800/50 mt-2">
-                Menampilkan semua transaksi bulan ini (${dataBulanIni.length} Data)
+                Menampilkan semua transaksi bulan ini (${dataBulanIni.length} Transaksi)
             </div>`;
         }
 
@@ -4315,93 +4413,218 @@
     };
 
 
-  // Buka Modal Laporan
-  window.bukaModalLaporan = function() {
-      const modal = document.getElementById('modal-laporan');
-      if (modal) {
-          modal.classList.remove('hidden');
-          window.filterLaporan('30hari'); // Default tampilkan 30 Hari
-      }
-  };
+  // Variable Global Filter Laporan
+    window.periodeLaporanAktif = '30hari';
 
-  // Tutup Modal Laporan
-  window.tutupModalLaporan = function() {
-      const modal = document.getElementById('modal-laporan');
-      if (modal) modal.classList.add('hidden');
-  };
+    // Buka Modal Laporan
+    window.bukaModalLaporan = function() {
+        const modal = document.getElementById('modal-laporan');
+        if (modal) {
+            modal.classList.remove('hidden');
+            // Reset input pencarian dan dropdown jenis
+            const inputCari = document.getElementById('cari-laporan');
+            const selectJenis = document.getElementById('filter-jenis-laporan');
+            if (inputCari) inputCari.value = '';
+            if (selectJenis) selectJenis.value = 'semua';
+            
+            // Terapkan filter default (30 Hari)
+            window.filterLaporan('30hari');
+        }
+    };
 
-  // Filter Data Laporan Lengkap
-  window.filterLaporan = function(tipeFilter) {
-      const container = document.getElementById('container-laporan-lengkap');
-      if (!container || !window.semuaDataLaporan) return;
+    // Tutup Modal Laporan
+    window.tutupModalLaporan = function() {
+        const modal = document.getElementById('modal-laporan');
+        if (modal) modal.classList.add('hidden');
+    };
 
-      const sekarang = new Date();
-      let dataHasilFilter = [...window.semuaDataLaporan];
+    // Set Periode Laporan & Update UI Tombol Filter
+    window.filterLaporan = function(tipeFilter) {
+        window.periodeLaporanAktif = tipeFilter;
 
-      const getTimestamp = (item) => {
-          if (item.waktuTransaksi) {
-              if (typeof item.waktuTransaksi.toDate === 'function') return item.waktuTransaksi.toDate().getTime();
-              const p = new Date(item.waktuTransaksi).getTime();
-              if (!isNaN(p)) return p;
-          }
-          const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
-          return matchDigits ? parseInt(matchDigits[0], 10) : 0;
-      };
+        // Highlight tombol filter yang aktif
+        const btns = document.querySelectorAll('.btn-filter-laporan');
+        btns.forEach(btn => {
+            btn.classList.remove('bg-[#b5f234]', 'text-black', 'border-[#b5f234]');
+            btn.classList.add('bg-slate-900', 'text-slate-300', 'border-slate-800');
+        });
 
-      if (tipeFilter === '7hari') {
-          const batas = new Date(); batas.setDate(sekarang.getDate() - 7);
-          dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
-      } else if (tipeFilter === '30hari') {
-          const batas = new Date(); batas.setDate(sekarang.getDate() - 30);
-          dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
-      } else if (tipeFilter === '90hari') {
-          const batas = new Date(); batas.setDate(sekarang.getDate() - 90);
-          dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
-      } else if (tipeFilter === 'bulan_ini') {
-          dataHasilFilter = dataHasilFilter.filter(item => {
-              const tgl = new Date(getTimestamp(item));
-              return tgl.getMonth() === sekarang.getMonth() && tgl.getFullYear() === sekarang.getFullYear();
-          });
-      } else if (tipeFilter === 'tahun_ini') {
-          dataHasilFilter = dataHasilFilter.filter(item => {
-              const tgl = new Date(getTimestamp(item));
-              return tgl.getFullYear() === sekarang.getFullYear();
-          });
-      }
+        const activeBtn = Array.from(btns).find(btn => {
+            const onclickAttr = btn.getAttribute('onclick') || '';
+            return onclickAttr.includes(`'${tipeFilter}'`);
+        });
 
-      if (dataHasilFilter.length === 0) {
-          container.innerHTML = `<div class="text-center py-8"><p class="text-xs font-bold text-slate-400">Tidak ada data untuk filter ini</p></div>`;
-          return;
-      }
+        if (activeBtn) {
+            activeBtn.classList.remove('bg-slate-900', 'text-slate-300', 'border-slate-800');
+            activeBtn.classList.add('bg-[#b5f234]', 'text-black', 'border-[#b5f234]');
+        }
 
-      let html = '';
-      dataHasilFilter.forEach(item => {
-          const isMasuk = item.tipe === 'pemasukan';
-          const nominal = Math.abs(Number(item.totalBersihNetto || 0));
-          const judul = item.keterangan || item.kategori || item.idTransaksi;
-          const subJudul = item.periode || '';
+        // Jalankan eksekusi penyaringan data
+        window.terapkanFilterLaporan();
+    };
 
-          html += `
-          <div class="flex items-center justify-between p-3 bg-slate-900 border border-slate-800 rounded-xl mb-2">
-              <div class="flex items-center gap-3">
-                  <div class="w-8 h-8 rounded-lg flex items-center justify-center ${isMasuk ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}">
-                      <i class="fa-solid ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
-                  </div>
-                  <div>
-                      <div class="text-xs font-bold text-slate-200">${judul}</div>
-                      <div class="text-[9px] text-slate-400">${subJudul}</div>
-                  </div>
-              </div>
-              <div class="text-right">
-                  <div class="text-xs font-bold ${isMasuk ? 'text-emerald-400' : 'text-rose-400'}">
-                      ${isMasuk ? '+' : '-'} ${window.formatRupiah(nominal)}
-                  </div>
-              </div>
-          </div>`;
-      });
+    // Core Engine Filter & Rendering Data Laporan
+    window.terapkanFilterLaporan = function() {
+        const container = document.getElementById('container-laporan-lengkap');
+        if (!container) return;
 
-      container.innerHTML = html;
-  };
+        const dataAwal = window.semuaDataLaporan || [];
+        const tipeFilter = window.periodeLaporanAktif || '30hari';
+        const jenisFilter = document.getElementById('filter-jenis-laporan')?.value || 'semua';
+        const kataKunci = (document.getElementById('cari-laporan')?.value || '').toLowerCase().trim();
+
+        const sekarang = new Date();
+
+        // Helper Timestamp
+        const getTimestamp = (item) => {
+            if (item.waktuTransaksi) {
+                if (typeof item.waktuTransaksi.toDate === 'function') return item.waktuTransaksi.toDate().getTime();
+                const p = new Date(item.waktuTransaksi).getTime();
+                if (!isNaN(p)) return p;
+            }
+            const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
+            return matchDigits ? parseInt(matchDigits[0], 10) : 0;
+        };
+
+        // 1. Filter Berdasarkan Periode Waktu
+        let dataHasilFilter = [...dataAwal];
+        if (tipeFilter === '7hari') {
+            const batas = new Date(); batas.setDate(sekarang.getDate() - 7);
+            dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
+        } else if (tipeFilter === '30hari') {
+            const batas = new Date(); batas.setDate(sekarang.getDate() - 30);
+            dataHasilFilter = dataHasilFilter.filter(item => getTimestamp(item) >= batas.getTime());
+        } else if (tipeFilter === 'bulan_ini') {
+            dataHasilFilter = dataHasilFilter.filter(item => {
+                const tgl = new Date(getTimestamp(item));
+                return tgl.getMonth() === sekarang.getMonth() && tgl.getFullYear() === sekarang.getFullYear();
+            });
+        } else if (tipeFilter === 'tahun_ini') {
+            dataHasilFilter = dataHasilFilter.filter(item => {
+                const tgl = new Date(getTimestamp(item));
+                return tgl.getFullYear() === sekarang.getFullYear();
+            });
+        }
+
+        // 2. Filter Berdasarkan Jenis Transaksi
+        if (jenisFilter !== 'semua') {
+            dataHasilFilter = dataHasilFilter.filter(item => {
+                const tipe = (item.tipe || '').toLowerCase();
+                if (jenisFilter === 'pemasukan') return tipe === 'pemasukan';
+                if (jenisFilter === 'pengeluaran') return tipe === 'pengeluaran';
+                if (jenisFilter === 'mutasi') return tipe === 'mutasi' || tipe === 'tabungan';
+                return true;
+            });
+        }
+
+        // 3. Filter Berdasarkan Kata Kunci (Pencarian Catatan / Kategori)
+        if (kataKunci !== '') {
+            dataHasilFilter = dataHasilFilter.filter(item => {
+                const ket = (item.keterangan || '').toLowerCase();
+                const kat = (item.kategori || '').toLowerCase();
+                const id = (item.idTransaksi || '').toLowerCase();
+                return ket.includes(kataKunci) || kat.includes(kataKunci) || id.includes(kataKunci);
+            });
+        }
+
+        // 4. Hitung Ringkasan / Summary Cards (Total Pemasukan, Pengeluaran, Cashflow)
+        let totalMasuk = 0;
+        let totalKeluar = 0;
+
+        dataHasilFilter.forEach(item => {
+            const nominal = Math.abs(Number(item.totalBersihNetto || item.nominal || 0));
+            const tipe = (item.tipe || '').toLowerCase();
+            if (tipe === 'pemasukan') {
+                totalMasuk += nominal;
+            } else if (tipe === 'pengeluaran') {
+                totalKeluar += nominal;
+            }
+        });
+
+        const arusKasBersih = totalMasuk - totalKeluar;
+
+        // Update Elemen DOM Summary Cards
+        const elMasuk = document.getElementById('laporan-total-masuk');
+        const elKeluar = document.getElementById('laporan-total-keluar');
+        const elSelisih = document.getElementById('laporan-selisih-bersih');
+
+        if (elMasuk) elMasuk.textContent = window.formatRupiah ? window.formatRupiah(totalMasuk) : `Rp ${totalMasuk.toLocaleString('id-ID')}`;
+        if (elKeluar) elKeluar.textContent = window.formatRupiah ? window.formatRupiah(totalKeluar) : `Rp ${totalKeluar.toLocaleString('id-ID')}`;
+        if (elSelisih) {
+            elSelisih.textContent = window.formatRupiah ? window.formatRupiah(arusKasBersih) : `Rp ${arusKasBersih.toLocaleString('id-ID')}`;
+            elSelisih.className = `text-base font-extrabold mt-1 ${arusKasBersih >= 0 ? 'text-[#b5f234]' : 'text-rose-400'}`;
+        }
+
+        // 5. Render Daftar Transaksi Ke HTML
+        if (dataHasilFilter.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12 bg-[#121714] rounded-2xl border border-slate-800/80">
+                    <i class="fa-solid fa-folder-open text-slate-600 text-3xl mb-2"></i>
+                    <p class="text-xs font-bold text-slate-400">Tidak ada transaksi ditemukan</p>
+                    <p class="text-[10px] text-slate-500 mt-0.5">Coba ubah filter atau kata kunci pencarian kamu</p>
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        dataHasilFilter.forEach(item => {
+            const tipe = (item.tipe || '').toLowerCase();
+            const isMasuk = tipe === 'pemasukan';
+            const isMutasi = tipe === 'mutasi' || tipe === 'tabungan';
+            
+            const nominal = Math.abs(Number(item.totalBersihNetto || item.nominal || 0));
+            const judul = item.keterangan || item.kategori || item.idTransaksi || 'Transaksi';
+            const subJudul = item.periode || (item.waktuTransaksi ? new Date(getTimestamp(item)).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
+
+            // Styling Warna & Icon Berdasarkan Jenis
+            let iconClass = 'fa-arrow-down';
+            let bgIconClass = 'bg-emerald-500/10 text-emerald-400';
+            let textNominalClass = 'text-emerald-400';
+            let tandaNominal = '+';
+
+            if (isMutasi) {
+                iconClass = 'fa-repeat';
+                bgIconClass = 'bg-sky-500/10 text-sky-400';
+                textNominalClass = 'text-sky-400';
+                tandaNominal = '•';
+            } else if (!isMasuk) {
+                iconClass = 'fa-arrow-up';
+                bgIconClass = 'bg-rose-500/10 text-rose-400';
+                textNominalClass = 'text-rose-400';
+                tandaNominal = '-';
+            }
+
+            const formattedNominal = window.formatRupiah ? window.formatRupiah(nominal) : `Rp ${nominal.toLocaleString('id-ID')}`;
+
+            html += `
+            <div class="flex items-center justify-between p-3.5 bg-[#121714] border border-slate-800/80 rounded-2xl hover:border-slate-700 transition">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center ${bgIconClass}">
+                        <i class="fa-solid ${iconClass} text-xs"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-100">${judul}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5 flex items-center gap-2">
+                            <span>${subJudul}</span>
+                            ${item.kategori ? `<span class="bg-slate-800 px-1.5 py-0.5 rounded text-[9px] text-slate-300">${item.kategori}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xs font-extrabold ${textNominalClass}">
+                        ${tandaNominal} ${formattedNominal}
+                    </div>
+                </div>
+            </div>`;
+        });
+
+        container.innerHTML = html;
+    };
+
+    // Fungsi Cetak / Export Laporan
+    window.exportLaporan = function() {
+        window.print();
+    };
 
 
 
