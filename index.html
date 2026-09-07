@@ -1612,23 +1612,34 @@
         }
     };
 
+    // Variable state untuk kontrol Infinite Scroll & Filter Bulan
+    window.stateRiwayat = {
+        limitPerPage: 10,       // Jumlah item yang dirender per batch
+        currentLimit: 10,       // Limit item aktif saat ini
+        dataFilteredBulan: [],  // Cache data transaksi bulan berjalan
+        isListenerAttached: false
+    };
+
     /**
-     * Helper Render Daftar Riwayat Transaksi (Mobile-Optimized & Stacked Layout)
+     * Helper Render Daftar Riwayat Transaksi (Fix Pemasukan/Pendapatan Render)
      */
-    window.renderListRiwayat = function(items) {
+    window.renderListRiwayat = function(items, isLoadMore = false) {
         const container = document.getElementById('container-riwayat-slip');
         if (!container) return;
+
+        if (!isLoadMore) {
+            window.stateRiwayat.currentLimit = window.stateRiwayat.limitPerPage;
+        }
 
         if (!items || items.length === 0) {
             container.innerHTML = `
             <div class="text-center py-10">
                 <p class="text-xs font-bold text-slate-400">Belum Ada Transaksi</p>
-                <p class="text-[10px] text-slate-500 mt-1">Tidak ada catatan pada periode ini.</p>
+                <p class="text-[10px] text-slate-500 mt-1">Tidak ada catatan transaksi.</p>
             </div>`;
             return;
         }
 
-        // Helper ekstraksi Date object dari waktuTransaksi / timestamp
         const getDateObject = (item) => {
             if (item.waktuTransaksi) {
                 if (typeof item.waktuTransaksi.toDate === 'function') {
@@ -1637,16 +1648,13 @@
                 const parsed = new Date(item.waktuTransaksi);
                 if (!isNaN(parsed.getTime())) return parsed;
             }
-            // Fallback angka timestamp unik di akhir ID
             const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
             if (matchDigits) return new Date(parseInt(matchDigits[0], 10));
-
             if (item.diperbaruiPada) return new Date(item.diperbaruiPada);
 
-            return new Date(0); // Epoch jika kosong
+            return new Date(0);
         };
 
-        // Helper Ekstraksi Jam Format HH:mm WIB
         const getFormatJam = (objTgl) => {
             if (!objTgl || objTgl.getTime() === 0) return '';
             const jam = String(objTgl.getHours()).padStart(2, '0');
@@ -1656,38 +1664,65 @@
 
         // 1. URUTKAN DATA TERBARU DI ATAS
         const dataTersortir = [...items].sort((a, b) => getDateObject(b) - getDateObject(a));
+        window.semuaDataLaporan = dataTersortir;
 
-        // 2. FILTER DATA 7 HARI TERAKHIR UNTUK DASHBOARD
-        const batas7HariLalu = new Date();
-        batas7HariLalu.setDate(batas7HariLalu.getDate() - 7);
-        batas7HariLalu.setHours(0, 0, 0, 0);
+        // 2. FILTER PERIODE BULAN BERJALAN (PROTEKSI DATA ANOMALI 1970)
+        const skrg = new Date();
+        const bulanIni = skrg.getMonth();
+        const tahunIni = skrg.getFullYear();
 
-        const dataUtama = dataTersortir.filter(item => {
+        // Format nama bulan untuk pencocokan field `periode` (Contoh: "September 2026")
+        const namaBulanIndo = skrg.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+
+        const dataBulanIni = dataTersortir.filter(item => {
             const tgl = getDateObject(item);
-            if (tgl.getTime() === 0) return true;
-            return tgl >= batas7HariLalu;
+            
+            // PROTECTION 1: Tolak jika tanggal tidak valid / Epoch 1970 (tgl.getTime() === 0)
+            if (!tgl || tgl.getTime() === 0) return false;
+
+            // PROTECTION 2: Tolak jika data sampah migrasi (nominal 0 dan tidak ada keterangan)
+            const rawNetto = Number(item.totalBersihNetto || 0);
+            const rawPendapatan = Number(item.pendapatan || 0);
+            const rawNominal = Number(item.nominal || 0);
+            const nominalBersih = Math.abs(rawNetto || rawPendapatan || rawNominal || 0);
+            
+            if (nominalBersih === 0 && (!item.keterangan || item.keterangan === '-')) {
+                return false;
+            }
+
+            // A. Pengecekan Berdasarkan Field `periode` (Misal: slip gaji dicatat untuk "September 2026")
+            if (item.periode && typeof item.periode === 'string') {
+                const periodeClean = item.periode.trim().toLowerCase();
+                const targetPeriode = namaBulanIndo.trim().toLowerCase();
+                
+                if (periodeClean === targetPeriode) return true;
+            }
+
+            // B. Fallback: Pengecekan Berdasarkan Tanggal waktuTransaksi
+            return tgl.getMonth() === bulanIni && tgl.getFullYear() === tahunIni;
         });
 
-        if (dataUtama.length === 0) {
+        window.stateRiwayat.dataFilteredBulan = dataBulanIni;
+
+        if (dataBulanIni.length === 0) {
             container.innerHTML = `
             <div class="text-center py-10">
-                <p class="text-xs font-bold text-slate-400">Tidak Ada Transaksi 7 Hari Terakhir</p>
-                <p class="text-[10px] text-slate-500 mt-1">Gunakan menu Laporan untuk melihat riwayat lengkap.</p>
+                <p class="text-xs font-bold text-slate-400">Belum Ada Transaksi Bulan Ini</p>
+                <p class="text-[10px] text-slate-500 mt-1">Gunakan menu Laporan untuk melihat periode lain.</p>
             </div>`;
             return;
         }
 
-        window.semuaDataLaporan = dataTersortir;
+        // 3. POTONG DATA BERDASARKAN LIMIT (LAZY LOADING)
+        const dataBatch = dataBulanIni.slice(0, window.stateRiwayat.currentLimit);
 
-        // 3. KELOMPOKKAN DATA BERDASARKAN TANGGAL (GROUP BY DATE)
+        // 4. KELOMPOKKAN DATA BERDASARKAN TANGGAL
         const kelompokTanggal = {};
         const opsiFormatTgl = { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' };
 
-        dataUtama.forEach(item => {
+        dataBatch.forEach(item => {
             const objTgl = getDateObject(item);
-            const labelTanggal = objTgl.getTime() > 0 
-                ? objTgl.toLocaleDateString('id-ID', opsiFormatTgl) 
-                : 'Lainnya';
+            const labelTanggal = objTgl.toLocaleDateString('id-ID', opsiFormatTgl);
 
             if (!kelompokTanggal[labelTanggal]) {
                 kelompokTanggal[labelTanggal] = [];
@@ -1695,13 +1730,12 @@
             kelompokTanggal[labelTanggal].push(item);
         });
 
-        // 4. RENDER TAMPILAN
+        // 5. RENDER TAMPILAN
         let html = '';
 
         for (const [tglHeader, listTransaksi] of Object.entries(kelompokTanggal)) {
             html += `
             <div class="mb-4">
-                <!-- Header Group Tanggal -->
                 <div class="text-[11px] font-bold text-slate-400 mb-2 px-1 tracking-wide">
                     ${tglHeader}
                 </div>
@@ -1709,7 +1743,12 @@
                 <div class="bg-[#121714] border border-[#b5f234]/30 rounded-2xl p-2 space-y-1.5">`;
 
             listTransaksi.forEach(item => {
-                const nominal = Math.abs(Number(item.totalBersihNetto || 0));
+                // Ekstraksi Nominal dengan fallback fleksibel (Netto / Pendapatan / Nominal / Potongan)
+                const rawNetto = Number(item.totalBersihNetto || 0);
+                const rawPendapatan = Number(item.pendapatan || 0);
+                const rawNominal = Number(item.nominal || 0);
+                
+                const nominal = Math.abs(rawNetto || rawPendapatan || rawNominal || 0);
                 const objTgl = getDateObject(item);
                 const teksJam = getFormatJam(objTgl);
 
@@ -1718,7 +1757,16 @@
                 const idTransStr = (item.idTransaksi || '').toLowerCase();
                 const katStr = (item.kategori || '').toLowerCase();
 
-                const isMasuk = tipeStr === 'pemasukan' || idTransStr.startsWith('gaji') || idTransStr.startsWith('ksp') || idTransStr.startsWith('thr');
+                // Lakukan cek jika ini Pemasukan / Pendapatan
+                const isMasuk = tipeStr === 'pemasukan' || 
+                                tipeStr === 'masuk' || 
+                                rawPendapatan > 0 || 
+                                rawNetto > 0 || 
+                                idTransStr.startsWith('gaji') || 
+                                idTransStr.startsWith('in_') || 
+                                idTransStr.startsWith('ksp') || 
+                                idTransStr.startsWith('thr');
+
                 const isMutasi = tipeStr === 'mutasi' || katStr.includes('mutasi') || idTransStr.startsWith('mutasi');
 
                 let styleBgIcon = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
@@ -1726,7 +1774,7 @@
                 let styleTeksNominal = 'text-rose-400';
                 let tandaNominal = '-';
 
-                if (isMasuk) {
+                if (isMasuk && !isMutasi) {
                     styleBgIcon = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
                     styleIkon = 'fa-arrow-down';
                     styleTeksNominal = 'text-emerald-400';
@@ -1735,27 +1783,22 @@
                     styleBgIcon = 'bg-sky-500/10 text-sky-400 border-sky-500/20';
                     styleIkon = 'fas fa-exchange-alt';
                     styleTeksNominal = 'text-sky-400';
-                    tandaNominal = '-';
+                    tandaNominal = '';
                 }
 
                 const judulKategori = (item.kategori || item.idTransaksi || 'Transaksi').toUpperCase();
                 const subKeterangan = item.keterangan || '-';
-
-                // Escape payload data untuk dikirim ke fungsi onclick
                 const safeItemStr = encodeURIComponent(JSON.stringify(item));
 
                 html += `
                     <div onclick="window.bukaModalEditTransaksi('${safeItemStr}')" 
                         class="flex items-start gap-3 p-2.5 hover:bg-slate-800/50 rounded-xl transition cursor-pointer active:scale-[0.99] group">
                         
-                        <!-- Icon Kategori -->
                         <div class="w-9 h-9 rounded-xl flex items-center justify-center border ${styleBgIcon} shrink-0 mt-0.5">
                             <i class="fa-solid ${styleIkon} text-xs"></i>
                         </div>
                         
-                        <!-- Detail Transaksi Stacked -->
                         <div class="flex-1 min-w-0">
-                            <!-- Baris 1: Judul Kategori & Jam -->
                             <div class="flex items-center justify-between gap-2">
                                 <div class="text-xs font-extrabold ${styleTeksNominal} group-hover:text-[#b5f234] transition tracking-wide truncate">
                                     ${judulKategori}
@@ -1766,12 +1809,10 @@
                                 </div>` : ''}
                             </div>
 
-                            <!-- Baris 2: Sub Keterangan -->
                             <div class="text-[10px] text-slate-400 mt-0.5 break-words">
                                 ${subKeterangan}
                             </div>
 
-                            <!-- Baris 3: Nominal (Di Bawah Keterangan) -->
                             <div class="text-xs font-black ${styleTeksNominal} mt-1">
                                 ${tandaNominal} ${window.formatRupiah(nominal)}
                             </div>
@@ -1785,7 +1826,46 @@
             </div>`;
         }
 
+        if (dataBatch.length < dataBulanIni.length) {
+            html += `
+            <div id="loading-more-riwayat" class="text-center py-3 text-[10px] font-medium text-slate-500 animate-pulse">
+                Geser ke bawah untuk memuat transaksi lainnya...
+            </div>`;
+        } else {
+            html += `
+            <div class="text-center py-4 text-[10px] text-slate-500 border-t border-slate-800/50 mt-2">
+                Menampilkan semua transaksi bulan ini (${dataBulanIni.length} Data)
+            </div>`;
+        }
+
         container.innerHTML = html;
+        window.initScrollRiwayat();
+    };
+
+    /**
+     * Listener Scroll Otomatis untuk Infinite Scroll
+     */
+    window.initScrollRiwayat = function() {
+        if (window.stateRiwayat.isListenerAttached) return;
+
+        window.addEventListener('scroll', () => {
+            const container = document.getElementById('container-riwayat-slip');
+            if (!container) return;
+
+            const totalFiltered = window.stateRiwayat.dataFilteredBulan.length;
+            const currentLimit = window.stateRiwayat.currentLimit;
+
+            // Jika masih ada sisa data yang belum dirender
+            if (currentLimit < totalFiltered) {
+                // Cek jika pengguna sudah scroll mendekati bagian bawah layar (100px sebelum bawah)
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                    window.stateRiwayat.currentLimit += window.stateRiwayat.limitPerPage;
+                    window.renderListRiwayat(window.semuaDataLaporan, true);
+                }
+            }
+        });
+
+        window.stateRiwayat.isListenerAttached = true;
     };
 
     // =================================================================
