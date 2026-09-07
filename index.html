@@ -1613,7 +1613,7 @@
     };
 
     /**
-     * Helper Render Daftar Riwayat Transaksi
+     * Helper Render Daftar Riwayat Transaksi (Mobile-Optimized & Stacked Layout)
      */
     window.renderListRiwayat = function(items) {
         const container = document.getElementById('container-riwayat-slip');
@@ -1644,6 +1644,14 @@
             if (item.diperbaruiPada) return new Date(item.diperbaruiPada);
 
             return new Date(0); // Epoch jika kosong
+        };
+
+        // Helper Ekstraksi Jam Format HH:mm WIB
+        const getFormatJam = (objTgl) => {
+            if (!objTgl || objTgl.getTime() === 0) return '';
+            const jam = String(objTgl.getHours()).padStart(2, '0');
+            const menit = String(objTgl.getMinutes()).padStart(2, '0');
+            return `${jam}:${menit} WIB`;
         };
 
         // 1. URUTKAN DATA TERBARU DI ATAS
@@ -1687,7 +1695,7 @@
             kelompokTanggal[labelTanggal].push(item);
         });
 
-        // 4. RENDER TAMPILAN STYLE GOPAY
+        // 4. RENDER TAMPILAN
         let html = '';
 
         for (const [tglHeader, listTransaksi] of Object.entries(kelompokTanggal)) {
@@ -1698,10 +1706,12 @@
                     ${tglHeader}
                 </div>
                 
-                <div class="bg-[#121714] border border-[#b5f234] rounded-2xl p-2 space-y-1">`;
+                <div class="bg-[#121714] border border-[#b5f234]/30 rounded-2xl p-2 space-y-1.5">`;
 
             listTransaksi.forEach(item => {
                 const nominal = Math.abs(Number(item.totalBersihNetto || 0));
+                const objTgl = getDateObject(item);
+                const teksJam = getFormatJam(objTgl);
 
                 // Deteksi tipe transaksi
                 const tipeStr = (item.tipe || '').toLowerCase();
@@ -1736,22 +1746,37 @@
 
                 html += `
                     <div onclick="window.bukaModalEditTransaksi('${safeItemStr}')" 
-                        class="flex items-center justify-between p-2.5 hover:bg-slate-800/50 rounded-xl transition cursor-pointer active:scale-[0.99]">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl flex items-center justify-center border ${styleBgIcon}">
-                                <i class="fa-solid ${styleIkon} text-xs"></i>
-                            </div>
-                            <div>
-                                <div class="text-xs font-extrabold ${styleTeksNominal} tracking-wide">${judulKategori}</div>
-                                <div class="text-[10px] text-slate-400 mt-0.5 line-clamp-1">${subKeterangan}</div>
-                            </div>
+                        class="flex items-start gap-3 p-2.5 hover:bg-slate-800/50 rounded-xl transition cursor-pointer active:scale-[0.99] group">
+                        
+                        <!-- Icon Kategori -->
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center border ${styleBgIcon} shrink-0 mt-0.5">
+                            <i class="fa-solid ${styleIkon} text-xs"></i>
                         </div>
                         
-                        <div class="text-right">
-                            <div class="text-xs font-black ${styleTeksNominal}">
+                        <!-- Detail Transaksi Stacked -->
+                        <div class="flex-1 min-w-0">
+                            <!-- Baris 1: Judul Kategori & Jam -->
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="text-xs font-extrabold ${styleTeksNominal} group-hover:text-[#b5f234] transition tracking-wide truncate">
+                                    ${judulKategori}
+                                </div>
+                                ${teksJam ? `
+                                <div class="text-[9px] font-medium text-slate-400 bg-slate-900/80 border border-slate-800 px-1.5 py-0.5 rounded-md shrink-0 flex items-center gap-1">
+                                    <i class="fa-regular fa-clock text-[8px] text-slate-500"></i> ${teksJam}
+                                </div>` : ''}
+                            </div>
+
+                            <!-- Baris 2: Sub Keterangan -->
+                            <div class="text-[10px] text-slate-400 mt-0.5 break-words">
+                                ${subKeterangan}
+                            </div>
+
+                            <!-- Baris 3: Nominal (Di Bawah Keterangan) -->
+                            <div class="text-xs font-black ${styleTeksNominal} mt-1">
                                 ${tandaNominal} ${window.formatRupiah(nominal)}
                             </div>
                         </div>
+
                     </div>`;
             });
 
@@ -2372,7 +2397,6 @@
 
         if (!dateObj || isNaN(dateObj.getTime())) return "Waktu simpan tidak valid";
 
-        // Format Tanggal: 1 Sep 2026, 06:46 WIB
         const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
         const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
         
@@ -2412,7 +2436,7 @@
         return new Date(year, month, 1).getTime();
     }
 
-    // LEVEL 1: FETCH DATA & TAMPILKAN LIST PERIODE DENGAN WAKTU UPLOAD
+    // LEVEL 1: FETCH DATA & TAMPILKAN LIST PERIODE (LAYOUT VERTICAL STACK)
     async function renderArsipSlip() {
         const viewList = document.getElementById('view-arsip-list');
         if (!viewList) return;
@@ -2430,11 +2454,9 @@
         }
 
         try {
-            // 1. Fetch data dari rekap_slip
             const colRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_slip');
             const querySnap = await window.fbGetDocs(colRef);
 
-            // 2. Fetch data pendukung dari rekap_finansial
             let finMap = {};
             try {
                 const finColRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_finansial');
@@ -2481,7 +2503,7 @@
                 return;
             }
 
-            // UrutkanKronologis (Terbaru di atas)
+            // Urutkan Kronologis
             rawList.sort((a, b) => parsePeriodeToTimestamp(b) - parsePeriodeToTimestamp(a));
             window.cacheArsipSlip = rawList;
 
@@ -2491,7 +2513,6 @@
                 const periodeNama = item.periode;
                 const teksWaktuUpload = formatWaktuUpload(item.rawTime);
 
-                // Indikator Tren vs Bulan Sebelumnya
                 let elTrend = '';
                 if (index < rawList.length - 1) {
                     const prevItem = rawList[index + 1];
@@ -2518,21 +2539,25 @@
 
                 return `
                 <div onclick="bukaDetailArsipSlip('${item.docId}')" class="bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-[#b5f234]/50 rounded-2xl p-4 transition shadow-sm cursor-pointer group">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-[#b5f234]/10 border border-[#b5f234]/20 text-[#b5f234] flex items-center justify-center font-bold text-sm group-hover:scale-105 transition">
-                                <i class="fa-regular fa-calendar-check"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-white group-hover:text-[#b5f234] transition capitalize">${periodeNama}</h4>
-                                <p class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
-                                    <i class="fa-regular fa-clock text-[9px] text-slate-500"></i> ${teksWaktuUpload}
-                                </p>
-                            </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#b5f234]/10 border border-[#b5f234]/20 text-[#b5f234] flex items-center justify-center font-bold text-sm group-hover:scale-105 transition shrink-0 mt-0.5">
+                            <i class="fa-regular fa-calendar-check"></i>
                         </div>
-                        <div class="text-right">
-                            <p class="text-xs font-black text-[#b5f234]">Rp ${nettoCurrent.toLocaleString('id-ID')}</p>
-                            <p class="text-[9px] text-slate-400 font-medium">Netto Diterima</p>
+                        
+                        <div class="flex-1 min-w-0">
+                            <!-- Bulan & Tahun -->
+                            <h4 class="text-xs font-bold text-white group-hover:text-[#b5f234] transition capitalize truncate">${periodeNama}</h4>
+                            
+                            <!-- Nominal Netto Diterima -->
+                            <div class="flex items-baseline gap-1.5 mt-0.5">
+                                <span class="text-sm font-black text-[#b5f234]">Rp ${nettoCurrent.toLocaleString('id-ID')}</span>
+                                <span class="text-[9px] text-slate-400 font-medium">(Netto Diterima)</span>
+                            </div>
+
+                            <!-- Waktu Disimpan/Upload -->
+                            <p class="text-[10px] text-slate-400 flex items-center gap-1 mt-1 truncate">
+                                <i class="fa-regular fa-clock text-[9px] text-slate-500"></i> ${teksWaktuUpload}
+                            </p>
                         </div>
                     </div>
 
