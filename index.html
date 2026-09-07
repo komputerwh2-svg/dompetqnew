@@ -252,41 +252,52 @@
         </div>
     </div>
 
-    <!-- MODAL ARSIP SLIP -->
+    <!-- MODAL ARSIP SLIP GAJI (MASTER-DETAIL) -->
     <div id="modal-arsip-slip" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[50] hidden flex items-center justify-center p-4">
-      <div class="bg-[#121614] border border-[#b5f234] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+    <div class="bg-[#121614] border border-[#b5f234] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
         
         <!-- Header Modal -->
-        <div class="p-5 border-b border-[#b5f234] flex items-center justify-between bg-[#141a16]">
-          <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold">
-              <i class="fa-solid fa-wallet"></i>
+        <div class="p-5 border-b border-[#b5f234]/30 flex items-center justify-between bg-[#141a16]">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-full bg-[#b5f234] text-slate-950 flex items-center justify-center text-xs font-bold shadow">
+            <i class="fa-solid fa-wallet"></i>
             </div>
             <div>
-              <h3 class="text-sm font-bold text-white leading-none">Arsip Slip Gaji</h3>
-              <span class="text-[10px] text-slate-400">Riwayat berkas slip yang tersimpan</span>
+            <h3 id="arsip-title" class="text-sm font-bold text-white leading-none">Arsip Slip Gaji</h3>
+            <span id="arsip-subtitle" class="text-[10px] text-slate-400">Riwayat berkas slip yang tersimpan</span>
             </div>
-          </div>
-          <button id="btn-close-arsip" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+        </div>
+        <button id="btn-close-arsip" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
             <i class="fa-solid fa-xmark text-sm"></i>
-          </button>
+        </button>
         </div>
 
-        <!-- Body Modal (Daftar Slip) -->
-        <div class="p-5 overflow-y-auto space-y-3 flex-1">
-          <!-- Empty State / Dummy Item -->
-          <div class="text-center py-8 text-slate-500">
-            <i class="fa-solid fa-folder-open text-3xl mb-2"></i>
-            <p class="text-xs font-medium">Belum ada slip tersimpan</p>
-          </div>
+        <!-- Body Modal: CONTAINER SWAP -->
+        <div class="p-5 overflow-y-auto space-y-3 flex-1 custom-scrollbar">
+        
+        <!-- VIEW LEVEL 1: LIST PERIODE / BULAN -->
+        <div id="view-arsip-list" class="space-y-3">
+            <!-- Item daftar periode & indikator tren dirender via JS -->
+        </div>
+
+        <!-- VIEW LEVEL 2: RINCIAN SLIP PERIODE (HIDDEN DEFAULT) -->
+        <div id="view-arsip-detail" class="hidden space-y-4">
+            <!-- Rincian Pendapatan, Potongan, & Netto dirender via JS -->
+        </div>
+
         </div>
 
         <!-- Footer Modal -->
-        <div class="p-4 border-t border-[#b5f234] bg-[#141a16] text-right">
-          <button id="btn-close-arsip-footer" class="px-4 py-2 bg-slate-800 text-xs font-bold text-slate-300 rounded-xl hover:bg-slate-700">Tutup</button>
+        <div class="p-4 border-t border-[#b5f234]/30 bg-[#141a16] flex items-center justify-between">
+        <button id="btn-back-arsip" type="button" class="hidden px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition border border-slate-700 cursor-pointer">
+            <i class="fa-solid fa-arrow-left text-[10px]"></i> Kembali ke Daftar
+        </button>
+        <div class="ml-auto">
+            <button id="btn-close-arsip-footer" type="button" class="px-4 py-1.5 bg-slate-800 text-xs font-bold text-slate-300 rounded-xl hover:bg-slate-700 transition cursor-pointer">Tutup</button>
+        </div>
         </div>
 
-      </div>
+    </div>
     </div>
 
     <!-- LIGHTBOX ZOOM GAMBAR -->
@@ -2300,6 +2311,305 @@
 
     hideCalModal();
   });
+
+
+    // Variabel Penyimpanan Data Cache Sementara
+    window.cacheArsipSlip = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnArsip = document.getElementById('btn-arsip-slip');
+        const modalArsip = document.getElementById('modal-arsip-slip');
+        const btnClose1 = document.getElementById('btn-close-arsip');
+        const btnClose2 = document.getElementById('btn-close-arsip-footer');
+        const btnBack = document.getElementById('btn-back-arsip');
+
+        if (btnArsip && modalArsip) {
+            btnArsip.addEventListener('click', () => {
+                modalArsip.classList.remove('hidden');
+                kembaliKeDaftarArsip();
+                renderArsipSlip();
+            });
+        }
+
+        const tutupModal = () => modalArsip && modalArsip.classList.add('hidden');
+        if (btnClose1) btnClose1.addEventListener('click', tutupModal);
+        if (btnClose2) btnClose2.addEventListener('click', tutupModal);
+        if (btnBack) btnBack.addEventListener('click', kembaliKeDaftarArsip);
+    });
+
+    // Fungsi Reset View ke Level 1 (Daftar Periode)
+    function kembaliKeDaftarArsip() {
+        const viewList = document.getElementById('view-arsip-list');
+        const viewDetail = document.getElementById('view-arsip-detail');
+        const btnBack = document.getElementById('btn-back-arsip');
+        const title = document.getElementById('arsip-title');
+        const subtitle = document.getElementById('arsip-subtitle');
+
+        if (viewList) viewList.classList.remove('hidden');
+        if (viewDetail) viewDetail.classList.add('hidden');
+        if (btnBack) btnBack.classList.add('hidden');
+        
+        if (title) title.innerText = "Arsip Slip Gaji";
+        if (subtitle) subtitle.innerText = "Riwayat berkas slip yang tersimpan";
+    }
+
+    // Helper Format Waktu Upload Indonesia
+    function formatWaktuUpload(rawTime) {
+        if (!rawTime) return "Waktu simpan tidak tercatat";
+
+        let dateObj = null;
+
+        if (typeof rawTime.toDate === 'function') {
+            dateObj = rawTime.toDate();
+        } else if (rawTime instanceof Date) {
+            dateObj = rawTime;
+        } else if (typeof rawTime === 'number') {
+            dateObj = new Date(rawTime);
+        } else if (typeof rawTime === 'string') {
+            const parsed = Date.parse(rawTime);
+            if (!isNaN(parsed)) dateObj = new Date(parsed);
+        }
+
+        if (!dateObj || isNaN(dateObj.getTime())) return "Waktu simpan tidak valid";
+
+        // Format Tanggal: 1 Sep 2026, 06:46 WIB
+        const optionsDate = { day: 'numeric', month: 'short', year: 'numeric' };
+        const optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+        
+        const strTanggal = dateObj.toLocaleDateString('id-ID', optionsDate);
+        const strJam = dateObj.toLocaleTimeString('id-ID', optionsTime).replace('.', ':');
+
+        return `Disimpan: ${strTanggal}, ${strJam} WIB`;
+    }
+
+    // Helper Parsing Urutan Kronologis Tanggal
+    function parsePeriodeToTimestamp(item) {
+        if (item.rawTime) {
+            if (typeof item.rawTime.toDate === 'function') return item.rawTime.toDate().getTime();
+            if (typeof item.rawTime === 'number') return item.rawTime;
+            if (typeof item.rawTime === 'string') {
+                const parsed = Date.parse(item.rawTime);
+                if (!isNaN(parsed)) return parsed;
+            }
+        }
+
+        const mapBulan = {
+            januari: 0, februari: 1, maret: 2, april: 3, mei: 4, juni: 5,
+            juli: 6, agustus: 7, september: 8, oktober: 9, november: 10, desember: 11
+        };
+
+        const str = (item.periode || '').toLowerCase();
+        let month = 0;
+        let year = 2026;
+
+        Object.keys(mapBulan).forEach(b => {
+            if (str.includes(b)) month = mapBulan[b];
+        });
+
+        const matchYear = str.match(/\d{4}/);
+        if (matchYear) year = parseInt(matchYear[0]);
+
+        return new Date(year, month, 1).getTime();
+    }
+
+    // LEVEL 1: FETCH DATA & TAMPILKAN LIST PERIODE DENGAN WAKTU UPLOAD
+    async function renderArsipSlip() {
+        const viewList = document.getElementById('view-arsip-list');
+        if (!viewList) return;
+
+        viewList.innerHTML = `
+            <div class="text-center py-10 text-slate-400 text-xs flex flex-col items-center justify-center gap-2">
+                <i class="fa-solid fa-spinner fa-spin text-2xl text-[#b5f234]"></i>
+                <p>Memuat arsip slip...</p>
+            </div>`;
+
+        const activeUserId = typeof window.getActiveUserId === 'function' ? window.getActiveUserId() : null;
+        if (!activeUserId) {
+            viewList.innerHTML = `<div class="text-center py-6 text-amber-400 text-xs">Profil user belum dipilih.</div>`;
+            return;
+        }
+
+        try {
+            // 1. Fetch data dari rekap_slip
+            const colRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_slip');
+            const querySnap = await window.fbGetDocs(colRef);
+
+            // 2. Fetch data pendukung dari rekap_finansial
+            let finMap = {};
+            try {
+                const finColRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_finansial');
+                const finSnap = await window.fbGetDocs(finColRef);
+                finSnap.forEach(d => { finMap[d.id] = d.data(); });
+            } catch (eFin) {
+                console.warn("⚠️ Data rekap_finansial tidak ditemukan:", eFin);
+            }
+
+            let rawList = [];
+            querySnap.forEach(doc => {
+                const d = doc.data() || {};
+                const docId = doc.id;
+                const finData = finMap[docId] || {};
+
+                const kotor = parseInt(finData.pendapatan || d.pendapatan || d.totalPendapatanKotor || 0);
+                const potongan = parseInt(finData.potongan || d.potongan || d.totalPotongan || 0);
+                let netto = parseInt(finData.totalBersihNetto || d.totalBersihNetto || d.nettoDiterima || 0);
+
+                if (netto === 0 && kotor > 0) {
+                    netto = kotor - potongan;
+                }
+
+                const periodeText = finData.periode || d.periode || docId.replace(/^(gaji|thr|ksp|lainnya)_/i, '').replace(/_/g, ' ');
+
+                rawList.push({
+                    docId: docId,
+                    periode: periodeText,
+                    kategori: finData.kategori || d.tipeSlip || d.kategori || "GAJI",
+                    pendapatanKotor: kotor,
+                    totalPotongan: potongan,
+                    totalBersihNetto: netto,
+                    referenceKeyImage: finData.referenceKeyImage || d.referenceKeyImage || docId,
+                    rawTime: finData.waktuTransaksi || finData.tgl_dibuat || d.waktuTransaksi || d.tgl_dibuat || null
+                });
+            });
+
+            if (rawList.length === 0) {
+                viewList.innerHTML = `
+                    <div class="text-center py-10 text-slate-500 space-y-2">
+                        <i class="fa-solid fa-folder-open text-4xl opacity-30"></i>
+                        <p class="text-xs font-medium">Belum ada slip tersimpan</p>
+                    </div>`;
+                return;
+            }
+
+            // UrutkanKronologis (Terbaru di atas)
+            rawList.sort((a, b) => parsePeriodeToTimestamp(b) - parsePeriodeToTimestamp(a));
+            window.cacheArsipSlip = rawList;
+
+            // Render List Card
+            viewList.innerHTML = rawList.map((item, index) => {
+                const nettoCurrent = item.totalBersihNetto;
+                const periodeNama = item.periode;
+                const teksWaktuUpload = formatWaktuUpload(item.rawTime);
+
+                // Indikator Tren vs Bulan Sebelumnya
+                let elTrend = '';
+                if (index < rawList.length - 1) {
+                    const prevItem = rawList[index + 1];
+                    const nettoPrev = prevItem.totalBersihNetto;
+                    const selisih = nettoCurrent - nettoPrev;
+                    const namaBulanLalu = prevItem.periode;
+
+                    if (selisih > 0) {
+                        elTrend = `<span class="text-[10px] text-emerald-400 font-medium flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                            <i class="fa-solid fa-arrow-trend-up"></i> +Rp ${selisih.toLocaleString('id-ID')} vs ${namaBulanLalu}
+                        </span>`;
+                    } else if (selisih < 0) {
+                        elTrend = `<span class="text-[10px] text-rose-400 font-medium flex items-center gap-1 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+                            <i class="fa-solid fa-arrow-trend-down"></i> -Rp ${Math.abs(selisih).toLocaleString('id-ID')} vs ${namaBulanLalu}
+                        </span>`;
+                    } else {
+                        elTrend = `<span class="text-[10px] text-slate-400 font-medium bg-slate-800 px-2 py-0.5 rounded-md">
+                            Sama vs ${namaBulanLalu}
+                        </span>`;
+                    }
+                } else {
+                    elTrend = `<span class="text-[10px] text-slate-400 font-medium bg-slate-800 px-2 py-0.5 rounded-md">Data Awal</span>`;
+                }
+
+                return `
+                <div onclick="bukaDetailArsipSlip('${item.docId}')" class="bg-slate-900/90 hover:bg-slate-800/90 border border-slate-800 hover:border-[#b5f234]/50 rounded-2xl p-4 transition shadow-sm cursor-pointer group">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#b5f234]/10 border border-[#b5f234]/20 text-[#b5f234] flex items-center justify-center font-bold text-sm group-hover:scale-105 transition">
+                                <i class="fa-regular fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white group-hover:text-[#b5f234] transition capitalize">${periodeNama}</h4>
+                                <p class="text-[10px] text-slate-400 flex items-center gap-1 mt-0.5">
+                                    <i class="fa-regular fa-clock text-[9px] text-slate-500"></i> ${teksWaktuUpload}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-black text-[#b5f234]">Rp ${nettoCurrent.toLocaleString('id-ID')}</p>
+                            <p class="text-[9px] text-slate-400 font-medium">Netto Diterima</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between">
+                        ${elTrend}
+                        <span class="text-[10px] font-semibold text-slate-300 flex items-center gap-1 group-hover:translate-x-1 transition">
+                            Detail <i class="fa-solid fa-chevron-right text-[9px] text-[#b5f234]"></i>
+                        </span>
+                    </div>
+                </div>`;
+            }).join('');
+
+        } catch (e) {
+            console.error("❌ Gagal memuat arsip:", e);
+            viewList.innerHTML = `<div class="text-center py-6 text-rose-400 text-xs">Gagal memuat data arsip.</div>`;
+        }
+    }
+
+    // LEVEL 2: RINCIAN SLIP
+    function bukaDetailArsipSlip(docId) {
+        const item = window.cacheArsipSlip.find(x => x.docId === docId);
+        if (!item) return;
+
+        const viewList = document.getElementById('view-arsip-list');
+        const viewDetail = document.getElementById('view-arsip-detail');
+        const btnBack = document.getElementById('btn-back-arsip');
+        const title = document.getElementById('arsip-title');
+        const subtitle = document.getElementById('arsip-subtitle');
+
+        const periodeNama = item.periode;
+        const kotor = item.pendapatanKotor;
+        const potongan = item.totalPotongan;
+        const netto = item.totalBersihNetto;
+        const refImg = item.referenceKeyImage;
+
+        if (title) title.innerText = `Arsip Slip ${periodeNama}`;
+        if (subtitle) subtitle.innerText = "Histori data masuk & dokumentasi slip";
+
+        if (viewList) viewList.classList.add('hidden');
+        if (viewDetail) viewDetail.classList.remove('hidden');
+        if (btnBack) btnBack.classList.remove('hidden');
+
+        viewDetail.innerHTML = `
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-[#b5f234]/30 rounded-2xl p-4 text-center shadow-inner">
+                <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Total Diterima Bersih</span>
+                <p class="text-2xl font-black text-[#b5f234] mt-0.5">Rp ${netto.toLocaleString('id-ID')}</p>
+            </div>
+
+            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                    <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-dot text-[8px] text-[#b5f234]"></i> Kategori
+                    </span>
+                    <span class="text-xs font-bold text-white uppercase">${item.kategori}</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-300">Pendapatan Kotor</span>
+                    <span class="text-xs font-semibold text-slate-200">Rp ${kotor.toLocaleString('id-ID')}</span>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-300">Potongan</span>
+                    <span class="text-xs font-semibold text-rose-400">-Rp ${potongan.toLocaleString('id-ID')}</span>
+                </div>
+
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <span class="text-xs font-bold text-white">Netto Diterima</span>
+                    <span class="text-xs font-black text-[#b5f234]">Rp ${netto.toLocaleString('id-ID')}</span>
+                </div>
+            </div>
+
+            <button type="button" onclick="window.bukaPratinjauSlipManual('${refImg}')" class="w-full py-3 bg-[#b5f234]/10 hover:bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/40 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow">
+                <i class="fa-regular fa-image text-sm"></i> Lihat Pratinjau Slip Fisik
+            </button>
+        `;
+    }
 
 
   
