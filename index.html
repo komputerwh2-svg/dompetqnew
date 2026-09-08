@@ -829,15 +829,41 @@
 
             <!-- 1. Filter Periode & Pencarian -->
             <div class="bg-[#121714] p-3 md:p-4 rounded-2xl md:rounded-3xl border border-slate-800/80 space-y-3">
-                <!-- Filter Periode Waktu (Pilihan Cepat) -->
+                <!-- Filter Periode Waktu (Pilihan Cepat & Kustom Kalender) -->
                 <div>
                     <label class="block text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-[#b5f234] mb-1.5">Periode Waktu</label>
-                    <div class="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                        <button onclick="filterLaporan('7hari', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">7 Hari</button>
-                        <button onclick="filterLaporan('30hari', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">30 Hari</button>
-                        <button onclick="filterLaporan('bulan_ini', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-[#b5f234] text-black text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">Bulan Ini</button>
-                        <button onclick="filterLaporan('tahun_ini', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">Tahun Ini</button>
-                        <button onclick="filterLaporan('semua', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">Semua</button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- Tombol Pilihan Cepat -->
+                        <div class="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                            <button onclick="filterLaporan('7hari', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">7 Hr</button>
+                            <button onclick="filterLaporan('30hari', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">30 Hr</button>
+                            <button onclick="filterLaporan('bulan_ini', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-[#b5f234] text-black text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">Bulan</button>
+                            <button onclick="filterLaporan('tahun_ini', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">Tahun</button>
+                            <button onclick="filterLaporan('semua', event)" class="btn-filter-laporan px-3 py-1.5 rounded-xl bg-slate-900 text-slate-300 text-xs font-semibold hover:bg-[#b5f234] hover:text-black transition">Semua</button>
+                        </div>
+
+                        <!-- Trigger Modal Kalender Kustom -->
+                        <div class="flex items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-slate-800 text-xs">
+                            <span class="text-slate-400 text-[10px] font-semibold px-1">Kustom:</span>
+                            
+                            <!-- Tanggal Mulai -->
+                            <button type="button" onclick="bukaKalenderUntukLaporan('mulai')" class="bg-slate-950 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-700/60 hover:border-[#b5f234] text-xs flex items-center gap-1.5 transition">
+                                <i class="fa-regular fa-calendar text-[10px] text-[#b5f234]"></i>
+                                <span id="label-tgl-mulai">Mulai</span>
+                            </button>
+                            
+                            <span class="text-slate-500">-</span>
+                            
+                            <!-- Tanggal Akhir -->
+                            <button type="button" onclick="bukaKalenderUntukLaporan('akhir')" class="bg-slate-950 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-700/60 hover:border-[#b5f234] text-xs flex items-center gap-1.5 transition">
+                                <i class="fa-regular fa-calendar text-[10px] text-[#b5f234]"></i>
+                                <span id="label-tgl-akhir">Sampai</span>
+                            </button>
+
+                            <!-- Hidden Input Menyimpan Format ISO YYYY-MM-DD -->
+                            <input type="hidden" id="laporan-tgl-mulai">
+                            <input type="hidden" id="laporan-tgl-akhir">
+                        </div>
                     </div>
                 </div>
 
@@ -2624,8 +2650,75 @@
     renderCalendar();
   });
 
-  // Terapkan Pilihan Tanggal ke Hero Card
+  /**
+   * FUNGSI BARU: Membuka Modal Kalender dari Laporan (Kustom Tanggal)
+   * @param {string} target - 'mulai' atau 'akhir'
+   */
+  function bukaKalenderUntukLaporan(target) {
+    targetInputKalenderLaporan = target;
+    
+    // Ambil nilai tanggal yang sudah tersimpan sebelumnya jika ada
+    const existingVal = target === 'mulai' 
+      ? document.getElementById('laporan-tgl-mulai')?.value 
+      : document.getElementById('laporan-tgl-akhir')?.value;
+
+    if (existingVal) {
+      selectedDate = new Date(existingVal);
+      currDate = new Date(existingVal);
+    } else {
+      selectedDate = new Date();
+      currDate = new Date();
+    }
+
+    currentMode = 'days';
+    renderCalendar();
+    
+    if (modalKalender) {
+      modalKalender.classList.remove('hidden');
+    }
+  }
+
+  // ==========================================
+  // UPDATE LOGIKA TOMBOL TERAPKAN / SIMPAN
+  // ==========================================
   btnSimpanKalender.addEventListener('click', () => {
+    // 1. Format tanggal ISO YYYY-MM-DD (contoh: 2026-09-08)
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const isoDateStr = `${year}-${month}-${day}`;
+
+    // 2. Format Tampilan Lokal Indonesia (contoh: 08 Sep 2026)
+    const formattedShort = selectedDate.toLocaleDateString('id-ID', {
+      day: '2-digit', month: 'short', year: 'numeric'
+    });
+
+    // JIKA DIPANGGIL DARI FILTER LAPORAN
+    if (targetInputKalenderLaporan) {
+      if (targetInputKalenderLaporan === 'mulai') {
+        const inputMulai = document.getElementById('laporan-tgl-mulai');
+        const labelMulai = document.getElementById('label-tgl-mulai');
+        if (inputMulai) inputMulai.value = isoDateStr;
+        if (labelMulai) labelMulai.innerText = formattedShort;
+      } else if (targetInputKalenderLaporan === 'akhir') {
+        const inputAkhir = document.getElementById('laporan-tgl-akhir');
+        const labelAkhir = document.getElementById('label-tgl-akhir');
+        if (inputAkhir) inputAkhir.value = isoDateStr;
+        if (labelAkhir) labelAkhir.innerText = formattedShort;
+      }
+
+      // Reset penanda target & Sembunyikan Modal
+      targetInputKalenderLaporan = null;
+      hideCalModal();
+
+      // Jalankan Saringan Filter Laporan
+      if (typeof filterLaporan === 'function') {
+        filterLaporan('kustom');
+      }
+      return;
+    }
+
+    // JIKA DIPANGGIL UTAMA (DEFAULT HERO CARD / UTAMA)
     const formattedDate = selectedDate.toLocaleDateString('id-ID', {
       weekday: 'long', day: 'numeric', month: 'short', year: 'numeric'
     });
@@ -4537,19 +4630,69 @@
     };
 
 
-  // Variable Global
+  // =================================================================
+    // MODULE LAPORAN FINANSIAL (JALUR INDEPENDEN - FIRESTORE REKAP)
+    // =================================================================
+
+    // Variable Global Khusus Laporan
     let chartTrenInstance = null;
     let chartKategoriInstance = null;
-    let periodeAktif = 'bulan_ini';
+    let periodeAktif = 'semua'; 
+    let dataMasterLaporan = []; // Penampung murni khusus data rekap_finansial
 
     /**
-     * Buka modal laporan & muat data awal
+     * Mengambil LANGSUNG data dari sub-koleksi 'rekap_finansial' Firebase
+     * Menggunakan Firestore v10 Modular SDK dari window
      */
-    function bukaModalLaporan() {
+    async function muatDataJalurLaporan() {
+        try {
+            const userId = window.getActiveUserId 
+                ? window.getActiveUserId() 
+                : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('userId'));
+
+            if (!userId || !window.db) {
+                console.warn("[Laporan] User ID atau Firestore (window.db) belum siap.");
+                return [];
+            }
+
+            console.log(`[Laporan] Mengambil data langsung dari users/${userId}/rekap_finansial...`);
+            
+            // Menggunakan fungsi v10 modular yang diekspos di window
+            const rekapRef = window.fbCollection(window.db, 'users', userId, 'rekap_finansial');
+            const querySnapshot = await window.fbGetDocs(rekapRef);
+
+            const listData = [];
+            querySnapshot.forEach(docSnap => {
+                listData.push({
+                    idTransaksi: docSnap.id,
+                    ...docSnap.data()
+                });
+            });
+
+            // Simpan HANYA ke penampung khusus laporan
+            dataMasterLaporan = listData;
+            return listData;
+
+        } catch (err) {
+            console.error("[Laporan] Gagal mengambil data rekap_finansial:", err);
+            return [];
+        }
+    }
+
+    /**
+     * Buka modal laporan & muat data awal dari Firestore
+     */
+    async function bukaModalLaporan() {
         const modal = document.getElementById('modal-laporan');
         if (modal) {
             modal.classList.remove('hidden');
-            filterLaporan(periodeAktif);
+            
+            // 1. Tarik data Firestore murni jalur rekap_finansial
+            await muatDataJalurLaporan();
+
+            // 2. Default ke filter 'semua'
+            const btnSemua = document.querySelector('.btn-filter-laporan[onclick*="semua"]');
+            filterLaporan('semua', { target: btnSemua });
         }
     }
 
@@ -4563,37 +4706,101 @@
         }
     }
 
+    // Variable temporary untuk menandai field mana yang sedang diisi ('mulai' atau 'akhir')
+    let targetInputKalenderLaporan = null;
+
     /**
-     * Filter berdasarkan tombol periode (7 Hari, 30 Hari, Bulan Ini, Tahun Ini, Semua)
+     * Membuka Modal Kalender Universal untuk Laporan
+     */
+    function bukaKalenderUntukLaporan(target) {
+        targetInputKalenderLaporan = target;
+        
+        // Tampilkan modal kalender
+        const modalCal = document.getElementById('modal-kalender');
+        if (modalCal) {
+            modalCal.classList.remove('hidden');
+        }
+
+        // Ambil nilai existing jika sudah ada
+        const existingVal = target === 'mulai' 
+            ? document.getElementById('laporan-tgl-mulai')?.value 
+            : document.getElementById('laporan-tgl-akhir')?.value;
+
+        // Jika fungsi renderer kalender universal Anda ada, set tanggal fokusnya
+        if (typeof renderKalenderUniversal === 'function') {
+            renderKalenderUniversal(existingVal ? new Date(existingVal) : new Date());
+        }
+    }
+
+    /**
+     * Callback saat tombol "Terapkan" di Modal Kalender di-klik
+     * (Integrasikan kode ini ke listener #btn-simpan-kalender yang sudah ada)
+     */
+    function simpanPilihanKalenderLaporan(selectedDateISO) {
+        if (!selectedDateISO || !targetInputKalenderLaporan) return;
+
+        // Format tanggal cantik untuk tampilan UI (misal: 01 Jan 2026)
+        const d = new Date(selectedDateISO);
+        const options = { day: '2-digit', month: 'short', year: 'numeric' };
+        const labelFormatted = d.toLocaleDateString('id-ID', options);
+
+        if (targetInputKalenderLaporan === 'mulai') {
+            document.getElementById('laporan-tgl-mulai').value = selectedDateISO;
+            document.getElementById('label-tgl-mulai').innerText = labelFormatted;
+        } else if (targetInputKalenderLaporan === 'akhir') {
+            document.getElementById('laporan-tgl-akhir').value = selectedDateISO;
+            document.getElementById('label-tgl-akhir').innerText = labelFormatted;
+        }
+
+        // Reset target penanda
+        targetInputKalenderLaporan = null;
+
+        // Sembunyikan modal kalender
+        document.getElementById('modal-kalender')?.classList.add('hidden');
+
+        // Eksekusi filter laporan mode kustom
+        filterLaporan('kustom');
+    }
+
+    /**
+     * Filter berdasarkan tombol periode (7 Hari, 30 Hari, Bulan Ini, Tahun Ini, Semua, Kustom)
      */
     function filterLaporan(periode, evt) {
         periodeAktif = periode;
 
-        // Highlight tombol filter yang aktif
+        // Reset highlight pada semua tombol preset
         const buttons = document.querySelectorAll('.btn-filter-laporan');
         buttons.forEach(btn => {
             btn.classList.remove('bg-[#b5f234]', 'text-black');
             btn.classList.add('bg-slate-900', 'text-slate-300');
         });
 
-        const targetEl = evt ? evt.target : (window.event ? window.event.target : null);
-        if (targetEl && targetEl.classList && targetEl.classList.contains('btn-filter-laporan')) {
-            targetEl.classList.remove('bg-slate-900', 'text-slate-300');
-            targetEl.classList.add('bg-[#b5f234]', 'text-black');
+        // Highlight tombol preset jika diklik (bukan mode kustom)
+        if (periode !== 'kustom') {
+            const targetEl = evt ? evt.target : (window.event ? window.event.target : null);
+            if (targetEl && targetEl.classList && targetEl.classList.contains('btn-filter-laporan')) {
+                targetEl.classList.remove('bg-slate-900', 'text-slate-300');
+                targetEl.classList.add('bg-[#b5f234]', 'text-black');
+            }
         }
 
+        // Jalankan kalkulasi & penyaringan data
         terapkanFilterLaporan();
     }
 
     /**
-     * Fungsi Utama Filter Laporan & Keuangan
+     * Logika Filter & Update Tampilan Modal Laporan (Mengabaikan Saldo Lalu & Mendukung Rentang Kustom)
      */
-    function terapkanFilterLaporan() {
-        const dataTransaksi = window.semuaDataLaporan || window.stateRiwayat?.dataFilteredBulan || [];
+    async function terapkanFilterLaporan() {
+        let dataTransaksi = dataMasterLaporan;
 
         if (!dataTransaksi || dataTransaksi.length === 0) {
-            console.warn("Data transaksi belum siap atau masih kosong.");
-            kalkulasiDanUpdateSummary([], periodeAktif);
+            dataTransaksi = await muatDataJalurLaporan();
+        }
+
+        if (!dataTransaksi || dataTransaksi.length === 0) {
+            console.warn("[Laporan] Data rekap_finansial tidak ditemukan atau kosong.");
+            if (typeof kalkulasiDanUpdateSummary === 'function') kalkulasiDanUpdateSummary([], periodeAktif);
             if (typeof renderGrafikTren === 'function') renderGrafikTren([]);
             if (typeof renderGrafikKategori === 'function') renderGrafikKategori([]);
             if (typeof renderDaftarTransaksiLaporan === 'function') renderDaftarTransaksiLaporan([]);
@@ -4602,26 +4809,64 @@
 
         const jenisSelected = document.getElementById('filter-jenis-laporan')?.value || 'semua';
         const keyword = document.getElementById('cari-laporan')?.value?.toLowerCase() || '';
-        const hariIni = new Date();
 
-        // Helper ekstraksi tanggal
+        const hariIni = new Date();
+        const tahunSekarang = hariIni.getFullYear();
+
+        // 1. ELIMINASI DOKUMEN SALDO LALU
+        const dataMurni = dataTransaksi.filter(item => {
+            const idTrans = String(item.idTransaksi || '').toLowerCase();
+            const kat = String(item.kategori || '').toLowerCase();
+            const ket = String(item.keterangan || '').toLowerCase();
+
+            // Abaikan dokumen yang diawali atau berisi "saldo_lalu" / "saldo lalu"
+            const isSaldoLalu = idTrans.startsWith('saldo_lalu') || 
+                                kat.includes('saldo_lalu') || 
+                                kat.includes('saldo lalu') || 
+                                ket.includes('sisa saldo otomatis');
+
+            return !isSaldoLalu;
+        });
+
+        // Helper Ekstraksi Tanggal
         const getDateObject = (item) => {
+            let parsedDate = null;
+
             if (item.waktuTransaksi) {
-                if (typeof item.waktuTransaksi.toDate === 'function') return item.waktuTransaksi.toDate();
-                const parsed = new Date(item.waktuTransaksi);
-                if (!isNaN(parsed.getTime())) return parsed;
+                if (typeof item.waktuTransaksi.toDate === 'function') {
+                    parsedDate = item.waktuTransaksi.toDate();
+                } else {
+                    parsedDate = new Date(item.waktuTransaksi);
+                }
+            } else if (item.tanggal) {
+                // Mencegah isu timezone offset saat membaca string YYYY-MM-DD
+                if (typeof item.tanggal === 'string' && item.tanggal.includes('-')) {
+                    const parts = item.tanggal.split('T')[0].split('-');
+                    if (parts.length === 3) {
+                        parsedDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                    } else {
+                        parsedDate = new Date(item.tanggal);
+                    }
+                } else {
+                    parsedDate = new Date(item.tanggal);
+                }
+            } else {
+                const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
+                if (matchDigits) {
+                    parsedDate = new Date(parseInt(matchDigits[0], 10));
+                } else if (item.diperbaruiPada) {
+                    parsedDate = new Date(item.diperbaruiPada);
+                }
             }
-            if (item.tanggal) {
-                const parsed = new Date(item.tanggal);
-                if (!isNaN(parsed.getTime())) return parsed;
+
+            if (parsedDate && !isNaN(parsedDate.getTime())) {
+                return parsedDate;
             }
-            const matchDigits = String(item.idTransaksi || '').match(/\d{10,13}$/);
-            if (matchDigits) return new Date(parseInt(matchDigits[0], 10));
-            if (item.diperbaruiPada) return new Date(item.diperbaruiPada);
-            return new Date(0);
+
+            return new Date(0); 
         };
 
-        // Helper tipe transaksi
+        // Helper Tipe Transaksi
         const getJenisItem = (item) => {
             const tipeStr = (item.tipe || item.jenis || '').toLowerCase();
             const idTransStr = (item.idTransaksi || '').toLowerCase();
@@ -4643,49 +4888,110 @@
             return isMasuk ? 'pemasukan' : 'pengeluaran';
         };
 
-        // Normalize data
-        const dataNormalized = dataTransaksi.map(item => {
+        // 2. Normalisasi Data
+        const dataNormalized = dataMurni.map(item => {
             const rawNetto = Number(item.totalBersihNetto || 0);
             const rawPendapatan = Number(item.pendapatan || 0);
             const rawNominal = Number(item.nominal || 0);
             const nominalBersih = Math.abs(rawNetto || rawPendapatan || rawNominal || 0);
             const tglObj = getDateObject(item);
 
+            const isDateValid = tglObj && !isNaN(tglObj.getTime()) && tglObj.getTime() !== 0;
+            const formattedDate = isDateValid 
+                ? tglObj.toISOString().split('T')[0] 
+                : (item.tanggal || 'N/A');
+
             return {
                 ...item,
                 jenisCalculated: getJenisItem(item),
                 nominalCalculated: nominalBersih,
                 dateObject: tglObj,
-                formattedDate: tglObj.getTime() !== 0 ? tglObj.toISOString().split('T')[0] : (item.tanggal || 'N/A')
+                formattedDate: formattedDate
             };
         });
 
-        // Filter Periode
+        // 3. Filter Periode Waktu
+        const keyPeriode = String(periodeAktif).toLowerCase().replace(/_/g, '');
+
+        // Ambil elemen tanggal kustom dari input hidden
+        const inputMulaiVal = document.getElementById('laporan-tgl-mulai')?.value;
+        const inputAkhirVal = document.getElementById('laporan-tgl-akhir')?.value;
+
+        // Parsing presisi untuk tanggal kustom (Tahun, Bulan-1, Hari)
+        let timeMulai = null;
+        let timeAkhir = null;
+
+        if (inputMulaiVal) {
+            const pMulai = inputMulaiVal.split('-');
+            if (pMulai.length === 3) {
+                const dMulai = new Date(parseInt(pMulai[0], 10), parseInt(pMulai[1], 10) - 1, parseInt(pMulai[2], 10), 0, 0, 0, 0);
+                timeMulai = dMulai.getTime();
+            }
+        }
+
+        if (inputAkhirVal) {
+            const pAkhir = inputAkhirVal.split('-');
+            if (pAkhir.length === 3) {
+                const dAkhir = new Date(parseInt(pAkhir[0], 10), parseInt(pAkhir[1], 10) - 1, parseInt(pAkhir[2], 10), 23, 59, 59, 999);
+                timeAkhir = dAkhir.getTime();
+            }
+        }
+
         let dataTerfilter = dataNormalized.filter(item => {
             const tglItem = item.dateObject;
-            if (!tglItem || tglItem.getTime() === 0) return false;
-            if (item.nominalCalculated === 0 && (!item.keterangan || item.keterangan === '-')) return false;
 
-            if (periodeAktif === '7hari') {
-                const selisihHari = (hariIni - tglItem) / (1000 * 60 * 60 * 24);
-                return selisihHari >= 0 && selisihHari <= 7;
-            } else if (periodeAktif === '30hari') {
-                const selisihHari = (hariIni - tglItem) / (1000 * 60 * 60 * 24);
-                return selisihHari >= 0 && selisihHari <= 30;
-            } else if (periodeAktif === 'bulan_ini') {
-                return tglItem.getMonth() === hariIni.getMonth() && tglItem.getFullYear() === hariIni.getFullYear();
-            } else if (periodeAktif === 'tahun_ini') {
-                return tglItem.getFullYear() === hariIni.getFullYear();
+            // A. FILTER PERIODE KUSTOM
+            if (keyPeriode === 'kustom') {
+                if (!tglItem || isNaN(tglItem.getTime()) || tglItem.getTime() === 0) return false;
+                
+                const timeItem = tglItem.getTime();
+                
+                if (timeMulai !== null && timeItem < timeMulai) return false;
+                if (timeAkhir !== null && timeItem > timeAkhir) return false;
+                return true;
             }
-            return true; // semua
+
+            // B. SEMUA
+            if (keyPeriode === 'semua') {
+                return true;
+            }
+
+            // C. TAHUN INI
+            if (keyPeriode === 'tahun' || keyPeriode === 'tahunini') {
+                if (!tglItem || isNaN(tglItem.getTime()) || tglItem.getTime() === 0) {
+                    return String(item.idTransaksi || '').includes(String(tahunSekarang));
+                }
+                return tglItem.getFullYear() === tahunSekarang;
+            }
+
+            // D. FILTER PRESET LAIN (7 Hari, 30 Hari, Bulan Ini)
+            if (!tglItem || isNaN(tglItem.getTime()) || tglItem.getTime() === 0) return false;
+
+            const tglItemZero = new Date(tglItem);
+            tglItemZero.setHours(0, 0, 0, 0);
+            
+            const hariIniZero = new Date(hariIni);
+            hariIniZero.setHours(0, 0, 0, 0);
+
+            const selisihHari = Math.floor((hariIniZero - tglItemZero) / (1000 * 60 * 60 * 24));
+
+            if (keyPeriode === '7h' || keyPeriode === '7hari') {
+                return selisihHari >= 0 && selisihHari < 7;
+            } else if (keyPeriode === '30h' || keyPeriode === '30hari') {
+                return selisihHari >= 0 && selisihHari < 30;
+            } else if (keyPeriode === 'bulan' || keyPeriode === 'bulanini') {
+                return tglItem.getMonth() === hariIni.getMonth() && tglItem.getFullYear() === tahunSekarang;
+            }
+
+            return true;
         });
 
-        // Filter Jenis
+        // 4. Filter Jenis
         if (jenisSelected !== 'semua') {
             dataTerfilter = dataTerfilter.filter(item => item.jenisCalculated === jenisSelected);
         }
 
-        // Filter Pencarian
+        // 5. Filter Kata Kunci
         if (keyword !== '') {
             dataTerfilter = dataTerfilter.filter(item => {
                 const ket = (item.keterangan || '').toLowerCase();
@@ -4694,8 +5000,8 @@
             });
         }
 
-        // Update Seluruh Komponen Panel
-        kalkulasiDanUpdateSummary(dataTerfilter, periodeAktif);
+        // 6. Render Ke UI Laporan
+        if (typeof kalkulasiDanUpdateSummary === 'function') kalkulasiDanUpdateSummary(dataTerfilter, periodeAktif);
         if (typeof renderGrafikTren === 'function') renderGrafikTren(dataTerfilter);
         if (typeof renderGrafikKategori === 'function') renderGrafikKategori(dataTerfilter);
         if (typeof renderDaftarTransaksiLaporan === 'function') renderDaftarTransaksiLaporan(dataTerfilter);
@@ -4715,25 +5021,48 @@
         });
 
         const netArusKas = totalMasuk - totalKeluar;
+        const keyPeriode = String(periode || '').toLowerCase().replace(/_/g, '');
 
-        // Hitung Hari Efektif untuk Rata-rata
+        // 1. HITUNG HARI EFEKTIF UNTUK RATA-RATA HARIAN
         let jumlahHari = 30;
-        if (periode === '7hari') jumlahHari = 7;
-        else if (periode === '30hari' || periode === 'bulan_ini') jumlahHari = 30;
-        else if (periode === 'tahun_ini') jumlahHari = 365;
-        else if (data.length > 0) {
+
+        if (keyPeriode === 'kustom') {
+            const inputMulaiVal = document.getElementById('laporan-tgl-mulai')?.value;
+            const inputAkhirVal = document.getElementById('laporan-tgl-akhir')?.value;
+
+            if (inputMulaiVal && inputAkhirVal) {
+                const dMulai = new Date(inputMulaiVal);
+                const dAkhir = new Date(inputAkhirVal);
+                const diffTime = Math.abs(dAkhir - dMulai);
+                // Tambah 1 hari agar hitungan inklusif (misal 30 Agu ke 30 Sep dianggap 32 hari)
+                jumlahHari = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1);
+            } else if (data.length > 0) {
+                const timestamps = data.map(d => d.dateObject.getTime()).filter(t => t > 0);
+                if (timestamps.length > 0) {
+                    const minTgl = new Date(Math.min(...timestamps));
+                    const maxTgl = new Date(Math.max(...timestamps));
+                    jumlahHari = Math.max(1, Math.ceil((maxTgl - minTgl) / (1000 * 60 * 60 * 24)) + 1);
+                }
+            }
+        } else if (keyPeriode === '7h' || keyPeriode === '7hari') {
+            jumlahHari = 7;
+        } else if (keyPeriode === '30h' || keyPeriode === '30hari' || keyPeriode === 'bulan' || keyPeriode === 'bulanini') {
+            jumlahHari = 30;
+        } else if (keyPeriode === 'tahun' || keyPeriode === 'tahunini') {
+            jumlahHari = 365;
+        } else if (data.length > 0) {
             const timestamps = data.map(d => d.dateObject.getTime()).filter(t => t > 0);
             if (timestamps.length > 0) {
                 const minTgl = new Date(Math.min(...timestamps));
                 const maxTgl = new Date(Math.max(...timestamps));
-                jumlahHari = Math.max(1, Math.ceil((maxTgl - minTgl) / (1000 * 60 * 60 * 24)));
+                jumlahHari = Math.max(1, Math.ceil((maxTgl - minTgl) / (1000 * 60 * 60 * 24)) + 1);
             }
         }
 
         const rataHarian = Math.round(totalKeluar / (jumlahHari || 1));
         const formatRp = (val) => typeof window.formatRupiah === 'function' ? window.formatRupiah(val) : 'Rp ' + val.toLocaleString('id-ID');
 
-        // Update Elemen UI
+        // 2. UPDATE ELEMEN UI RINGKASAN
         const elNet = document.getElementById('laporan-selisih-bersih');
         const elMasuk = document.getElementById('laporan-total-masuk');
         const elKeluar = document.getElementById('laporan-total-keluar');
@@ -4757,10 +5086,10 @@
         // Update Badge Status
         if (elBadge) {
             if (netArusKas > 0) {
-                elBadge.innerText = "SURPLUS";
+                elBadge.innerText = "ANDA HEMAT";
                 elBadge.className = "px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider";
             } else if (netArusKas < 0) {
-                elBadge.innerText = "DEFISIT";
+                elBadge.innerText = "ANDA BOROS";
                 elBadge.className = "px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wider";
             } else {
                 elBadge.innerText = "STABIL";
@@ -4768,14 +5097,35 @@
             }
         }
 
-        // Update Rentang Tanggal Dinamis
+        // 3. UPDATE RENTANG TANGGAL DINAMIS (MENDUKUNG KUSTOM)
         if (elRentang) {
             const opsiTgl = { day: 'numeric', month: 'short', year: 'numeric' };
-            if (data.length > 0) {
+
+            if (keyPeriode === 'kustom') {
+                const labelMulai = document.getElementById('label-tgl-mulai')?.innerText;
+                const labelAkhir = document.getElementById('label-tgl-akhir')?.innerText;
+                const inputMulaiVal = document.getElementById('laporan-tgl-mulai')?.value;
+                const inputAkhirVal = document.getElementById('laporan-tgl-akhir')?.value;
+
+                if (labelMulai && labelAkhir) {
+                    elRentang.innerText = `${labelMulai} – ${labelAkhir}`;
+                } else if (inputMulaiVal && inputAkhirVal) {
+                    const dMulai = new Date(inputMulaiVal);
+                    const dAkhir = new Date(inputAkhirVal);
+                    elRentang.innerText = `${dMulai.toLocaleDateString('id-ID', opsiTgl)} – ${dAkhir.toLocaleDateString('id-ID', opsiTgl)}`;
+                } else {
+                    elRentang.innerText = 'Periode Kustom';
+                }
+            } else if (data.length > 0) {
                 const timestamps = data.map(d => d.dateObject.getTime()).filter(t => t > 0);
-                const awal = new Date(Math.min(...timestamps));
-                const akhir = new Date(Math.max(...timestamps));
-                elRentang.innerText = `${awal.toLocaleDateString('id-ID', opsiTgl)} – ${akhir.toLocaleDateString('id-ID', opsiTgl)}`;
+                if (timestamps.length > 0) {
+                    const awal = new Date(Math.min(...timestamps));
+                    const akhir = new Date(Math.max(...timestamps));
+                    elRentang.innerText = `${awal.toLocaleDateString('id-ID', opsiTgl)} – ${akhir.toLocaleDateString('id-ID', opsiTgl)}`;
+                } else {
+                    const skrg = new Date();
+                    elRentang.innerText = skrg.toLocaleDateString('id-ID', opsiTgl);
+                }
             } else {
                 const skrg = new Date();
                 elRentang.innerText = skrg.toLocaleDateString('id-ID', opsiTgl);
