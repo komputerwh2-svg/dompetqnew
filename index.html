@@ -893,7 +893,6 @@
                 <!-- Total Nominal Utama & Arus Kas -->
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-1 border-b border-slate-800/60 pb-3">
                     <div>
-                        <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-slate-400">Net Arus Kas</p>
                         <h2 id="laporan-selisih-bersih" class="text-xl md:text-3xl font-extrabold text-[#b5f234] tracking-tight">Rp 0</h2>
                     </div>
                     <p id="laporan-rata-harian" class="text-[11px] md:text-xs text-slate-400">
@@ -925,13 +924,26 @@
                 </div>
             </div>
 
-            <!-- 3. Wawasan (Insights & Smart Alert) -->
-            <div id="container-laporan-insight" class="bg-amber-500/10 border border-amber-500/20 p-3 rounded-2xl flex items-start gap-2.5">
-                <i class="fa-solid fa-lightbulb text-amber-400 text-sm mt-0.5 shrink-0"></i>
-                <div class="text-xs text-slate-300">
-                    <p id="laporan-insight-text" class="leading-relaxed">
-                        <strong class="text-amber-400">Wawasan:</strong> Kebutuhan Pokok merupakan porsi pengeluaran terbesar Anda pada periode ini.
-                    </p>
+            <!-- 3. Navigasi Pintas (Menggantikan posisi Wawasan/Insights) -->
+            <div class="pt-2 pb-2">
+                <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Jelajahi</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <button onclick="navigasiKeModul('kategori')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
+                        <i class="fa-solid fa-layer-group text-[#b5f234] text-xs"></i>
+                        <span class="text-xs font-semibold text-slate-300">Kategori</span>
+                    </button>
+                    <button onclick="navigasiKeModul('kekayaan')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
+                        <i class="fa-solid fa-vault text-[#b5f234] text-xs"></i>
+                        <span class="text-xs font-semibold text-slate-300">Kekayaan</span>
+                    </button>
+                    <button onclick="navigasiKeModul('anggaran')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
+                        <i class="fa-solid fa-wallet text-[#b5f234] text-xs"></i>
+                        <span class="text-xs font-semibold text-slate-300">Anggaran</span>
+                    </button>
+                    <button onclick="navigasiKeModul('tujuan')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
+                        <i class="fa-solid fa-bullseye text-[#b5f234] text-xs"></i>
+                        <span class="text-xs font-semibold text-slate-300">Tujuan</span>
+                    </button>
                 </div>
             </div>
 
@@ -971,85 +983,49 @@
                     <!-- Data terisi lewat JavaScript -->
                 </div>
             </div>
-
-            <!-- 6. Navigasi Pintas (Jelajahi) -->
-            <div class="pt-2 pb-6">
-                <p class="text-[9px] md:text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Jelajahi Lanjutan</p>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                    <button onclick="navigasiKeModul('kategori')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
-                        <i class="fa-solid fa-layer-group text-[#b5f234] text-xs"></i>
-                        <span class="text-xs font-semibold text-slate-300">Kategori</span>
-                    </button>
-                    <button onclick="navigasiKeModul('kekayaan')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
-                        <i class="fa-solid fa-vault text-[#b5f234] text-xs"></i>
-                        <span class="text-xs font-semibold text-slate-300">Kekayaan</span>
-                    </button>
-                    <button onclick="navigasiKeModul('anggaran')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
-                        <i class="fa-solid fa-wallet text-[#b5f234] text-xs"></i>
-                        <span class="text-xs font-semibold text-slate-300">Anggaran</span>
-                    </button>
-                    <button onclick="navigasiKeModul('tujuan')" class="p-2.5 rounded-xl bg-[#121714] border border-slate-800/80 hover:border-[#b5f234]/50 flex items-center gap-2 text-left transition cursor-pointer">
-                        <i class="fa-solid fa-bullseye text-[#b5f234] text-xs"></i>
-                        <span class="text-xs font-semibold text-slate-300">Tujuan</span>
-                    </button>
-                </div>
-            </div>
-
         </div>
 
     </div>
 
-    <!-- Modal Detail Lanjutan (Kategori, Kekayaan, Anggaran, Tujuan) -->
-    <div id="modal-detail-jelajahi" class="fixed inset-0 bg-black/80 backdrop-blur-md z-[60] flex items-center justify-center p-2 md:p-4 hidden">
-        <div class="bg-[#0f1412] border border-slate-800 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
-            
-            <!-- Header Modal -->
-            <div class="sticky top-0 bg-[#0f1412]/90 backdrop-blur-md p-4 border-b border-slate-800/80 flex items-center justify-between z-10">
-                <!-- Tombol Kembali hanya menutup modal ini -->
-                <button onclick="tutupModalDetailJelajahi()" class="p-2 rounded-xl bg-slate-800/50 text-slate-300 hover:text-white transition cursor-pointer">
-                    <i class="fa-solid fa-arrow-left text-sm"></i>
-                </button>
-                <h3 id="jelajahi-judul-header" class="text-base font-bold text-white capitalize">Detail Modul</h3>
-                <div class="w-8"></div>
+    <!-- Modal Detail Lanjutan Full Screen (Sub-page dari Modal Laporan) -->
+    <div id="modal-detail-jelajahi" class="fixed inset-0 bg-[#0f1412] z-[70] flex flex-col hidden transition-all duration-300 overflow-y-auto">
+        
+        <!-- Sticky Header Navigation -->
+        <div class="sticky top-0 bg-[#0f1412]/95 backdrop-blur-md px-4 py-3.5 border-b border-slate-800/80 flex items-center justify-between z-20">
+            <!-- Tombol Kembali -->
+            <button onclick="tutupModalDetailJelajahi()" class="p-2.5 rounded-xl bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800 transition cursor-pointer flex items-center justify-center">
+                <i class="fa-solid fa-arrow-left text-base"></i>
+            </button>
+
+            <!-- Judul Dinamis Sub-page -->
+            <h3 id="jelajahi-judul-header" class="text-base font-bold text-white tracking-wide capitalize">Detail Modul</h3>
+
+            <!-- Spacer seimbang -->
+            <div class="w-10"></div>
+        </div>
+
+        <!-- Main Content Sub-page -->
+        <div class="p-4 md:p-6 space-y-4 max-w-2xl mx-auto w-full flex-1">
+
+            <!-- Filter Periode -->
+            <div id="jelajahi-filter-periode" class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <button onclick="filterJelajahiPeriode('7h', event)" class="btn-jelajahi-p px-3.5 py-1.5 rounded-full text-xs font-bold bg-[#b5f234] text-black transition shrink-0 cursor-pointer">7H</button>
+                <button onclick="filterJelajahiPeriode('30h', event)" class="btn-jelajahi-p px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-800/80 text-slate-400 hover:text-white transition shrink-0 cursor-pointer">30H</button>
+                <button onclick="filterJelajahiPeriode('90h', event)" class="btn-jelajahi-p px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-800/80 text-slate-400 hover:text-white transition shrink-0 cursor-pointer">90H</button>
+                <button onclick="filterJelajahiPeriode('bulan', event)" class="btn-jelajahi-p px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-800/80 text-slate-400 hover:text-white transition shrink-0 cursor-pointer">Bulan</button>
+                <button onclick="filterJelajahiPeriode('tahun', event)" class="btn-jelajahi-p px-3.5 py-1.5 rounded-full text-xs font-bold bg-slate-800/80 text-slate-400 hover:text-white transition shrink-0 cursor-pointer">Tahun</button>
             </div>
 
-            <div class="p-4 space-y-4 text-slate-200">
-                <!-- Filter Periode (Khusus Kategori) -->
-                <div id="jelajahi-filter-periode" class="flex items-center gap-1.5 overflow-x-auto pb-1">
-                    <button onclick="filterJelajahiPeriode('7h', event)" class="btn-jelajahi-p px-3 py-1.5 rounded-full text-xs font-bold bg-[#b5f234] text-black transition">7H</button>
-                    <button onclick="filterJelajahiPeriode('30h', event)" class="btn-jelajahi-p px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400 transition">30H</button>
-                    <button onclick="filterJelajahiPeriode('90h', event)" class="btn-jelajahi-p px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400 transition">90H</button>
-                    <button onclick="filterJelajahiPeriode('bulan', event)" class="btn-jelajahi-p px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400 transition">Bulan</button>
-                    <button onclick="filterJelajahiPeriode('tahun', event)" class="btn-jelajahi-p px-3 py-1.5 rounded-full text-xs font-bold bg-slate-800 text-slate-400 transition">Tahun</button>
-                </div>
-
-                <!-- Card Summary Atas -->
-                <div id="jelajahi-card-summary" class="bg-[#141a17] border border-slate-800 rounded-2xl p-4 grid grid-cols-3 gap-2 text-center">
-                    <!-- Diisi via JavaScript -->
-                </div>
-
-                <!-- Main Content Card (Grafik + Breakdown Bar) -->
-                <div class="bg-[#141a17] border border-slate-800 rounded-2xl p-4 space-y-4">
-                    <h4 id="jelajahi-section-title" class="text-sm font-bold text-white">Ke Mana Uang Anda Pergi</h4>
-
-                    <!-- Chart Container -->
-                    <div class="relative flex items-center justify-center py-2">
-                        <div class="w-44 h-44">
-                            <canvas id="chartJelajahiDoughnut"></canvas>
-                        </div>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span id="jelajahi-chart-center-val" class="text-base font-extrabold text-white">Rp 0</span>
-                            <span id="jelajahi-chart-center-lbl" class="text-[10px] text-slate-400 font-medium">Terpakai</span>
-                        </div>
-                    </div>
-
-                    <!-- Breakdown List & Progress Bar -->
-                    <div id="jelajahi-breakdown-list" class="space-y-3 pt-2">
-                        <!-- Diisi via JavaScript -->
-                    </div>
-                </div>
-
+            <!-- Card Summary Atas -->
+            <div id="jelajahi-card-summary" class="bg-[#141a17] border border-slate-800/90 rounded-2xl p-4 grid grid-cols-3 gap-2 text-center shadow-lg">
+                <!-- Diisi via JavaScript -->
             </div>
+
+            <!-- Container Utama untuk Layar Bertumpuk / Breakdown (Cukup sediakan wadah ini) -->
+            <div id="jelajahi-breakdown-list" class="w-full">
+                <!-- Diisi penuh via JavaScript (Panel Pengeluaran & Panel Pemasukan) -->
+            </div>
+
         </div>
     </div>
 
@@ -4628,7 +4604,8 @@
     // Variable Global Khusus Laporan
     let chartTrenInstance = null;
     let chartKategoriInstance = null;
-    let periodeAktif = 'semua'; 
+    let chartKekayaanInstance = null;
+    let periodeAktif = 'bulan'; // Default periode aktif untuk laporan
     let dataMasterLaporan = []; // Penampung murni khusus data rekap_finansial
 
     /**
@@ -4681,9 +4658,9 @@
             // 1. Tarik data Firestore murni jalur rekap_finansial
             await muatDataJalurLaporan();
 
-            // 2. Default ke filter 'semua'
-            const btnSemua = document.querySelector('.btn-filter-laporan[onclick*="semua"]');
-            filterLaporan('semua', { target: btnSemua });
+            // 2. Default ke filter 'bulan'
+            const btnBulan = document.querySelector('.btn-filter-laporan[onclick*="bulan"]');
+            filterLaporan('bulan', { target: btnBulan });
         }
     }
 
@@ -4719,6 +4696,7 @@
 
         // Jika fungsi renderer kalender universal Anda ada, set tanggal fokusnya
         if (typeof renderKalenderUniversal === 'function') {
+            updateMainMonthDisplay(selectedDate);
             renderKalenderUniversal(existingVal ? new Date(existingVal) : new Date());
         }
     }
@@ -5125,36 +5103,49 @@
     }
 
     /**
-     * Membuka modal jelajah di atas modal laporan
-     * Tanpa menutup modal laporan di latar belakang
+     * Membuka Modal / Sub-Page Detail Jelajahi Lanjutan (Full Screen)
      */
     function navigasiKeModul(namaModul) {
-        // 1. Catat modul yang dipilih
         jenisModulAktif = namaModul;
 
-        // 2. Ambil elemen modal jelajah
-        const modalJelajahi = document.getElementById('modal-detail-jelajahi');
+        const modal = document.getElementById('modal-detail-jelajahi');
         const filterPeriode = document.getElementById('jelajahi-filter-periode');
         const headerTitle = document.getElementById('jelajahi-judul-header');
 
-        // 3. Tampilkan modal jelajah (Modal Laporan tetap biarkan terbuka di belakang)
-        if (modalJelajahi) {
-            modalJelajahi.classList.remove('hidden');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.scrollTop = 0; // Reset scroll ke atas
         } else {
-            console.error("Elemen #modal-detail-jelajahi tidak ditemukan di HTML.");
+            console.error("Elemen #modal-detail-jelajahi tidak ditemukan.");
             return;
         }
 
-        // 4. Atur tampilan filter berdasarkan modul
+        // Set default periode ke 'bulan' setiap kali modul dibuka
+        periodeJelajahiAktif = 'bulan';
+
+        // Update style tombol filter agar tombol 'Bulan' yang menyala
         if (filterPeriode) {
-            if (namaModul === 'kekayaan') {
+            if (namaModul === 'kekayaan' || namaModul === 'tujuan') {
                 filterPeriode.classList.add('hidden');
             } else {
                 filterPeriode.classList.remove('hidden');
+
+                // Reset semua tombol filter periode
+                const btns = filterPeriode.querySelectorAll('.btn-jelajahi-p');
+                btns.forEach(b => {
+                    b.classList.remove('bg-[#b5f234]', 'text-black');
+                    b.classList.add('bg-slate-800/80', 'text-slate-400');
+
+                    // Aktifkan tombol yang punya data-periode="bulan" / onclick bulan
+                    if (b.getAttribute('onclick')?.includes("'bulan'")) {
+                        b.classList.remove('bg-slate-800/80', 'text-slate-400');
+                        b.classList.add('bg-[#b5f234]', 'text-black');
+                    }
+                });
             }
         }
 
-        // 5. Ubah Judul Header
+        // Update judul header
         if (headerTitle) {
             const titles = {
                 kategori: 'Kategori Pengeluaran',
@@ -5165,20 +5156,19 @@
             headerTitle.innerText = titles[namaModul] || namaModul;
         }
 
-        // 6. Render data konten
+        // Render konten modul
         if (typeof renderKontenJelajahi === 'function') {
             renderKontenJelajahi();
         }
     }
 
     /**
-     * Fungsi Tombol Kembali di Modal Jelajah
-     * Hanya menyembunyikan modal jelajah, sehingga modal laporan di bawahnya langsung terlihat lagi
+     * Menutup Modal / Sub-Page Detail Jelajahi Lanjutan
      */
     function tutupModalDetailJelajahi() {
-        const modalJelajahi = document.getElementById('modal-detail-jelajahi');
-        if (modalJelajahi) {
-            modalJelajahi.classList.add('hidden');
+        const modal = document.getElementById('modal-detail-jelajahi');
+        if (modal) {
+            modal.classList.add('hidden');
         }
     }
 
@@ -5348,184 +5338,402 @@
         window.print();
     }
 
+    // Variable State
     let chartJelajahiInstance = null;
     let jenisModulAktif = 'kategori';
+    let subKategoriAktif = 'pengeluaran'; // 'pengeluaran' atau 'pemasukan'
+    let periodeJelajahiAktif = 'bulan';
+    let chartKeluarInstance = null;
+    let chartMasukInstance = null;
 
     /**
-     * Membuka Modal Detail Jelajahi Lanjutan
-     */
-    function navigasiKeModul(namaModul) {
-        jenisModulAktif = namaModul;
-
-        const modal = document.getElementById('modal-detail-jelajahi');
-        const filterPeriode = document.getElementById('jelajahi-filter-periode');
-        const headerTitle = document.getElementById('jelajahi-judul-header');
-
-        if (modal) modal.classList.remove('hidden');
-
-        // Sembunyikan filter periode jika memilih 'kekayaan'
-        if (filterPeriode) {
-            if (namaModul === 'kekayaan') filterPeriode.classList.add('hidden');
-            else filterPeriode.classList.remove('hidden');
-        }
-
-        if (headerTitle) {
-            const titles = {
-                kategori: 'Kategori Pengeluaran',
-                kekayaan: 'Kekayaan Bersih',
-                anggaran: 'Analisis Anggaran',
-                tujuan: 'Tujuan Tabungan'
-            };
-            headerTitle.innerText = titles[namaModul] || namaModul;
-        }
-
-        renderKontenJelajahi();
-    }
-
-    function tutupModalDetailJelajahi() {
-        const modal = document.getElementById('modal-detail-jelajahi');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    /**
-     * Filter Periode di dalam Modal Jelajahi
+     * Filter Periode di dalam Modal Jelajahi (Mendukung preset 7h, 30h, 90h, bulan, tahun)
      */
     function filterJelajahiPeriode(periode, evt) {
+        periodeJelajahiAktif = periode;
+
         const btns = document.querySelectorAll('.btn-jelajahi-p');
         btns.forEach(b => {
             b.classList.remove('bg-[#b5f234]', 'text-black');
-            b.classList.add('bg-slate-800', 'text-slate-400');
+            b.classList.add('bg-slate-800/80', 'text-slate-400');
         });
 
-        if (evt && evt.target) {
-            evt.target.classList.remove('bg-slate-800', 'text-slate-400');
-            evt.target.classList.add('bg-[#b5f234]', 'text-black');
+        const targetEl = evt ? evt.target : (window.event ? window.event.target : null);
+        if (targetEl && targetEl.classList) {
+            targetEl.classList.remove('bg-slate-800/80', 'text-slate-400');
+            targetEl.classList.add('bg-[#b5f234]', 'text-black');
         }
 
         renderKontenJelajahi();
     }
 
     /**
-     * Render Konten Tampilan Dinamis Berdasarkan Modul (Kategori vs Kekayaan)
+     * Render Konten Tampilan Dinamis Real-Data dari Firestore (Layout Bertumpuk)
      */
-    function renderKontenJelajahi() {
+    async function renderKontenJelajahi() {
         const summaryBox = document.getElementById('jelajahi-card-summary');
-        const sectionTitle = document.getElementById('jelajahi-section-title');
-        const centerVal = document.getElementById('jelajahi-chart-center-val');
-        const centerLbl = document.getElementById('jelajahi-chart-center-lbl');
         const listContainer = document.getElementById('jelajahi-breakdown-list');
+        const filterPeriodeBox = document.getElementById('jelajahi-filter-periode');
 
-        const formatRp = (v) => 'Rp ' + Number(v).toLocaleString('id-ID');
+        if (!summaryBox || !listContainer) return;
 
-        if (jenisModulAktif === 'kategori') {
-            // --- TAMPILAN MODUL KATEGORI ---
-            sectionTitle.innerText = "Ke Mana Uang Anda Pergi";
-            
-            // Data Dummy / Diambil dari State App
-            const totalMasuk = 0;
-            const totalKeluar = 2270000;
-            const sisa = totalMasuk - totalKeluar;
+        const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+        const paletteKeluar = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444', '#06b6d4'];
+        const paletteMasuk = ['#10b981', '#06b6d4', '#3b82f6', '#84cc16', '#14b8a6', '#6366f1'];
+        const paletteKekayaan = ['#f59e0b', '#3b82f6', '#84cc16', '#06b6d4', '#ef4444', '#10b981', '#ec4899', '#8b5cf6'];
 
-            summaryBox.innerHTML = `
-                <div>
-                    <p class="text-[10px] text-slate-400 font-medium">Uang Masuk</p>
-                    <p class="text-xs font-bold text-emerald-400">${formatRp(totalMasuk)}</p>
-                </div>
-                <div>
-                    <p class="text-[10px] text-slate-400 font-medium">Uang Keluar</p>
-                    <p class="text-xs font-bold text-rose-400">${formatRp(totalKeluar)}</p>
-                </div>
-                <div>
-                    <p class="text-[10px] text-slate-400 font-medium">Sisa</p>
-                    <p class="text-xs font-bold text-sky-400">${formatRp(sisa)}</p>
-                </div>
-            `;
-
-            centerVal.innerText = "Rp 2,27 jt";
-            centerLbl.innerText = "Terpakai";
-
-            const itemsKategori = [
-                { nama: 'Kebutuhan Pokok', jumlah: 2200000, persen: 97, warna: '#10b981' },
-                { nama: 'Transportasi', jumlah: 70000, persen: 3, warna: '#3b82f6' }
-            ];
-
-            renderBreakdownList(itemsKategori, listContainer);
-            renderDoughnutChart(itemsKategori.map(i => i.nama), itemsKategori.map(i => i.jumlah), itemsKategori.map(i => i.warna));
-
-        } else if (jenisModulAktif === 'kekayaan') {
-            // --- TAMPILAN MODUL KEKAYAAN ---
-            sectionTitle.innerText = "Di Mana Uang Anda Berada";
-
-            const totalKekayaan = 2324900;
-            const totalUtang = 0;
-
-            summaryBox.innerHTML = `
-                <div class="col-span-3 text-left">
-                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">KEKAYAAN BERSIH ANDA</p>
-                    <p class="text-xl font-extrabold text-[#b5f234] mt-0.5">${formatRp(totalKekayaan)}</p>
-                    <p class="text-[11px] text-emerald-400 mt-1">✓ Yang Anda miliki lebih besar dari utang Anda. Posisi yang bagus.</p>
-                </div>
-            `;
-
-            centerVal.innerText = formatRp(totalKekayaan);
-            centerLbl.innerText = "Anda Miliki";
-
-            const itemsKekayaan = [
-                { nama: 'Jatah Bulanan', jumlah: 1200000, persen: 52, warna: '#f59e0b' },
-                { nama: 'BCA', jumlah: 694900, persen: 30, warna: '#3b82f6' },
-                { nama: 'Saldo Kas', jumlah: 130000, persen: 6, warna: '#10b981' },
-                { nama: 'Tabungan A', jumlah: 100000, persen: 4, warna: '#06b6d4' },
-                { nama: 'Tabungan B', jumlah: 100000, persen: 4, warna: '#ef4444' },
-                { nama: 'Tabungan C', jumlah: 100000, persen: 4, warna: '#10b981' }
-            ];
-
-            renderBreakdownList(itemsKekayaan, listContainer);
-            renderDoughnutChart(itemsKekayaan.map(i => i.nama), itemsKekayaan.map(i => i.jumlah), itemsKekayaan.map(i => i.warna));
+        // --- TAMPILKAN / SEMBUNYIKAN FILTER PERIODE ---
+        if (filterPeriodeBox) {
+            if (jenisModulAktif === 'kekayaan') {
+                filterPeriodeBox.classList.add('hidden');
+            } else {
+                filterPeriodeBox.classList.remove('hidden');
+            }
         }
+
+        // ==========================================
+        // B. MODUL KEKAYAAN BERSIH (SESUAI REFERENSI)
+        // ==========================================
+        if (jenisModulAktif === 'kekayaan') {
+            summaryBox.classList.add('hidden'); // Sembunyikan summary box 3-kolom standar
+
+            // 1. Ambil Data Akun dari Module Users / Master Akun
+            let daftarAkun = [];
+            
+            if (window.currentUserData && Array.isArray(window.currentUserData.dompet)) {
+                daftarAkun = window.currentUserData.dompet;
+            } else if (window.currentUserData && Array.isArray(window.currentUserData.akun)) {
+                daftarAkun = window.currentUserData.akun;
+            } else if (Array.isArray(window.dataMasterAkun) && window.dataMasterAkun.length > 0) {
+                daftarAkun = window.dataMasterAkun;
+            } else if (Array.isArray(window.listAkunFinansial) && window.listAkunFinansial.length > 0) {
+                daftarAkun = window.listAkunFinansial;
+            }
+
+            let totalMiliki = 0;
+            let totalUtang = 0;
+            const itemsAset = [];
+
+            daftarAkun.forEach((acc, idx) => {
+                const nama = acc.namaAkun || acc.nama || acc.namaDompet || 'Akun ' + (idx + 1);
+                const saldo = Number(acc.saldo || acc.nominal || acc.jumlah || 0);
+                const tipe = (acc.tipe || acc.jenis || '').toLowerCase();
+
+                if (tipe.includes('utang') || tipe.includes('pinjaman') || saldo < 0) {
+                    totalUtang += Math.abs(saldo);
+                } else {
+                    totalMiliki += saldo;
+                    if (saldo > 0) {
+                        itemsAset.push({
+                            nama: nama,
+                            jumlah: saldo,
+                            warna: paletteKekayaan[idx % paletteKekayaan.length]
+                        });
+                    }
+                }
+            });
+
+            // Hitung Persentase & Urutkan Aset Terbesar
+            itemsAset.forEach(item => {
+                item.persen = totalMiliki > 0 ? Math.round((item.jumlah / totalMiliki) * 100) : 0;
+            });
+            itemsAset.sort((a, b) => b.jumlah - a.jumlah);
+
+            const totalKekayaanBersih = totalMiliki - totalUtang;
+            const pctMiliki = (totalMiliki + totalUtang) > 0 ? Math.round((totalMiliki / (totalMiliki + totalUtang)) * 100) : 100;
+            const pctUtang = 100 - pctMiliki;
+            const tglSkrg = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+            // 2. Inject Tampilan Kekayaan Sesuai UI Referensi
+            listContainer.innerHTML = `
+                <div class="space-y-4 w-full">
+                    <!-- CARD 1: HEADER TOTAL KEKAYAAN BERSIH -->
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-5 rounded-2xl text-center space-y-3">
+                        <p class="text-[11px] font-bold text-slate-400 tracking-wider uppercase">KEKAYAAN BERSIH ANDA</p>
+                        <p class="text-3xl font-extrabold text-emerald-400">${formatRp(totalKekayaanBersih)}</p>
+                        <p class="text-xs text-slate-300">Semua yang Anda miliki, dikurangi semua utang Anda</p>
+                        
+                        <div class="bg-emerald-950/40 border border-emerald-800/40 p-3 rounded-xl flex items-center justify-center gap-2 text-emerald-400 text-xs font-medium">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>${totalKekayaanBersih >= 0 ? 'Yang Anda miliki lebih besar dari utang Anda. Posisi yang bagus.' : 'Utang Anda lebih besar dari aset yang dimiliki.'}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 font-medium">Per ${tglSkrg}</p>
+                    </div>
+
+                    <!-- CARD 2: YANG ANDA MILIKI VS UTANG ANDA -->
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-5 rounded-2xl space-y-3">
+                        <h4 class="text-sm font-bold text-white">Yang Anda Miliki vs Utang Anda</h4>
+                        
+                        <div class="w-full h-3.5 bg-slate-800 rounded-full overflow-hidden flex">
+                            <div class="bg-emerald-500 h-full transition-all duration-500" style="width: ${pctMiliki}%"></div>
+                            <div class="bg-rose-500 h-full transition-all duration-500" style="width: ${pctUtang}%"></div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-xs pt-1">
+                            <div>
+                                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                <span class="text-slate-400">Anda miliki · ${pctMiliki}%</span>
+                                <p class="font-bold text-emerald-400 mt-0.5">${formatRp(totalMiliki)}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 mr-1.5"></span>
+                                <span class="text-slate-400">Anda berutang · ${pctUtang}%</span>
+                                <p class="font-bold text-rose-400 mt-0.5">${formatRp(totalUtang)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: STATUS UTANG -->
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-emerald-950/60 border border-emerald-800/50 flex items-center justify-center text-emerald-400">
+                                <i class="fa-solid fa-shield-halved text-lg"></i>
+                            </div>
+                            <div>
+                                <h5 class="text-xs font-bold text-white">Cek Utang</h5>
+                                <p class="text-[11px] text-slate-400">${totalUtang === 0 ? 'Anda tidak punya utang. Anda bebas utang.' : 'Anda memiliki catatan utang aktif.'}</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-[11px] font-bold ${totalUtang === 0 ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/50' : 'bg-rose-950/80 text-rose-400 border border-rose-800/50'} shrink-0">
+                            ${totalUtang === 0 ? 'Bebas utang' : 'Ada utang'}
+                        </span>
+                    </div>
+
+                    <!-- CARD 4: DI MANA UANG ANDA BERADA -->
+                    <div class="bg-slate-900/80 border border-slate-800/80 p-5 rounded-2xl space-y-4">
+                        <h4 class="text-sm font-bold text-white">Di Mana Uang Anda Berada</h4>
+                        
+                        ${itemsAset.length > 0 ? `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+                            <div class="relative flex justify-center items-center h-48">
+                                <canvas id="chartJelajahiKekayaan"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-base font-extrabold text-white">${formatRp(totalMiliki)}</span>
+                                    <span class="text-[10px] text-slate-400 font-medium">Anda miliki</span>
+                                </div>
+                            </div>
+                            <div id="list-breakdown-kekayaan" class="space-y-2.5"></div>
+                        </div>
+                        ` : `
+                        <p class="text-xs text-slate-400 text-center py-4">Belum ada data saldo akun yang tercatat.</p>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            if (itemsAset.length > 0) {
+                renderBreakdownListKekayaan(itemsAset, document.getElementById('list-breakdown-kekayaan'));
+                chartKekayaanInstance = renderSingleDoughnutChart('chartJelajahiKekayaan', chartKekayaanInstance, itemsAset);
+            }
+
+            return;
+        }
+
+        // ==========================================
+        // A. MODUL KATEGORI (LAYOUT BERTUMPUK)
+        // ==========================================
+        summaryBox.classList.remove('hidden');
+
+        // 1. Ambil Data Murni Firestore (Mengabaikan Saldo Lalu)
+        let rawData = window.dataMasterLaporan || [];
+        if (!rawData || rawData.length === 0) {
+            if (typeof muatDataJalurLaporan === 'function') {
+                rawData = await muatDataJalurLaporan();
+            }
+        }
+
+        const dataMurni = (rawData || []).filter(item => {
+            const idTrans = String(item.idTransaksi || '').toLowerCase();
+            const kat = String(item.kategori || '').toLowerCase();
+            const ket = String(item.keterangan || '').toLowerCase();
+            return !idTrans.startsWith('saldo_lalu') && !kat.includes('saldo_lalu') && !kat.includes('saldo lalu') && !ket.includes('sisa saldo otomatis');
+        });
+
+        // 2. Filter Periode Tanggal
+        const hariIni = new Date();
+        const dataTerfilter = dataMurni.filter(item => {
+            let tglObj = null;
+            if (item.waktuTransaksi?.toDate) tglObj = item.waktuTransaksi.toDate();
+            else if (item.tanggal) tglObj = new Date(item.tanggal);
+
+            if (!tglObj || isNaN(tglObj.getTime())) return false;
+
+            const tglZero = new Date(tglObj).setHours(0,0,0,0);
+            const hariIniZero = new Date(hariIni).setHours(0,0,0,0);
+            const diffDays = Math.floor((hariIniZero - tglZero) / (1000 * 60 * 60 * 24));
+
+            if (periodeJelajahiAktif === '7h') return diffDays >= 0 && diffDays < 7;
+            if (periodeJelajahiAktif === '30h') return diffDays >= 0 && diffDays < 30;
+            if (periodeJelajahiAktif === '90h') return diffDays >= 0 && diffDays < 90;
+            if (periodeJelajahiAktif === 'bulan') return tglObj.getMonth() === hariIni.getMonth() && tglObj.getFullYear() === hariIni.getFullYear();
+            if (periodeJelajahiAktif === 'tahun') return tglObj.getFullYear() === hariIni.getFullYear();
+            return true;
+        });
+
+        let totalMasuk = 0;
+        let totalKeluar = 0;
+        const mapPengeluaran = {};
+        const mapPemasukan = {};
+
+        dataTerfilter.forEach(item => {
+            const rawNominal = Number(item.totalBersihNetto || item.pendapatan || item.nominal || item.pengeluaran || item.jumlah || 0);
+            const nominal = Math.abs(rawNominal);
+            if (nominal === 0) return;
+
+            const tipe = (item.tipe || item.jenis || '').toLowerCase();
+            const isMasuk = tipe === 'pemasukan' || tipe === 'masuk' || Number(item.pendapatan || 0) > 0;
+            const isKeluar = tipe === 'pengeluaran' || tipe === 'keluar' || rawNominal < 0 || Number(item.pengeluaran || 0) > 0;
+
+            if (isMasuk) {
+                totalMasuk += nominal;
+                const katName = item.kategori || 'Pemasukan Lain';
+                mapPemasukan[katName] = (mapPemasukan[katName] || 0) + nominal;
+            } else if (isKeluar || tipe !== 'mutasi') {
+                totalKeluar += nominal;
+                const katName = item.kategori || 'Pengeluaran Lain';
+                mapPengeluaran[katName] = (mapPengeluaran[katName] || 0) + nominal;
+            }
+        });
+
+        const sisa = totalMasuk - totalKeluar;
+
+        // Summary Card Header
+        summaryBox.innerHTML = `
+            <div>
+                <p class="text-[10px] text-slate-400 font-medium">Uang Masuk</p>
+                <p class="text-xs font-bold text-emerald-400 truncate">${formatRp(totalMasuk)}</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-slate-400 font-medium">Uang Keluar</p>
+                <p class="text-xs font-bold text-rose-400 truncate">${formatRp(totalKeluar)}</p>
+            </div>
+            <div>
+                <p class="text-[10px] text-slate-400 font-medium">Sisa Saldo</p>
+                <p class="text-xs font-bold ${sisa >= 0 ? 'text-sky-400' : 'text-rose-500'} truncate">${formatRp(sisa)}</p>
+            </div>
+        `;
+
+        // Injeksi Struktur 2 Panel Bertumpuk
+        listContainer.innerHTML = `
+            <div class="space-y-6 w-full">
+                <!-- PANEL PEMASUKAN (ATAS) -->
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 space-y-4">
+                    <h3 class="text-sm font-bold text-slate-100">Dari Mana Uang Anda Berasal</h3>
+                    <div class="relative flex justify-center items-center h-48">
+                        <canvas id="chartJelajahiMasuk"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="text-base font-extrabold text-white">${formatRp(totalMasuk)}</span>
+                            <span class="text-[10px] text-slate-400 font-medium">Diterima</span>
+                        </div>
+                    </div>
+                    <div id="list-breakdown-masuk" class="space-y-3 pt-2"></div>
+                </div>
+
+                <!-- PANEL PENGELUARAN (BAWAH) -->
+                <div class="bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 space-y-4">
+                    <h3 class="text-sm font-bold text-slate-100">Ke Mana Uang Anda Pergi</h3>
+                    <div class="relative flex justify-center items-center h-48">
+                        <canvas id="chartJelajahiKeluar"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="text-base font-extrabold text-white">${formatRp(totalKeluar)}</span>
+                            <span class="text-[10px] text-slate-400 font-medium">Terpakai</span>
+                        </div>
+                    </div>
+                    <div id="list-breakdown-keluar" class="space-y-3 pt-2"></div>
+                </div>
+            </div>
+        `;
+
+        // Render Breakdown Panel Pengeluaran
+        const itemsKeluar = Object.keys(mapPengeluaran).map((kat, idx) => ({
+            nama: kat,
+            jumlah: mapPengeluaran[kat],
+            persen: totalKeluar > 0 ? Math.round((mapPengeluaran[kat] / totalKeluar) * 100) : 0,
+            warna: paletteKeluar[idx % paletteKeluar.length]
+        })).sort((a, b) => b.jumlah - a.jumlah);
+
+        renderBreakdownList(itemsKeluar, document.getElementById('list-breakdown-keluar'));
+        chartKeluarInstance = renderSingleDoughnutChart('chartJelajahiKeluar', chartKeluarInstance, itemsKeluar);
+
+        // Render Breakdown Panel Pemasukan
+        const itemsMasuk = Object.keys(mapPemasukan).map((kat, idx) => ({
+            nama: kat,
+            jumlah: mapPemasukan[kat],
+            persen: totalMasuk > 0 ? Math.round((mapPemasukan[kat] / totalMasuk) * 100) : 0,
+            warna: paletteMasuk[idx % paletteMasuk.length]
+        })).sort((a, b) => b.jumlah - a.jumlah);
+
+        renderBreakdownList(itemsMasuk, document.getElementById('list-breakdown-masuk'));
+        chartMasukInstance = renderSingleDoughnutChart('chartJelajahiMasuk', chartMasukInstance, itemsMasuk);
     }
 
     /**
-     * Helper Render List Progress Bar
+     * Helper Breakdown Khusus Modul Kekayaan
      */
-    function renderBreakdownList(items, container) {
-        const formatRp = (v) => 'Rp ' + Number(v).toLocaleString('id-ID');
+    function renderBreakdownListKekayaan(items, container) {
+        if (!container) return;
+        const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+
         container.innerHTML = items.map(item => `
-            <div class="space-y-1">
-                <div class="flex items-center justify-between text-xs">
-                    <div class="flex items-center gap-2">
-                        <span class="w-2.5 h-2.5 rounded-full" style="background-color: ${item.warna}"></span>
-                        <span class="font-semibold text-slate-200">${item.nama}</span>
-                    </div>
-                    <div class="text-right">
-                        <span class="font-bold text-white">${formatRp(item.jumlah)}</span>
-                        <span class="text-[10px] text-slate-400 ml-1">${item.persen}%</span>
-                    </div>
+            <div class="flex items-center justify-between text-xs py-1">
+                <div class="flex items-center gap-2 truncate pr-2">
+                    <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${item.warna}"></span>
+                    <span class="text-slate-200 font-medium truncate">${item.nama}</span>
                 </div>
-                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full" style="width: ${item.persen}%; background-color: ${item.warna}"></div>
+                <div class="flex items-center gap-3 shrink-0">
+                    <span class="font-bold text-white">${formatRp(item.jumlah)}</span>
+                    <span class="text-[11px] font-bold w-8 text-right" style="color: ${item.warna}">${item.persen}%</span>
                 </div>
             </div>
         `).join('');
     }
 
     /**
-     * Helper Render Chart Doughnut via Chart.js
+     * Helper Render List Progress Bar (Kosongkan state jika data 0)
      */
-    function renderDoughnutChart(labels, data, colors) {
-        const ctx = document.getElementById('chartJelajahiDoughnut');
-        if (!ctx) return;
-
-        if (chartJelajahiInstance) {
-            chartJelajahiInstance.destroy();
+    function renderBreakdownList(items, container) {
+        if (!items || items.length === 0) {
+            container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Tidak ada data transaksi pada periode ini.</p>`;
+            return;
         }
 
-        chartJelajahiInstance = new Chart(ctx, {
+        const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+
+        container.innerHTML = items.map(item => `
+            <div class="space-y-1">
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${item.warna}"></span>
+                        <span class="font-semibold text-slate-200 truncate max-w-[140px] md:max-w-[200px]">${item.nama}</span>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="font-bold text-white">${formatRp(item.jumlah)}</span>
+                        <span class="text-[10px] text-slate-400 ml-1">(${item.persen}%)</span>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full transition-all duration-500" style="width: ${Math.min(100, item.persen)}%; background-color: ${item.warna}"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    /**
+     * Helper Render Canvas Chart Mandiri untuk Masing-masing Panel
+     */
+    function renderSingleDoughnutChart(canvasId, chartInstance, items) {
+        const ctx = document.getElementById(canvasId)?.getContext('2d');
+        if (!ctx) return null;
+
+        if (chartInstance) chartInstance.destroy();
+
+        return new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: labels,
+                labels: items.map(i => i.nama),
                 datasets: [{
-                    data: data,
-                    backgroundColor: colors,
+                    data: items.map(i => i.jumlah),
+                    backgroundColor: items.map(i => i.warna),
                     borderWidth: 0,
                     hoverOffset: 4
                 }]
