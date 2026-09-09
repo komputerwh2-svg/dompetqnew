@@ -17,212 +17,274 @@
   <meta name="theme-color" content="#b5f234">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <style>
+    /* Custom Style untuk Tampilan Umum */
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background-color: #0b0f0ce5;
+    }
+
+    /* Custom Style Transisi Tab Halus & Empuk */
+    .slide-from-right {
+        animation: slideInRight 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        will-change: transform, opacity;
+    }
+
+    .slide-from-left {
+        animation: slideInLeft 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        will-change: transform, opacity;
+    }
+
+    @keyframes slideInRight {
+        0% {
+            opacity: 0;
+            transform: translate3d(45px, 0, 0) scale(0.98);
+        }
+        100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+    }
+
+    @keyframes slideInLeft {
+        0% {
+            opacity: 0;
+            transform: translate3d(-45px, 0, 0) scale(0.98);
+        }
+        100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
     }
   </style>
 </head>
 <body class="text-white pb-28 pt-4 px-3 md:px-8">
 
-  <!-- WRAPPER UTAMA: Lebar Melar (Fluid up to 6xl) & Tetap 1 Kolom Ke Bawah -->
-  <div class="max-w-6xl mx-auto space-y-4">
-
-      <!-- HERO ISLAND: CARD ATAS HIJAU LIME -->
-      <div class="bg-[#b5f234] text-slate-950 rounded-[2.5rem] p-5 md:p-7 shadow-lg relative overflow-hidden">
-        
-        <!-- Profile & Top Icons -->
-        <div class="flex items-center justify-between mb-4">
-          <div class="flex items-center gap-2.5">
-            <button id="btn-arsip-slip" type="button" class="w-9 h-9 rounded-full bg-slate-900 text-[#b5f234] flex items-center justify-center font-bold text-sm hover:scale-105 active:scale-95 transition shadow-sm cursor-pointer" title="Buka Arsip Slip">
-              <i class="fa-solid fa-wallet text-sm"></i>
-            </button>
-            <div>
-              <h1 class="font-bold text-sm md:text-base leading-none text-slate-900">DompetQ</h1>
-              <span id="current-date" class="text-[10px] md:text-xs text-slate-700 font-medium">--</span>
-            </div>
-          </div>
-          <div class="flex gap-1.5">
-                <!-- WADAH RELATIVE POPUP KALENDER -->
-                <div class="relative">
-                    <!-- TOMBOL SHORTCUT KALENDER -->
-                    <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
-                    <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
-                    </button>
-
-                    <!-- KONTAINER POPOVER (Dudukan Kalender Dinamis) -->
-                    <div id="popover-calendar-container" class="absolute right-0 top-full mt-2 z-[80]"></div>
-                </div>
-
-                <!-- TOMBOL SHORTCUT PROFIL USER -->
-                <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-700 bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
-                    <i class="fa-regular fa-user text-xs md:text-sm"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Month Selector -->
-        <div class="flex items-center justify-between my-2 bg-slate-950/5 py-1.5 px-4 rounded-full">
-          <button id="btn-prev-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
-            <i class="fa-solid fa-chevron-left"></i>
-          </button>
-          
-          <span id="label-month-main" class="text-[11px] md:text-xs font-bold tracking-wider text-slate-800 uppercase cursor-pointer hover:underline">
-            SEPTEMBER 2026
-          </span>
-          
-          <button id="btn-next-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-        </div>
-
-        <!-- Total Saldo -->
-        <div class="my-6">
-        <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
-        <h2 id="total-saldo" class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
-        
-        <!-- WADAH SEJAJAR (FLEX) SISA BULAN LALU & TOTAL TABUNGAN -->
-        <div class="mt-3 flex flex-wrap items-center gap-2">
-            <!-- Kiri: Sisa Bulan Lalu -->
-            <div class="bg-slate-950/10 px-3 py-1 rounded-full">
-            <p class="text-[10px] md:text-xs text-slate-800 font-medium">
-                Sisa Bulan Lalu: <span id="sisa-bulan-lalu" class="font-bold text-slate-950">Rp 0</span>
-            </p>
-            </div>
-
-            <!-- Kanan: Total Tabungan -->
-            <div class="bg-slate-950/10 px-3 py-1 rounded-full">
-            <p class="text-[10px] md:text-xs text-slate-800 font-medium">
-                Total Tabungan: <span id="total-saldo-tabungan" class="font-bold text-slate-950">Rp 0</span>
-            </p>
-            </div>
-        </div>
-        </div>
-
-        <!-- Wadah Akses Cepat dengan Background Lengkung -->
-        <div class="mt-3 bg-slate-900/10 p-2.5 rounded-2xl">
-          
-          <!-- Label Akses Cepat (Rata Kiri) -->
-          <div class="text-left mb-1.5 px-1">
-            <span class="text-[9px] md:text-[10px] font-bold tracking-widest text-slate-800 uppercase">
-              Akses Cepat
-            </span>
-          </div>
-
-          <!-- Action Buttons Grid (3 Tombol Kembali ke rounded-2xl) -->
-          <div class="grid grid-cols-3 gap-2 md:gap-4">
-            
-            <!-- Tombol Masuk -->
-            <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-              <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
-              <span class="text-[9px] md:text-xs font-bold">Masuk</span>
-            </button>
-
-            <!-- Tombol Keluar -->
-            <button onclick="bukaModalPengeluaran()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-              <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
-              <span class="text-[9px] md:text-xs font-bold">Keluar</span>
-            </button>
-
-            <!-- Tombol Laporan -->
-            <button onclick="bukaModalLaporan()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
-              <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
-              <span class="text-[9px] md:text-xs font-bold">Laporan</span>
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- SUB-PULAU: PEMASUKAN & PENGELUARAN (PULAU KEDUA) -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-[#0b0f0ce5] border border-[#b5f234] p-4 md:p-5 rounded-2xl flex items-center justify-between">
-          <div>
-            <p class="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider">Pemasukan</p>
-            <!-- TAMBAHKAN id="total-pemasukan" DI SINI -->
-            <p id="total-pemasukan" class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
-          </div>
-          <!-- Tombol Panah Masuk (Buka Detail Slip Masuk) -->
-          <button id="btn-detail-masuk" type="button" class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs md:text-sm hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer" title="Lihat Detail Pemasukan Bulan Ini">
-            <i class="fa-solid fa-arrow-down"></i>
-          </button>
-        </div>
-
-        <div class="bg-[#0b0f0ce5] border border-[#b5f234] p-4 md:p-5 rounded-2xl flex items-center justify-between">
-          <div>
-            <p class="text-[10px] md:text-xs font-bold text-rose-400 uppercase tracking-wider">Pengeluaran</p>
-            <!-- TAMBAHKAN id="total-pengeluaran" DI SINI -->
-            <p id="total-pengeluaran" class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
-          </div>
-          <div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs md:text-sm">
-            <i class="fa-solid fa-arrow-up"></i>
-          </div>
-        </div>
-      </div>
-
-      <!-- TRANSACTIONS SECTION (PULAU KETIGA UTAMA) -->
-      <div class="bg-[#0b0f0ce5] rounded-3xl p-5 md:p-7 border border-[#b5f234]">
-        
-        <!-- Title & Filter -->
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider">Riwayat Transaksi Bulan Ini</h3>
-        </div>
-
-        <!-- TAMBAHKAN id="container-riwayat-slip" PADA CONTAINER RIWAYAT INI -->
-        <div id="container-riwayat-slip">
-          <!-- Empty State Default -->
-          <div class="text-center py-10 md:py-14">
-            <div class="w-14 h-14 bg-slate-800/60 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-500">
-              <i class="fa-solid fa-receipt text-2xl"></i>
-            </div>
-            <p class="text-xs md:text-sm font-bold text-slate-400">Belum Ada Transaksi</p>
-            <p class="text-[10px] md:text-xs text-slate-500 mt-1">Catatan bulan ini masih kosong.</p>
-          </div>
-        </div>
-
-      </div>
-
-  </div>
-
   <!-- FLOATING BOTTOM NAVIGATION BAR (PULAU NAVIGASI) -->
-  <div class="fixed bottom-3 left-0 right-0 px-3 md:px-8">
-    <div class="max-w-6xl mx-auto">
-      <nav class="bg-[#b5f234] text-slate-950 rounded-full px-6 md:px-12 py-2 flex items-center justify-between shadow-2xl shadow-[#b5f234]/10">
-        
-        <!-- Rekap -->
-        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-950 font-bold">
-          <i class="fa-solid fa-chart-simple text-base md:text-lg"></i>
-          <span class="text-[9px] md:text-[10px]">REKAP</span>
-        </a>
+    <div class="fixed bottom-3 left-0 right-0 px-3 md:px-8 z-40">
+        <div class="max-w-6xl mx-auto">
+            <nav class="bg-[#b5f234] text-slate-950 rounded-full px-6 md:px-12 py-2 flex items-center justify-between shadow-2xl shadow-[#b5f234]/10">
+            
+            <!-- Rekap -->
+            <button id="nav-rekap" onclick="pindahTab('rekap', event)" data-tab="rekap" class="btn-nav-tab flex flex-col items-center gap-0.5 text-slate-950 font-bold">
+                <i class="fa-solid fa-chart-bar text-base md:text-lg"></i>
+                <span class="text-[9px] md:text-[10px]">REKAP</span>
+            </button>
 
-        <!-- Tabungan -->
-        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
-          <i class="fa-solid fa-wallet text-base md:text-lg"></i>
-          <span class="text-[9px] md:text-[10px] font-semibold">TABUNGAN</span>
-        </a>
+            <!-- Tabungan -->
+            <button id="nav-tabungan" onclick="pindahTab('tabungan', event)" data-tab="tabungan" class="btn-nav-tab flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
+                <i class="fa-solid fa-wallet text-base md:text-lg"></i>
+                <span class="text-[9px] md:text-[10px] font-semibold">TABUNGAN</span>
+            </button>
 
-        <!-- Center FAB (+) Button -->
-        <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-slate-950 text-[#b5f234] flex items-center justify-center text-lg md:text-xl hover:scale-105 transition active:scale-95 shadow-md -my-2">
-          <i class="fa-solid fa-plus"></i>
-        </button>
+            <!-- Center FAB (+) Button -->
+            <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-slate-950 text-[#b5f234] flex items-center justify-center text-lg md:text-xl hover:scale-105 transition active:scale-95 shadow-md -my-2">
+                <i class="fa-solid fa-plus"></i>
+            </button>
 
-        <!-- Servis -->
-        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
-          <i class="fa-solid fa-wrench text-base md:text-lg"></i>
-          <span class="text-[9px] md:text-[10px] font-semibold">SERVIS</span>
-        </a>
+            <!-- Servis -->
+            <button id="nav-servis" onclick="pindahTab('servis', event)" data-tab="servis" class="btn-nav-tab flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
+                <i class="fa-solid fa-wrench text-base md:text-lg"></i>
+                <span class="text-[9px] md:text-[10px] font-semibold">SERVIS</span>
+            </button>
 
-        <!-- Setelan -->
-        <a href="#" class="flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
-          <i class="fa-solid fa-gear text-base md:text-lg"></i>
-          <span class="text-[9px] md:text-[10px] font-semibold">SETELAN</span>
-        </a>
+            <!-- Setelan -->
+            <button id="nav-setelan" onclick="pindahTab('setelan', event)" data-tab="setelan" class="btn-nav-tab flex flex-col items-center gap-0.5 text-slate-800/70 hover:text-slate-950">
+                <i class="fa-solid fa-sliders text-base md:text-lg"></i>
+                <span class="text-[9px] md:text-[10px] font-semibold">SETELAN</span>
+            </button>
 
-      </nav>
+            </nav>
+        </div>
     </div>
+
+    <!-- MAIN VIEWPORT CONTAINER -->
+    <main class="w-full overflow-hidden relative min-h-screen">
+        <!-- TAB CONTAINER (Tempat berpindah tab dengan efek animasi geser) -->
+        <div id="tab-content-wrapper" class="w-full transition-transform duration-300 ease-out">
+            
+            <!-- Tab Rekap (Default Aktif) -->
+            <div id="tab-rekap-content" class="tab-pane w-full">
+            <!-- WRAPPER UTAMA: Lebar Melar (Fluid up to 6xl) & Tetap 1 Kolom Ke Bawah -->
+                <div class="max-w-6xl mx-auto space-y-4">
+
+                    <!-- HERO ISLAND: CARD ATAS HIJAU LIME -->
+                    <div class="bg-[#b5f234] text-slate-950 rounded-[2.5rem] p-5 md:p-7 shadow-lg relative overflow-hidden">
+                        
+                        <!-- Profile & Top Icons -->
+                        <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <button id="btn-arsip-slip" type="button" class="w-9 h-9 rounded-full bg-slate-900 text-[#b5f234] flex items-center justify-center font-bold text-sm hover:scale-105 active:scale-95 transition shadow-sm cursor-pointer" title="Buka Arsip Slip">
+                            <i class="fa-solid fa-wallet text-sm"></i>
+                            </button>
+                            <div>
+                            <h1 class="font-bold text-sm md:text-base leading-none text-slate-900">DompetQ</h1>
+                            <span id="current-date" class="text-[10px] md:text-xs text-slate-700 font-medium">--</span>
+                            </div>
+                        </div>
+                        <div class="flex gap-1.5">
+                                <!-- WADAH RELATIVE POPUP KALENDER -->
+                                <div class="relative">
+                                    <!-- TOMBOL SHORTCUT KALENDER -->
+                                    <button id="btn-open-calendar" type="button" class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 hover:scale-105 active:scale-95 transition cursor-pointer" title="Ubah Periode Bulan">
+                                    <i class="fa-regular fa-calendar text-xs md:text-sm"></i>
+                                    </button>
+
+                                    <!-- KONTAINER POPOVER (Dudukan Kalender Dinamis) -->
+                                    <div id="popover-calendar-container" class="absolute right-0 top-full mt-2 z-[80]"></div>
+                                </div>
+
+                                <!-- TOMBOL SHORTCUT PROFIL USER -->
+                                <button onclick="bukaModalRegistrasiUser()" title="Pengaturan Profil User" class="w-8 h-8 md:w-9 md:h-9 rounded-full border border-slate-700 bg-slate-950/10 flex items-center justify-center text-slate-900 hover:bg-slate-950/20 cursor-pointer transition">
+                                    <i class="fa-regular fa-user text-xs md:text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Month Selector -->
+                        <div class="flex items-center justify-between my-2 bg-slate-950/5 py-1.5 px-4 rounded-full">
+                        <button id="btn-prev-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        
+                        <span id="label-month-main" class="text-[11px] md:text-xs font-bold tracking-wider text-slate-800 uppercase cursor-pointer hover:underline">
+                            SEPTEMBER 2026
+                        </span>
+                        
+                        <button id="btn-next-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        </div>
+
+                        <!-- Total Saldo -->
+                        <div class="my-6">
+                        <p class="text-xs md:text-sm font-semibold text-slate-800/80">Saldo Saat Ini</p>
+                        <h2 id="total-saldo" class="text-3xl md:text-5xl font-black text-slate-950 tracking-tight mt-0.5">Rp 0</h2>
+                        
+                        <!-- WADAH SEJAJAR (FLEX) SISA BULAN LALU & TOTAL TABUNGAN -->
+                        <div class="mt-3 flex flex-wrap items-center gap-2">
+                            <!-- Kiri: Sisa Bulan Lalu -->
+                            <div class="bg-slate-950/10 px-3 py-1 rounded-full">
+                            <p class="text-[10px] md:text-xs text-slate-800 font-medium">
+                                Sisa Bulan Lalu: <span id="sisa-bulan-lalu" class="font-bold text-slate-950">Rp 0</span>
+                            </p>
+                            </div>
+
+                            <!-- Kanan: Total Tabungan -->
+                            <div class="bg-slate-950/10 px-3 py-1 rounded-full">
+                            <p class="text-[10px] md:text-xs text-slate-800 font-medium">
+                                Total Tabungan: <span id="total-saldo-tabungan" class="font-bold text-slate-950">Rp 0</span>
+                            </p>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- Wadah Akses Cepat dengan Background Lengkung -->
+                        <div class="mt-3 bg-slate-900/10 p-2.5 rounded-2xl">
+                        
+                        <!-- Label Akses Cepat (Rata Kiri) -->
+                        <div class="text-left mb-1.5 px-1">
+                            <span class="text-[9px] md:text-[10px] font-bold tracking-widest text-slate-800 uppercase">
+                            Akses Cepat
+                            </span>
+                        </div>
+
+                        <!-- Action Buttons Grid (3 Tombol Kembali ke rounded-2xl) -->
+                        <div class="grid grid-cols-3 gap-2 md:gap-4">
+                            
+                            <!-- Tombol Masuk -->
+                            <button onclick="bukaModalOcr()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+                            <i class="fa-solid fa-arrow-down text-xs md:text-base text-emerald-400 mb-1"></i>
+                            <span class="text-[9px] md:text-xs font-bold">Masuk</span>
+                            </button>
+
+                            <!-- Tombol Keluar -->
+                            <button onclick="bukaModalPengeluaran()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+                            <i class="fa-solid fa-arrow-up text-xs md:text-base text-rose-400 mb-1"></i>
+                            <span class="text-[9px] md:text-xs font-bold">Keluar</span>
+                            </button>
+
+                            <!-- Tombol Laporan -->
+                            <button onclick="bukaModalLaporan()" class="flex flex-col items-center justify-center bg-slate-950 text-white rounded-2xl py-3 px-1 hover:bg-slate-900 transition cursor-pointer">
+                            <i class="fa-solid fa-chart-pie text-xs md:text-base text-[#b5f234] mb-1"></i>
+                            <span class="text-[9px] md:text-xs font-bold">Laporan</span>
+                            </button>
+
+                        </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SUB-PULAU: PEMASUKAN & PENGELUARAN (PULAU KEDUA) -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-[#0b0f0ce5] border border-[#b5f234] p-4 md:p-5 rounded-2xl flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] md:text-xs font-bold text-emerald-400 uppercase tracking-wider">Pemasukan</p>
+                            <!-- TAMBAHKAN id="total-pemasukan" DI SINI -->
+                            <p id="total-pemasukan" class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+                        </div>
+                        <!-- Tombol Panah Masuk (Buka Detail Slip Masuk) -->
+                        <button id="btn-detail-masuk" type="button" class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs md:text-sm hover:bg-emerald-500/20 active:scale-95 transition-all cursor-pointer" title="Lihat Detail Pemasukan Bulan Ini">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                        </div>
+
+                        <div class="bg-[#0b0f0ce5] border border-[#b5f234] p-4 md:p-5 rounded-2xl flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] md:text-xs font-bold text-rose-400 uppercase tracking-wider">Pengeluaran</p>
+                            <!-- TAMBAHKAN id="total-pengeluaran" DI SINI -->
+                            <p id="total-pengeluaran" class="text-base md:text-xl font-extrabold text-white mt-0.5">Rp 0</p>
+                        </div>
+                        <div class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs md:text-sm">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </div>
+                        </div>
+                    </div>
+
+                    <!-- TRANSACTIONS SECTION (PULAU KETIGA UTAMA) -->
+                    <div class="bg-[#0b0f0ce5] rounded-3xl p-5 md:p-7 border border-[#b5f234]">
+                        
+                        <!-- Title & Filter -->
+                        <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-wider">Riwayat Transaksi Bulan Ini</h3>
+                        </div>
+
+                        <!-- TAMBAHKAN id="container-riwayat-slip" PADA CONTAINER RIWAYAT INI -->
+                        <div id="container-riwayat-slip">
+                        <!-- Empty State Default -->
+                        <div class="text-center py-10 md:py-14">
+                            <div class="w-14 h-14 bg-slate-800/60 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-500">
+                            <i class="fa-solid fa-receipt text-2xl"></i>
+                            </div>
+                            <p class="text-xs md:text-sm font-bold text-slate-400">Belum Ada Transaksi</p>
+                            <p class="text-[10px] md:text-xs text-slate-500 mt-1">Catatan bulan ini masih kosong.</p>
+                        </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Tab Tabungan -->
+            <div id="tab-tabungan-content" class="tab-pane w-full hidden">
+            <!-- Konten Tabungan akan di-render oleh renderTabTabungan() -->
+            </div>
+
+            <!-- Tab Servis -->
+            <div id="tab-servis-content" class="tab-pane w-full hidden">
+            <div class="p-4 text-center text-slate-400">Halaman Servis</div>
+            </div>
+
+            <!-- Tab Setelan -->
+            <div id="tab-setelan-content" class="tab-pane w-full hidden">
+            <div class="p-4 text-center text-slate-400">Halaman Setelan</div>
+            </div>
+
+        </div>
+    </main>
 
     <!-- MODAL ALERT CUSTOM (DARK THEME) -->
     <div id="modal-alert-custom" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden">
@@ -2236,6 +2298,162 @@
 
 
 <script>
+
+    /**
+     * Helper Haptic Feedback / Getar Singkat
+     * @param {number} ms - Durasi getar dalam milidetik (default: 12ms)
+     */
+    function triggerHaptic(ms = 12) {
+        if ('vibrate' in navigator) {
+            try {
+                navigator.vibrate(ms);
+            } catch (e) {
+                // Abaikan jika device/browser memblokir haptic
+            }
+        }
+    }
+
+    //Helper Global Listener untuk Haptic Feedback seluruh tombol
+    document.addEventListener('touchstart', function(e) {
+        const target = e.target.closest('button, a, [role="button"], .cursor-pointer');
+        if (target) {
+            triggerHaptic(10); // Getar super singkat (10ms) agar terasa reaktif
+        }
+    }, { passive: true });
+
+    // Mencegah double-tap zoom pada elemen interaktif
+    document.addEventListener('touchstart', function (event) {
+        if (event.touches.length > 1) {
+            event.preventDefault(); // Cegah pinch zoom multitouch
+        }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault(); // Cegah double tap zoom
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    /**
+     * PENGELOLAAN TOMBOL KEMBALI HP (BACK BUTTON HANDLING)
+     */
+
+    // Push state awal saat pertama kali aplikasi dimuat
+    window.history.pushState({ page: 'main' }, '', window.location.href);
+
+    // Event Listener saat pengguna menekan tombol Back HP / menggeser gestur kembali
+    window.addEventListener('popstate', function (event) {
+        // 1. Cek apakah ada Modal / Popover yang sedang terbuka
+        const openModals = document.querySelectorAll('.modal-overlay:not(.hidden), [id^="modal-"]:not(.hidden)');
+        
+        let modalTutup = false;
+        openModals.forEach(modal => {
+            // Jangan tutup container utama tab
+            if (modal.id !== 'tab-content-wrapper' && !modal.classList.contains('tab-pane')) {
+                modal.classList.add('hidden');
+                modalTutup = true;
+            }
+        });
+
+        if (modalTutup) {
+            // Jika berhasil menutup modal, tahan history agar tidak keluar
+            window.history.pushState({ page: 'app' }, '', window.location.href);
+            return;
+        }
+
+        // 2. Jika tidak ada modal terbuka, tapi user ada di Tab Tabungan / Servis / Setelan
+        if (typeof tabAktifSaatIni !== 'undefined' && tabAktifSaatIni !== 'rekap') {
+            // Pindahkan tab kembali ke 'rekap' secara otomatis
+            pindahTab('rekap');
+            window.history.pushState({ page: 'rekap' }, '', window.location.href);
+            return;
+        }
+
+        // 3. Jika sudah di Tab Rekap dan tidak ada modal, biarkan pushState ditahan agar tidak tidak sengaja keluar
+        // (Atau bisa berikan proteksi pushState lagi)
+        window.history.pushState({ page: 'main' }, '', window.location.href);
+    });
+
+    // Helper tambahan: Panggil fungsi ini setiap kali BUKA MODAL baru secara kustom
+    function catatHistoryModalOpen(namaModal) {
+        window.history.pushState({ modal: namaModal }, '', window.location.href);
+    }
+
+
+    // Urutan indeks tab untuk menentukan arah animasi geser
+    const URUTAN_TAB = ['rekap', 'tabungan', 'servis', 'setelan'];
+    let tabAktifSaatIni = 'rekap';
+
+    /**
+     * Fungsi Pindah Tab dengan Animasi Geser Smooth
+     */
+    function pindahTab(targetTab, event) {
+        if (event) event.preventDefault();
+        if (tabAktifSaatIni === targetTab) return; // Jika tab yang diklik sama, lewati
+
+        const idxLama = URUTAN_TAB.indexOf(tabAktifSaatIni);
+        const idxBaru = URUTAN_TAB.indexOf(targetTab);
+
+        // Panggil getaran haptic setiap kali tombol tab ditekan
+        triggerHaptic(12);
+
+        // Tentukan arah animasi:
+        // Jika target ada di sebelah kanan (idxBaru > idxLama) -> geser dari kanan ke kiri
+        // Jika target ada di sebelah kiri (idxBaru < idxLama) -> geser dari kiri ke kanan
+        const classAnimasi = idxBaru > idxLama ? 'slide-from-right' : 'slide-from-left';
+
+        // 1. Update Tampilan Tombol Navigasi Bottom Bar
+        document.querySelectorAll('.btn-nav-tab').forEach(btn => {
+            const idTabBtn = btn.getAttribute('data-tab');
+            const spanText = btn.querySelector('span');
+
+            if (idTabBtn === targetTab) {
+                btn.classList.remove('text-slate-800/70');
+                btn.classList.add('text-slate-950', 'font-bold');
+                if (spanText) spanText.classList.replace('font-semibold', 'font-bold');
+            } else {
+                btn.classList.remove('text-slate-950', 'font-bold');
+                btn.classList.add('text-slate-800/70');
+                if (spanText) spanText.classList.replace('font-bold', 'font-semibold');
+            }
+        });
+
+        // 2. Sembunyikan Semua Tab & Tampilkan Tab Target dengan Animasi
+        URUTAN_TAB.forEach(t => {
+            const pane = document.getElementById(`tab-${t}-content`);
+            if (pane) {
+                pane.classList.add('hidden');
+                pane.classList.remove('slide-from-right', 'slide-from-left');
+            }
+        });
+
+        const paneTarget = document.getElementById(`tab-${targetTab}-content`);
+        if (paneTarget) {
+            paneTarget.classList.remove('hidden');
+            paneTarget.classList.add(classAnimasi);
+        }
+
+        // Update status tab aktif
+        tabAktifSaatIni = targetTab;
+
+        // 3. Panggil Fungsi Render Spesifik per Tab
+        if (targetTab === 'tabungan') {
+            if (typeof renderTabTabungan === 'function') {
+                renderTabTabungan();
+            }
+        } else if (targetTab === 'rekap') {
+            if (typeof renderTabRekap === 'function') {
+                renderTabRekap();
+            }
+        }
+
+        // Tambahkan baris ini di akhir fungsi pindahTab()
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
 
   //Fungsi untuk menampilkan tanggal saat ini dalam format Bahasa Indonesia
   function updateDate() {
@@ -5748,6 +5966,196 @@
                 }
             }
         });
+    }
+
+
+
+    /**
+     * Render Halaman Tab Tabungan & Riwayat Mutasi
+     */
+    async function renderTabTabungan() {
+        const container = document.getElementById('tab-tabungan-content');
+        if (!container) return;
+
+        const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+
+        // 1. Ambil Data Akun / Dompet dari Master Data / Firestore
+        let daftarAkun = [];
+        if (window.currentUserData && Array.isArray(window.currentUserData.dompet)) {
+            daftarAkun = window.currentUserData.dompet;
+        } else if (window.currentUserData && Array.isArray(window.currentUserData.akun)) {
+            daftarAkun = window.currentUserData.akun;
+        } else if (Array.isArray(window.dataMasterAkun) && window.dataMasterAkun.length > 0) {
+            daftarAkun = window.dataMasterAkun;
+        } else if (Array.isArray(window.listAkunFinansial) && window.listAkunFinansial.length > 0) {
+            daftarAkun = window.listAkunFinansial;
+        }
+
+        // Helper untuk mencari saldo berdasarkan nama/tipe akun (dengan fallback jika belum ada data)
+        const getAccountData = (keywords) => {
+            const found = daftarAkun.find(a => {
+                const nama = (a.namaAkun || a.nama || a.namaDompet || '').toLowerCase();
+                return keywords.some(k => nama.includes(k));
+            });
+            return Number(found ? (found.saldo || found.nominal || found.jumlah || 0) : 0);
+        };
+
+        // Preset Data 3 Tabungan (Target bisa disesuaikan atau diambil dari master settings)
+        const listTabungan = [
+            {
+                id: 'utama',
+                nama: 'TABUNGAN UTAMA',
+                icon: 'fa-landmark',
+                iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+                barColor: 'bg-blue-500',
+                textColor: 'text-blue-400',
+                saldo: getAccountData(['utama', 'tabungan utama']),
+                target: 10000000
+            },
+            {
+                id: 'darurat',
+                nama: 'DANA DARURAT',
+                icon: 'fa-shield-halved',
+                iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+                barColor: 'bg-rose-500',
+                textColor: 'text-rose-400',
+                saldo: getAccountData(['darurat', 'dana darurat']),
+                target: 5000000
+            },
+            {
+                id: 'kendaraan',
+                nama: 'TABUNGAN KENDARAAN',
+                icon: 'fa-motorcycle',
+                iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                barColor: 'bg-amber-500',
+                textColor: 'text-amber-400',
+                saldo: getAccountData(['kendaraan', 'tabungan kendaraan', 'servis']),
+                target: 2000000
+            }
+        ];
+
+        // Render 3 Card Tabungan
+        let htmlTabunganCards = listTabungan.map(tab => {
+            const persen = tab.target > 0 ? Math.min(100, Math.round((tab.saldo / tab.target) * 100)) : 0;
+
+            return `
+                <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl space-y-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl border flex items-center justify-center text-sm ${tab.iconBg}">
+                            <i class="fa-solid ${tab.icon}"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-300 tracking-wider">${tab.nama}</span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-extrabold text-white">${formatRp(tab.saldo)}</h3>
+                        <p class="text-[11px] text-slate-400 font-medium mt-0.5">Target: ${formatRp(tab.target)}</p>
+                    </div>
+
+                    <div class="space-y-1.5 pt-1">
+                        <div class="flex justify-between items-center text-[11px]">
+                            <span class="text-slate-400 font-medium">Progres</span>
+                            <span class="font-bold ${tab.textColor}">${persen}%</span>
+                        </div>
+                        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                            <div class="h-full ${tab.barColor} transition-all duration-500 rounded-full" style="width: ${persen}%"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // 2. Ambil Transaksi Mutasi Khusus Tabungan
+        let rawData = window.dataMasterLaporan || [];
+        if ((!rawData || rawData.length === 0) && typeof muatDataJalurLaporan === 'function') {
+            rawData = await muatDataJalurLaporan();
+        }
+
+        // Filter transaksi yang berhubungan dengan tabungan (mutasi / kategori tabungan)
+        const mutasiTabungan = (rawData || []).filter(item => {
+            const kat = String(item.kategori || '').toLowerCase();
+            const ket = String(item.keterangan || '').toLowerCase();
+            const tipe = String(item.tipe || item.jenis || '').toLowerCase();
+            
+            return kat.includes('tabungan') || kat.includes('darurat') || ket.includes('tabungan') || tipe === 'mutasi';
+        }).sort((a, b) => {
+            const tglA = a.waktuTransaksi?.toDate ? a.waktuTransaksi.toDate() : new Date(a.tanggal || 0);
+            const tglB = b.waktuTransaksi?.toDate ? b.waktuTransaksi.toDate() : new Date(b.tanggal || 0);
+            return tglB - tglA;
+        });
+
+        // Grouping Mutasi berdasarkan Tanggal
+        const groupedMutasi = {};
+        mutasiTabungan.forEach(item => {
+            let tglObj = item.waktuTransaksi?.toDate ? item.waktuTransaksi.toDate() : new Date(item.tanggal || Date.now());
+            const dateStr = tglObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+
+            if (!groupedMutasi[dateStr]) groupedMutasi[dateStr] = [];
+            groupedMutasi[dateStr].push(item);
+        });
+
+        // Render HTML List Mutasi
+        let htmlMutasi = '';
+        const dateKeys = Object.keys(groupedMutasi);
+
+        if (dateKeys.length > 0) {
+            htmlMutasi = dateKeys.map(tgl => `
+                <div class="space-y-2">
+                    <p class="text-[11px] font-bold text-slate-400 px-1">${tgl}</p>
+                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-2 space-y-1">
+                        ${groupedMutasi[tgl].map(m => {
+                            const nominal = Number(m.totalBersihNetto || m.nominal || m.jumlah || 0);
+                            const isKeluar = nominal < 0 || String(m.tipe).toLowerCase() === 'pengeluaran';
+                            const displayNominal = (isKeluar ? '-' : '+') + formatRp(Math.abs(nominal));
+                            const namaKat = m.kategori || 'Tabungan';
+                            const ket = m.keterangan || m.nama || namaKat;
+
+                            return `
+                                <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/40 transition">
+                                    <div class="flex items-center gap-3 truncate pr-2">
+                                        <div class="w-8 h-8 rounded-full ${isKeluar ? 'bg-purple-950/60 text-purple-400 border border-purple-800/40' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/40'} flex items-center justify-center shrink-0">
+                                            <i class="fa-solid ${isKeluar ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
+                                        </div>
+                                        <div class="truncate">
+                                            <p class="text-xs font-bold text-slate-200 truncate">${namaKat}</p>
+                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold truncate">${ket}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-extrabold ${isKeluar ? 'text-purple-400' : 'text-emerald-400'} shrink-0">${displayNominal}</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            htmlMutasi = `
+                <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-400 space-y-1">
+                    <i class="fa-solid fa-receipt text-2xl text-slate-600 mb-1"></i>
+                    <p class="text-xs font-medium">Belum ada riwayat mutasi tabungan.</p>
+                </div>
+            `;
+        }
+
+        // Combine Seluruh Layout
+        container.innerHTML = `
+            <!-- LIST CARD TABUNGAN -->
+            <div class="space-y-3">
+                ${htmlTabunganCards}
+            </div>
+
+            <!-- SECTION RIWAYAT TABUNGAN & MUTASI -->
+            <div class="space-y-3 pt-2">
+                <div class="flex justify-between items-center px-1">
+                    <h4 class="text-xs font-bold text-slate-200 tracking-wider uppercase">RIWAYAT TABUNGAN & MUTASI</h4>
+                    <i class="fa-solid fa-right-left text-slate-400 text-xs"></i>
+                </div>
+                
+                <div class="space-y-3">
+                    ${htmlMutasi}
+                </div>
+            </div>
+        `;
     }
 
 
