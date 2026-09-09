@@ -275,7 +275,7 @@
 
             <!-- Tab Servis -->
             <div id="tab-servis-content" class="tab-pane w-full hidden">
-            <div class="p-4 text-center text-slate-400">Halaman Servis</div>
+            <!-- Konten Servis akan di-render oleh renderTabServis() -->
             </div>
 
             <!-- Tab Setelan -->
@@ -285,6 +285,14 @@
 
         </div>
     </main>
+    
+    <!-- TOAST KONFIRMASI KELUAR APLIKASI -->
+    <div id="toast-exit-confirm" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-[999] hidden transition-all duration-300">
+        <div class="bg-slate-900/90 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg border border-slate-700/50 backdrop-blur-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-[#b5f234]"></i>
+            <span>Tekan sekali lagi untuk keluar dari aplikasi</span>
+        </div>
+    </div>
 
     <!-- MODAL ALERT CUSTOM (DARK THEME) -->
     <div id="modal-alert-custom" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden">
@@ -743,12 +751,84 @@
             </div>
         </div>
 
-        <!-- BAGIAN 2: BAR CATATAN CEPAT + INPUT + KALKULATOR (60% TINGGI LAYAR) -->
-        <div class="h-[60%] flex flex-col justify-between bg-[#121714] p-4 space-y-3">
+        <!-- BAGIAN 2: BAR CATATAN CEPAT / PANEL KENDARAAN + INPUT + KALKULATOR (60% TINGGI LAYAR) -->
+        <div class="h-[60%] flex flex-col justify-between bg-[#121714] p-4 space-y-2.5 overflow-y-auto">
             
-            <!-- 1. BARIS HORIZONTAL ISI CATATAN CEPAT (QUICK NOTES) -->
+            <!-- 1. BARIS HORIZONTAL ISI CATATAN CEPAT (QUICK NOTES BIASA) -->
             <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 shrink-0" id="container-quick-notes">
-                <!-- Render Quick Notes via JavaScript -->
+                <!-- Render Quick Notes biasa via JavaScript -->
+            </div>
+
+            <!-- 1.B PANEL CEPAT KHUSUS KENDARAAN (Hanya Tampil Jika Kategori Kendaraan Aktif) -->
+            <div id="panel-khusus-kendaraan" class="hidden bg-slate-900/90 border border-[#b5f234]/40 p-3 rounded-xl space-y-2.5 text-xs shrink-0 shadow-inner">
+                <!-- Toggle Sub-Mode: Bensin / Servis -->
+                <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                    <span class="font-bold text-[#b5f234] text-[11px] flex items-center gap-1.5 uppercase tracking-wide">
+                        <i class="fa-solid fa-gauge-high"></i> Sub-Mode Kendaraan
+                    </span>
+                    <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                        <label id="lbl-mode-bensin" class="flex items-center gap-1 cursor-pointer text-slate-200 font-bold text-[10px] px-2.5 py-1 rounded-md bg-[#b5f234]/20 border border-[#b5f234]/40 text-[#b5f234]">
+                            <input type="radio" name="modeKendaraanOpt" value="Bensin" checked onchange="setSubModeKendaraan('Bensin')" class="hidden"> 
+                            <i class="fa-solid fa-gas-pump text-[10px]"></i> Bensin
+                        </label>
+                        <label id="lbl-mode-servis" class="flex items-center gap-1 cursor-pointer text-slate-400 font-bold text-[10px] px-2.5 py-1 rounded-md hover:bg-slate-900">
+                            <input type="radio" name="modeKendaraanOpt" value="Servis" onchange="setSubModeKendaraan('Servis')" class="hidden"> 
+                            <i class="fa-solid fa-wrench text-[10px]"></i> Servis
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Opsi Pilihan Kendaraan & Pilihan BBM -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">Pilih Kendaraan:</label>
+                        <select id="select-data-kendaraan" onchange="updateOtomatisDataKendaraan()" class="w-full bg-slate-950 border border-slate-800 text-white rounded-lg p-1.5 text-xs font-semibold focus:border-[#b5f234] outline-none">
+                            <!-- Diisi via JavaScript -->
+                        </select>
+                    </div>
+                    <div id="wrapper-opsi-bbm">
+                        <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">Jenis BBM:</label>
+                        <div class="grid grid-cols-2 gap-1">
+                            <button type="button" id="btn-bbm-pertalite" onclick="pilihTipeBBM('Pertalite', 10000)" class="border border-[#b5f234] bg-[#b5f234]/10 text-[#b5f234] py-1 rounded-lg font-bold text-[10px]">Pertalite</button>
+                            <button type="button" id="btn-bbm-pertamax" onclick="pilihTipeBBM('Pertamax', 12950)" class="border border-slate-800 bg-slate-950 text-slate-400 py-1 rounded-lg font-bold text-[10px]">Pertamax</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Liter & Quick Nominal Bensin -->
+                <div id="wrapper-detail-bensin" class="space-y-2">
+                    <div class="grid grid-cols-2 gap-2 items-center">
+                        <div>
+                            <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">Harga / Liter (Rp):</label>
+                            <input type="number" id="input-harga-per-liter" value="10000" oninput="kalkulasiOtoLiter()" class="w-full bg-slate-950 border border-slate-800 text-white p-1.5 rounded-lg text-center font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">Estimasi Liter:</label>
+                            <div id="display-estimasi-liter" class="bg-slate-950 border border-slate-800 text-[#b5f234] font-black p-1.5 rounded-lg text-center text-xs">0.00 Liter</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">Isi Cepat Bensin (Rp):</label>
+                        <div class="grid grid-cols-3 gap-1.5">
+                            <button type="button" onclick="quickIsiBensin(20000)" class="bg-slate-950 border border-slate-800 hover:border-[#b5f234] text-slate-200 py-1 rounded-lg font-bold text-[10px]">20.000</button>
+                            <button type="button" onclick="quickIsiBensin(50000)" class="bg-slate-950 border border-slate-800 hover:border-[#b5f234] text-slate-200 py-1 rounded-lg font-bold text-[10px]">50.000</button>
+                            <button type="button" onclick="quickIsiBensin(100000)" class="bg-slate-950 border border-slate-800 hover:border-[#b5f234] text-slate-200 py-1 rounded-lg font-bold text-[10px]">100.000</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form KM (Bisa untuk Bensin & Servis) -->
+                <div class="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80">
+                    <div>
+                        <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">KM Terakhir:</label>
+                        <input type="number" id="input-km-terakhir" value="0" placeholder="0" class="w-full bg-slate-950 border border-slate-800 text-slate-300 p-1.5 rounded-lg text-center font-bold text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] text-slate-400 font-bold uppercase mb-1">KM Baru Sekarang:</label>
+                        <input type="number" id="input-km-sekarang" value="0" placeholder="0" oninput="updateCatatanOtomatisKendaraan()" class="w-full bg-slate-950 border border-slate-800 text-white p-1.5 rounded-lg text-center font-bold text-xs">
+                    </div>
+                </div>
             </div>
 
             <!-- 2. INPUT CATATAN & DISPLAY NOMINAL -->
@@ -768,7 +848,7 @@
             </div>
 
             <!-- 3. KEYPAD KALKULATOR COMPACT (GRID 4x4) -->
-            <div class="grid grid-cols-4 gap-2 text-slate-100 font-bold text-xs flex-1">
+            <div class="grid grid-cols-4 gap-2 text-slate-100 font-bold text-xs flex-1 min-h-[160px]">
                 <!-- Row 1 -->
                 <button onclick="calcPress('C')" class="bg-slate-800/60 active:bg-slate-700 text-rose-400 border border-slate-700 hover:border-[#b5f234] rounded-xl font-black transition-colors">C</button>
                 <button onclick="calcPress('/')" class="bg-slate-800/60 active:bg-slate-700 text-sky-400 border border-slate-700 hover:border-[#b5f234] rounded-xl transition-colors"><i class="fas fa-divide"></i></button>
@@ -1179,6 +1259,53 @@
 
         </div>
     </div>
+
+    <!-- MODAL EDIT DATA KENDARAAN -->
+    <div id="modal-edit-kendaraan" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
+        <div class="bg-slate-900 border border-[#b5f234] rounded-3xl p-5 w-full max-w-md space-y-4 shadow-2xl">
+            <!-- Header -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-xs md:text-sm font-extrabold text-white tracking-wide uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-[#b5f234]"></i> Edit Data Kendaraan
+                </h3>
+                <button type="button" onclick="tutupModalEditKendaraan()" class="text-slate-400 hover:text-white text-base">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Form Edit -->
+            <form id="form-edit-kendaraan" onsubmit="simpanDataKendaraan(event)" class="space-y-3">
+                <input type="hidden" id="edit-ken-key" value="">
+
+                <!-- Field Nama Kendaraan -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Nama Kendaraan</label>
+                    <input type="text" id="edit-ken-nama" required placeholder="Contoh: Alpha Romeo Stelvio"
+                        class="w-full bg-slate-950 border border-slate-800 focus:border-[#b5f234] rounded-xl p-2.5 text-xs text-white outline-none transition">
+                </div>
+
+                <!-- Field Plat Nomor -->
+                <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Plat Nomor</label>
+                    <input type="text" id="edit-ken-plat" placeholder="Contoh: B 1234 XYZ"
+                        class="w-full bg-slate-950 border border-slate-800 focus:border-[#b5f234] rounded-xl p-2.5 text-xs text-white outline-none transition uppercase">
+                </div>
+
+                <!-- Tombol Aksi -->
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="tutupModalEditKendaraan()" 
+                            class="flex-1 py-2.5 rounded-xl border border-slate-700 text-slate-300 font-bold text-xs hover:bg-slate-800 transition">
+                        Batal
+                    </button>
+                    <button type="submit" id="btn-simpan-ken"
+                            class="flex-1 py-2.5 rounded-xl bg-[#b5f234] text-slate-950 font-black text-xs hover:bg-[#a1da2c] transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
   </div>
 
@@ -2338,20 +2465,21 @@
     }, false);
 
     /**
-     * PENGELOLAAN TOMBOL KEMBALI HP (BACK BUTTON HANDLING)
+     * PENGELOLAAN TOMBOL KEMBALI HP (DOUBLE-TAP BACK TO EXIT)
      */
 
-    // Push state awal saat pertama kali aplikasi dimuat
+    let backPressedOnce = false;
+    let exitToastTimer = null;
+
+    // Push state awal
     window.history.pushState({ page: 'main' }, '', window.location.href);
 
-    // Event Listener saat pengguna menekan tombol Back HP / menggeser gestur kembali
     window.addEventListener('popstate', function (event) {
-        // 1. Cek apakah ada Modal / Popover yang sedang terbuka
+        // 1. Cek jika ada Modal / Popover yang terbuka
         const openModals = document.querySelectorAll('.modal-overlay:not(.hidden), [id^="modal-"]:not(.hidden)');
         
         let modalTutup = false;
         openModals.forEach(modal => {
-            // Jangan tutup container utama tab
             if (modal.id !== 'tab-content-wrapper' && !modal.classList.contains('tab-pane')) {
                 modal.classList.add('hidden');
                 modalTutup = true;
@@ -2359,22 +2487,41 @@
         });
 
         if (modalTutup) {
-            // Jika berhasil menutup modal, tahan history agar tidak keluar
             window.history.pushState({ page: 'app' }, '', window.location.href);
             return;
         }
 
-        // 2. Jika tidak ada modal terbuka, tapi user ada di Tab Tabungan / Servis / Setelan
+        // 2. Jika tidak ada modal, tapi pengguna di Tab selain Rekap
         if (typeof tabAktifSaatIni !== 'undefined' && tabAktifSaatIni !== 'rekap') {
-            // Pindahkan tab kembali ke 'rekap' secara otomatis
             pindahTab('rekap');
             window.history.pushState({ page: 'rekap' }, '', window.location.href);
             return;
         }
 
-        // 3. Jika sudah di Tab Rekap dan tidak ada modal, biarkan pushState ditahan agar tidak tidak sengaja keluar
-        // (Atau bisa berikan proteksi pushState lagi)
+        // 3. Jika sudah berada di Tab Rekap (Halaman Utama)
+        if (backPressedOnce) {
+            // Jika ditekan kedua kalinya dalam rentang waktu < 2 detik, biarkan keluar
+            return; 
+        }
+
+        // Tekanan pertama di Tab Rekap: Tahan history & munculkan Toast
         window.history.pushState({ page: 'main' }, '', window.location.href);
+        backPressedOnce = true;
+        
+        // Berikan efek getar peringatan
+        if (typeof triggerHaptic === 'function') triggerHaptic(20);
+
+        // Tampilkan Toast Konfirmasi
+        const exitToast = document.getElementById('toast-exit-confirm');
+        if (exitToast) {
+            exitToast.classList.remove('hidden');
+            
+            clearTimeout(exitToastTimer);
+            exitToastTimer = setTimeout(() => {
+                exitToast.classList.add('hidden');
+                backPressedOnce = false; // Reset status setelah 2 detik
+            }, 2000);
+        }
     });
 
     // Helper tambahan: Panggil fungsi ini setiap kali BUKA MODAL baru secara kustom
@@ -2400,9 +2547,7 @@
         // Panggil getaran haptic setiap kali tombol tab ditekan
         triggerHaptic(12);
 
-        // Tentukan arah animasi:
-        // Jika target ada di sebelah kanan (idxBaru > idxLama) -> geser dari kanan ke kiri
-        // Jika target ada di sebelah kiri (idxBaru < idxLama) -> geser dari kiri ke kanan
+        // Tentukan arah animasi
         const classAnimasi = idxBaru > idxLama ? 'slide-from-right' : 'slide-from-left';
 
         // 1. Update Tampilan Tombol Navigasi Bottom Bar
@@ -2448,9 +2593,17 @@
             if (typeof renderTabRekap === 'function') {
                 renderTabRekap();
             }
+        } else if (targetTab === 'servis') {
+            if (typeof renderTabServis === 'function') {
+                renderTabServis();
+            }
+        } else if (targetTab === 'setelan' || targetTab === 'pengaturan') {
+            if (typeof renderTabSetelan === 'function') {
+                renderTabSetelan();
+            }
         }
 
-        // Tambahkan baris ini di akhir fungsi pindahTab()
+        // Reset posisi scroll ke atas
         window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
@@ -3901,11 +4054,21 @@
     };
 
 
-  // STATE MODAL PENGELUARAN & KALKULATOR
+  // ==========================================
+    // STATE MODAL PENGELUARAN, KALKULATOR & KENDARAAN
+    // ==========================================
     let calcState = {
         expression: '',
         currentValue: '0',
         selectedKategori: null
+    };
+
+    // State Tambahan untuk Kendaraan
+    let stateKendaraan = {
+        subMode: 'Bensin', // 'Bensin' atau 'Servis'
+        jenisBBM: 'Pertalite',
+        hargaBBM: 10000,
+        kategoriAktif: ''
     };
 
     // DATA KATEGORI (LocalStorage)
@@ -3923,7 +4086,9 @@
         'Makan', 'Minum', 'Bensin', 'Parkir', 'Galon'
     ];
 
-    // BUKA MODAL FULLSCREEN
+    // ==========================================
+    // MODAL CONTROL & RENDER
+    // ==========================================
     window.bukaModalPengeluaran = function() {
         const modal = document.getElementById('modal-pengeluaran');
         if (modal) {
@@ -3935,7 +4100,6 @@
         }
     };
 
-    // TUTUP MODAL
     window.tutupModalPengeluaran = function() {
         const modal = document.getElementById('modal-pengeluaran');
         if (modal) {
@@ -3950,7 +4114,7 @@
         if (!container) return;
 
         let html = '';
-        listKategoriPengeluaran.forEach((kat, idx) => {
+        listKategoriPengeluaran.forEach((kat) => {
             const isSelected = calcState.selectedKategori === kat.nama;
             html += `
                 <div onclick="pilihKategori('${kat.nama}')" 
@@ -3986,19 +4150,141 @@
         container.innerHTML = html;
     }
 
-    // GUNAKAN QUICK NOTE KE INPUT
     window.pilihQuickNote = function(note) {
         const inputKet = document.getElementById('input-keterangan-pengeluaran');
         if (inputKet) inputKet.value = note;
     };
 
-    // PILIH KATEGORI
+    // PILIH KATEGORI (UPDATED: DENGAN TOGGLE PANEL KENDARAAN)
     window.pilihKategori = function(namaKat) {
         calcState.selectedKategori = namaKat;
+        stateKendaraan.kategoriAktif = namaKat;
         renderGridKategori();
+
+        const elQuickNotes = document.getElementById('container-quick-notes');
+        const elPanelKendaraan = document.getElementById('panel-khusus-kendaraan');
+
+        // Cek jika kategori adalah Kendaraan (Case Insensitive)
+        if (namaKat.toUpperCase() === 'KENDARAAN') {
+            if (elQuickNotes) elQuickNotes.classList.add('hidden');
+            if (elPanelKendaraan) elPanelKendaraan.classList.remove('hidden');
+
+            loadOpsiKendaraanToSelect();
+            updateCatatanOtomatisKendaraan();
+        } else {
+            if (elQuickNotes) elQuickNotes.classList.remove('hidden');
+            if (elPanelKendaraan) elPanelKendaraan.classList.add('hidden');
+        }
     };
 
+    // ==========================================
+    // LOGIKA KHUSUS PANEL KENDARAAN
+    // ==========================================
+    function loadOpsiKendaraanToSelect() {
+        const sel = document.getElementById('select-data-kendaraan');
+        if (!sel) return;
+
+        // Cache / Fallback Data Kendaraan
+        const data = window.dataKendaraanCache || {
+            'v1': { nama: 'Kijang GrandEx (G 1082 AZ)' },
+            'v2': { nama: 'Vario 110 FI (H 4663 AEW)' },
+            'v3': { nama: 'Astrea Grand (H 3129 HW)' }
+        };
+
+        sel.innerHTML = Object.keys(data).map(key => {
+            const item = data[key];
+            const namaDisplay = item.nama || item.nama_kendaraan || 'Kendaraan';
+            return `<option value="${key}" data-nama="${namaDisplay}">${namaDisplay}</option>`;
+        }).join('');
+    }
+
+    window.setSubModeKendaraan = function(mode) {
+        stateKendaraan.subMode = mode;
+
+        const lblBensin = document.getElementById('lbl-mode-bensin');
+        const lblServis = document.getElementById('lbl-mode-servis');
+        const wrapBbm = document.getElementById('wrapper-opsi-bbm');
+        const wrapDetailBensin = document.getElementById('wrapper-detail-bensin');
+
+        if (mode === 'Bensin') {
+            if (lblBensin) lblBensin.className = "flex items-center gap-1 cursor-pointer text-[#b5f234] font-bold text-[10px] px-2.5 py-1 rounded-md bg-[#b5f234]/20 border border-[#b5f234]/40";
+            if (lblServis) lblServis.className = "flex items-center gap-1 cursor-pointer text-slate-400 font-bold text-[10px] px-2.5 py-1 rounded-md hover:bg-slate-900";
+            if (wrapBbm) wrapBbm.classList.remove('hidden');
+            if (wrapDetailBensin) wrapDetailBensin.classList.remove('hidden');
+        } else {
+            if (lblServis) lblServis.className = "flex items-center gap-1 cursor-pointer text-[#b5f234] font-bold text-[10px] px-2.5 py-1 rounded-md bg-[#b5f234]/20 border border-[#b5f234]/40";
+            if (lblBensin) lblBensin.className = "flex items-center gap-1 cursor-pointer text-slate-400 font-bold text-[10px] px-2.5 py-1 rounded-md hover:bg-slate-900";
+            if (wrapBbm) wrapBbm.classList.add('hidden');
+            if (wrapDetailBensin) wrapDetailBensin.classList.add('hidden');
+        }
+        updateCatatanOtomatisKendaraan();
+    };
+
+    window.pilihTipeBBM = function(jenis, harga) {
+        stateKendaraan.jenisBBM = jenis;
+        stateKendaraan.hargaBBM = harga;
+
+        const btnP = document.getElementById('btn-bbm-pertalite');
+        const btnPx = document.getElementById('btn-bbm-pertamax');
+        const inputHarga = document.getElementById('input-harga-per-liter');
+
+        if (inputHarga) inputHarga.value = harga;
+
+        if (jenis === 'Pertalite') {
+            if (btnP) btnP.className = "border border-[#b5f234] bg-[#b5f234]/10 text-[#b5f234] py-1 rounded-lg font-bold text-[10px]";
+            if (btnPx) btnPx.className = "border border-slate-800 bg-slate-950 text-slate-400 py-1 rounded-lg font-bold text-[10px]";
+        } else {
+            if (btnPx) btnPx.className = "border border-[#b5f234] bg-[#b5f234]/10 text-[#b5f234] py-1 rounded-lg font-bold text-[10px]";
+            if (btnP) btnP.className = "border border-slate-800 bg-slate-950 text-slate-400 py-1 rounded-lg font-bold text-[10px]";
+        }
+        kalkulasiOtoLiter();
+    };
+
+    window.quickIsiBensin = function(nominal) {
+        calcSetDirectValue(nominal);
+        kalkulasiOtoLiter();
+    };
+
+    window.kalkulasiOtoLiter = function() {
+        const nominal = Number(calcState.currentValue) || 0;
+        const harga = parseFloat(document.getElementById('input-harga-per-liter')?.value) || stateKendaraan.hargaBBM || 10000;
+
+        const liter = harga > 0 ? (nominal / harga).toFixed(2) : '0.00';
+        const displayLiter = document.getElementById('display-estimasi-liter');
+        if (displayLiter) displayLiter.innerText = `${liter} Liter`;
+
+        updateCatatanOtomatisKendaraan();
+    };
+
+    window.updateOtomatisDataKendaraan = function() {
+        updateCatatanOtomatisKendaraan();
+    };
+
+    function updateCatatanOtomatisKendaraan() {
+        if (!stateKendaraan.kategoriAktif || stateKendaraan.kategoriAktif.toUpperCase() !== 'KENDARAAN') return;
+
+        const sel = document.getElementById('select-data-kendaraan');
+        const namaKendaraan = sel && sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].getAttribute('data-nama') : 'Kendaraan';
+        const inputCatatan = document.getElementById('input-keterangan-pengeluaran');
+
+        if (stateKendaraan.subMode === 'Bensin') {
+            const nominal = Number(calcState.currentValue) || 0;
+            const harga = parseFloat(document.getElementById('input-harga-per-liter')?.value) || 10000;
+            const liter = harga > 0 ? (nominal / harga).toFixed(2) : '0.00';
+
+            if (inputCatatan) {
+                inputCatatan.value = `Bensin ${stateKendaraan.jenisBBM} (${liter}L) ${namaKendaraan}`;
+            }
+        } else {
+            if (inputCatatan && (!inputCatatan.value || inputCatatan.value.startsWith('Bensin'))) {
+                inputCatatan.value = `Servis ${namaKendaraan}`;
+            }
+        }
+    }
+
+    // ==========================================
     // MENU PENGATURAN KATEGORI & QUICK NOTES
+    // ==========================================
     window.bukaPengaturanPengeluaran = function() {
         const modal = document.getElementById('modal-pengaturan-pengeluaran');
         if (modal) {
@@ -4023,25 +4309,20 @@
         const contentNote = document.getElementById('tab-content-quicknote');
 
         if (tab === 'kategori') {
-            btnKat.className = "px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors";
-            btnNote.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors";
-            
-            contentKat.className = "flex flex-col gap-3 min-h-0 overflow-hidden";
-            contentNote.className = "hidden";
-            
+            if (btnKat) btnKat.className = "px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors";
+            if (btnNote) btnNote.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors";
+            if (contentKat) contentKat.className = "flex flex-col gap-3 min-h-0 overflow-hidden";
+            if (contentNote) contentNote.className = "hidden";
             renderKelolaKategori();
         } else {
-            btnNote.className = "px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors";
-            btnKat.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors";
-            
-            contentNote.className = "flex flex-col gap-3 min-h-0 overflow-hidden";
-            contentKat.className = "hidden";
-            
+            if (btnNote) btnNote.className = "px-3 py-1 font-bold rounded-lg bg-[#b5f234]/20 text-[#b5f234] border border-[#b5f234]/30 transition-colors";
+            if (btnKat) btnKat.className = "px-3 py-1 font-bold rounded-lg text-slate-400 hover:text-white transition-colors";
+            if (contentNote) contentNote.className = "flex flex-col gap-3 min-h-0 overflow-hidden";
+            if (contentKat) contentKat.className = "hidden";
             renderKelolaQuickNotes();
         }
     };
 
-    // KELOLA KATEGORI DI MODAL
     function renderKelolaKategori() {
         const listEl = document.getElementById('list-kelola-kategori');
         if (!listEl) return;
@@ -4064,45 +4345,28 @@
         listEl.innerHTML = html || `<p class="text-slate-500 text-xs italic text-center py-2">Belum ada kategori.</p>`;
     }
 
-    // FUNGSI SINKRONISASI KE FIRESTORE (DOKUMEN: kategori)
     async function simpanKategoriKeFirestore() {
         try {
             const userId = window.getActiveUserId ? window.getActiveUserId() : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID'));
-            
-            if (!userId) {
-                console.warn("User ID tidak ditemukan. Data hanya tersimpan di lokal.");
-                return;
-            }
+            if (!userId) return;
 
             const dataKategori = {
                 listKategori: listKategoriPengeluaran,
                 diperbaruiPada: new Date().toISOString()
             };
 
-            // Menggunakan reference Firestore Modular yang di-expose ke window
             if (window.db && window.fbDoc && window.fbSetDoc) {
                 const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "kategori");
                 await window.fbSetDoc(docRef, dataKategori, { merge: true });
-                console.log("✅ Data kategori berhasil disimpan ke Firestore (users/.../pengaturan_aplikasi/kategori)");
-            } else if (typeof window.simpanDataKeFirestore === 'function') {
-                await window.simpanDataKeFirestore({
-                    path: `users/${userId}/pengaturan_aplikasi/kategori`,
-                    data: dataKategori
-                });
             }
         } catch (err) {
             console.error("❌ Gagal menyimpan dokumen kategori ke Firestore:", err);
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert("Gagal sinkronisasi kategori ke cloud: " + err.message, "error");
-            }
         }
     }
 
-    // FUNGSI MUAT KATEGORI DARI FIRESTORE / LOCALSTORAGE
     window.muatKategoriPengeluaran = async function(userIdParam) {
         const userId = userIdParam || (window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id'));
         
-        // 1. Coba ambil dari Firestore jika user online/terdaftar
         if (userId && window.db && window.fbDoc && window.fbGetDoc) {
             try {
                 const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "kategori");
@@ -4112,7 +4376,7 @@
                     listKategoriPengeluaran = docSnap.data().listKategori;
                     localStorage.setItem('dompetq_kategori_pengeluaran', JSON.stringify(listKategoriPengeluaran));
                     renderKelolaKategori();
-                    if (typeof renderGridKategori === 'function') renderGridKategori();
+                    renderGridKategori();
                     return;
                 }
             } catch (err) {
@@ -4120,38 +4384,27 @@
             }
         }
 
-        // 2. Fallback ke LocalStorage jika offline atau Firestore kosong
         const localData = localStorage.getItem('dompetq_kategori_pengeluaran');
         if (localData) {
-            try {
-                listKategoriPengeluaran = JSON.parse(localData);
-            } catch (e) {
-                console.error("Error parse JSON kategori lokal:", e);
-            }
+            try { listKategoriPengeluaran = JSON.parse(localData); } catch (e) {}
         }
         
         renderKelolaKategori();
-        if (typeof renderGridKategori === 'function') renderGridKategori();
+        renderGridKategori();
     };
 
-    // TAMBAH KATEGORI VIA MODAL
     window.tambahKategoriViaModal = async function() {
         const input = document.getElementById('input-kategori-baru');
         const nama = input ? input.value.trim() : '';
 
         if (!nama) {
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert("Nama kategori tidak boleh kosong!", "warning");
-            }
+            if (typeof window.tampilAlert === 'function') await window.tampilAlert("Nama kategori tidak boleh kosong!", "warning");
             return;
         }
 
-        // Cek duplikasi nama
         const duplikat = listKategoriPengeluaran.some(k => k.nama.toUpperCase() === nama.toUpperCase());
         if (duplikat) {
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert(`Kategori "${nama}" sudah ada!`, "warning");
-            }
+            if (typeof window.tampilAlert === 'function') await window.tampilAlert(`Kategori "${nama}" sudah ada!`, "warning");
             return;
         }
 
@@ -4161,55 +4414,37 @@
             icon: 'fa-tags'
         });
 
-        // 1. Simpan Lokal
         localStorage.setItem('dompetq_kategori_pengeluaran', JSON.stringify(listKategoriPengeluaran));
-        
-        // 2. Simpan ke Firestore
         await simpanKategoriKeFirestore();
 
         input.value = '';
         renderKelolaKategori();
-        if (typeof renderGridKategori === 'function') renderGridKategori();
-        
-        if (typeof window.tampilAlert === 'function') {
-            await window.tampilAlert(`Kategori "${nama}" berhasil ditambahkan!`, "success");
-        }
+        renderGridKategori();
+        if (typeof window.tampilAlert === 'function') await window.tampilAlert(`Kategori "${nama}" berhasil ditambahkan!`, "success");
     };
 
-    // HAPUS KATEGORI VIA MODAL
     window.hapusKategoriIndex = async function(idx) {
         const kat = listKategoriPengeluaran[idx];
         if (kat) {
             listKategoriPengeluaran.splice(idx, 1);
-            
-            // 1. Simpan Lokal
             localStorage.setItem('dompetq_kategori_pengeluaran', JSON.stringify(listKategoriPengeluaran));
-            
-            // 2. Simpan ke Firestore
             await simpanKategoriKeFirestore();
 
-            if (typeof calcState !== 'undefined' && calcState.selectedKategori === kat.nama) {
-                calcState.selectedKategori = null;
-            }
+            if (calcState.selectedKategori === kat.nama) calcState.selectedKategori = null;
             
             renderKelolaKategori();
-            if (typeof renderGridKategori === 'function') renderGridKategori();
-            
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert(`Kategori "${kat.nama}" telah dihapus.`, "info");
-            }
+            renderGridKategori();
+            if (typeof window.tampilAlert === 'function') await window.tampilAlert(`Kategori "${kat.nama}" telah dihapus.`, "info");
         }
     };
 
-    // FUNGSI SINKRONISASI QUICK NOTES KE FIRESTORE (DOKUMEN: CATATAN_CEPAT)
+    // ==========================================
+    // QUICK NOTES FIRESTORE & MANAGEMENT
+    // ==========================================
     async function simpanQuickNotesKeFirestore() {
         try {
             const userId = window.getActiveUserId ? window.getActiveUserId() : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID'));
-            
-            if (!userId) {
-                console.warn("User ID tidak ditemukan. Quick Note hanya tersimpan di lokal.");
-                return;
-            }
+            if (!userId) return;
 
             const dataQuickNotes = {
                 listQuickNotes: listQuickNotes,
@@ -4219,26 +4454,15 @@
             if (window.db && window.fbDoc && window.fbSetDoc) {
                 const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "catatan_cepat");
                 await window.fbSetDoc(docRef, dataQuickNotes, { merge: true });
-                console.log("✅ Data Quick Notes berhasil disimpan ke Firestore (users/.../pengaturan_aplikasi/catatan_cepat)");
-            } else if (typeof window.simpanDataKeFirestore === 'function') {
-                await window.simpanDataKeFirestore({
-                    path: `users/${userId}/pengaturan_aplikasi/catatan_cepat`,
-                    data: dataQuickNotes
-                });
             }
         } catch (err) {
             console.error("❌ Gagal menyimpan dokumen catatan_cepat ke Firestore:", err);
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert("Gagal sinkronisasi catatan cepat ke cloud: " + err.message, "error");
-            }
         }
     }
 
-    // FUNGSI MUAT QUICK NOTES DARI FIRESTORE / LOCALSTORAGE
     window.muatQuickNotes = async function(userIdParam) {
         const userId = userIdParam || (window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id'));
         
-        // 1. Coba ambil dari Firestore jika user online/terdaftar
         if (userId && window.db && window.fbDoc && window.fbGetDoc) {
             try {
                 const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "catatan_cepat");
@@ -4248,7 +4472,7 @@
                     listQuickNotes = docSnap.data().listQuickNotes;
                     localStorage.setItem('dompetq_quick_notes', JSON.stringify(listQuickNotes));
                     renderKelolaQuickNotes();
-                    if (typeof renderQuickNotes === 'function') renderQuickNotes();
+                    renderQuickNotes();
                     return;
                 }
             } catch (err) {
@@ -4256,21 +4480,15 @@
             }
         }
 
-        // 2. Fallback ke LocalStorage jika offline atau dokumen Firestore belum ada
         const localData = localStorage.getItem('dompetq_quick_notes');
         if (localData) {
-            try {
-                listQuickNotes = JSON.parse(localData);
-            } catch (e) {
-                console.error("Error parse JSON Quick Notes lokal:", e);
-            }
+            try { listQuickNotes = JSON.parse(localData); } catch (e) {}
         }
         
         renderKelolaQuickNotes();
-        if (typeof renderQuickNotes === 'function') renderQuickNotes();
+        renderQuickNotes();
     };
 
-    // KELOLA QUICK NOTE DI MODAL
     function renderKelolaQuickNotes() {
         const listEl = document.getElementById('list-kelola-quicknote');
         if (!listEl) return;
@@ -4290,59 +4508,47 @@
         listEl.innerHTML = html || `<p class="text-slate-500 text-xs italic text-center py-2">Belum ada catatan cepat.</p>`;
     }
 
-    // TAMBAH QUICK NOTE VIA MODAL
     window.tambahQuickNoteViaModal = async function() {
         const input = document.getElementById('input-quicknote-baru');
         const note = input ? input.value.trim() : '';
 
         if (!note) {
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert("Catatan cepat tidak boleh kosong!", "warning");
-            } else {
-                alert("Catatan cepat tidak boleh kosong!");
-            }
+            if (typeof window.tampilAlert === 'function') await window.tampilAlert("Catatan cepat tidak boleh kosong!", "warning");
             return;
         }
 
         listQuickNotes.push(note);
-
-        // 1. Simpan Lokal
         localStorage.setItem('dompetq_quick_notes', JSON.stringify(listQuickNotes));
-        
-        // 2. Simpan ke Firestore (dokumen: CATATAN_CEPAT)
         await simpanQuickNotesKeFirestore();
 
         input.value = '';
         renderKelolaQuickNotes();
-        if (typeof renderQuickNotes === 'function') renderQuickNotes();
-
-        if (typeof window.tampilAlert === 'function') {
-            await window.tampilAlert(`Catatan "${note}" berhasil ditambahkan!`, "success");
-        }
+        renderQuickNotes();
+        if (typeof window.tampilAlert === 'function') await window.tampilAlert(`Catatan "${note}" berhasil ditambahkan!`, "success");
     };
 
-    // HAPUS QUICK NOTE VIA MODAL
     window.hapusQuickNoteIndex = async function(idx) {
         const note = listQuickNotes[idx];
         if (note) {
             listQuickNotes.splice(idx, 1);
-
-            // 1. Simpan Lokal
             localStorage.setItem('dompetq_quick_notes', JSON.stringify(listQuickNotes));
-            
-            // 2. Simpan ke Firestore (dokumen: CATATAN_CEPAT)
             await simpanQuickNotesKeFirestore();
 
             renderKelolaQuickNotes();
-            if (typeof renderQuickNotes === 'function') renderQuickNotes();
-
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert(`Catatan "${note}" telah dihapus.`, "info");
-            }
+            renderQuickNotes();
+            if (typeof window.tampilAlert === 'function') await window.tampilAlert(`Catatan "${note}" telah dihapus.`, "info");
         }
     };
 
-    // LOGIKA KALKULATOR
+    // ==========================================
+    // LOGIKA KALKULATOR (UPDATED FOR KENDARAAN)
+    // ==========================================
+    window.calcSetDirectValue = function(val) {
+        calcState.expression = String(val);
+        calcState.currentValue = String(val);
+        updateCalcDisplay();
+    };
+
     window.calcPress = function(val) {
         let exp = calcState.expression;
 
@@ -4406,14 +4612,21 @@
             const nominal = Number(calcState.currentValue) || 0;
             dispCalc.innerText = window.formatRupiah ? window.formatRupiah(nominal) : nominal.toLocaleString('id-ID');
         }
+
+        // Auto trigger kalkulasi kendaraan jika panel kendaraan aktif
+        if (calcState.selectedKategori && calcState.selectedKategori.toUpperCase() === 'KENDARAAN') {
+            kalkulasiOtoLiter();
+        }
     }
 
+    // ==========================================
     // SIMPAN TRANSAKSI PENGELUARAN KE FIRESTORE
+    // ==========================================
     window.simpanTransaksiPengeluaran = async function() {
         const nominalFinal = Number(calcState.currentValue);
         const ketInput = document.getElementById('input-keterangan-pengeluaran')?.value.trim() || '-';
 
-        // 1. Validasi Kategori & Nominal
+        // 1. Validasi
         if (!calcState.selectedKategori) {
             await window.tampilAlert("Silakan pilih kategori pengeluaran terlebih dahulu!", "warning");
             return;
@@ -4424,7 +4637,6 @@
             return;
         }
 
-        // 2. Ambil User ID & Periode Aktif UI
         const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
         if (!activeUserId) {
             await window.tampilAlert("Profil pengguna tidak ditemukan. Silakan pilih/daftar profil!", "error");
@@ -4435,42 +4647,64 @@
         const elLabelPeriode = document.getElementById('label-month-main');
         const periodeAktif = elLabelPeriode ? elLabelPeriode.textContent.trim().toUpperCase() : "";
 
-        // 3. Ambil ID Kategori & Format ID Unik
-        // Jika calcState.selectedKategori adalah Object, ambil properti .id, jika String pakai langsung
+        // Parse ID Kategori
         const rawKatId = (typeof calcState.selectedKategori === 'object' && calcState.selectedKategori !== null) 
                         ? calcState.selectedKategori.id 
                         : calcState.selectedKategori;
                         
         const katIdSanitized = String(rawKatId).toLowerCase().trim();
 
-        // Parse periode (contoh: "SEPTEMBER 2026" -> bulan: "september", tahun: "2026")
         const partsPeriode = periodeAktif.toLowerCase().split(' ');
         const bulanStr = partsPeriode[0] || 'bulan';
         const tahunStr = partsPeriode[1] || new Date().getFullYear();
         const timestamp = Date.now();
 
-        // ID unik menjadi: out_konsumsi_september_2026_1788432765645
         const uniqueId = `out_${katIdSanitized}_${bulanStr}_${tahunStr}_${timestamp}`;
 
-        // 4. Susun Payload Sesuai Struktur Firestore
+        // 2. Format Payload Utama Transaksi
         const payload = {
             idTransaksi: uniqueId,
             uid: activeUserId,
             periode: periodeAktif,
             tipe: 'pengeluaran',
-            kategori: rawKatId, // Menyimpan ID kategori (misal: "KONSUMSI")
+            kategori: rawKatId,
             keterangan: ketInput,
             totalBersihNetto: -Math.abs(nominalFinal),
             waktuTransaksi: new Date(),
             diperbaruiPada: new Date().toISOString()
         };
 
+        // 3. Sertakan Metadata Kendaraan jika kategori = Kendaraan
+        if (String(rawKatId).toUpperCase() === 'KENDARAAN') {
+            const sel = document.getElementById('select-data-kendaraan');
+            const idKendaraan = sel ? sel.value : '';
+            const namaKendaraan = sel && sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].getAttribute('data-nama') : '';
+            const kmAwal = parseFloat(document.getElementById('input-km-terakhir')?.value) || 0;
+            const kmAkhir = parseFloat(document.getElementById('input-km-sekarang')?.value) || 0;
+
+            payload.detailKendaraan = {
+                idKendaraan: idKendaraan,
+                namaKendaraan: namaKendaraan,
+                subMode: stateKendaraan.subMode,
+                kmAwal: kmAwal,
+                kmAkhir: kmAkhir,
+                jarakTempuhKM: kmAkhir > kmAwal ? (kmAkhir - kmAwal) : 0
+            };
+
+            if (stateKendaraan.subMode === 'Bensin') {
+                const hargaLiter = parseFloat(document.getElementById('input-harga-per-liter')?.value) || 10000;
+                payload.detailKendaraan.jenisBBM = stateKendaraan.jenisBBM;
+                payload.detailKendaraan.hargaPerLiter = hargaLiter;
+                payload.detailKendaraan.estimasiLiter = hargaLiter > 0 ? parseFloat((nominalFinal / hargaLiter).toFixed(2)) : 0;
+            }
+        }
+
         const btnSimpan = document.getElementById('btn-simpan-calc');
 
         try {
             if (btnSimpan) btnSimpan.innerHTML = `<i class="fas fa-spinner fa-spin text-sm"></i>`;
 
-            // 5. Simpan ke Sub-Koleksi Firestore
+            // 4. Simpan ke Sub-Koleksi Firestore
             if (window.db && window.fbDoc && window.fbSetDoc) {
                 const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', uniqueId);
                 await window.fbSetDoc(docRef, payload, { merge: true });
@@ -4480,11 +4714,10 @@
 
             await window.tampilAlert("Pengeluaran berhasil disimpan!", "success");
 
-            // 6. Reset & Tutup Modal
-            if (typeof resetKalkulator === 'function') resetKalkulator();
-            if (typeof tutupModalPengeluaran === 'function') tutupModalPengeluaran();
+            // 5. Reset & Reload
+            resetKalkulator();
+            tutupModalPengeluaran();
 
-            // 7. Reload Data UI
             if (window.muatDataUtama) {
                 await window.muatDataUtama(activeUserId);
             }
@@ -5971,7 +6204,7 @@
 
 
     /**
-     * Render Halaman Tab Tabungan & Riwayat Mutasi
+     * FUNGSI RENDER HALAMAN TABUNGAN & RIWAYAT MUTASI
      */
     async function renderTabTabungan() {
         const container = document.getElementById('tab-tabungan-content');
@@ -5979,28 +6212,33 @@
 
         const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
 
-        // 1. Ambil Data Akun / Dompet dari Master Data / Firestore
-        let daftarAkun = [];
-        if (window.currentUserData && Array.isArray(window.currentUserData.dompet)) {
-            daftarAkun = window.currentUserData.dompet;
-        } else if (window.currentUserData && Array.isArray(window.currentUserData.akun)) {
-            daftarAkun = window.currentUserData.akun;
-        } else if (Array.isArray(window.dataMasterAkun) && window.dataMasterAkun.length > 0) {
-            daftarAkun = window.dataMasterAkun;
-        } else if (Array.isArray(window.listAkunFinansial) && window.listAkunFinansial.length > 0) {
-            daftarAkun = window.listAkunFinansial;
+        // 1. Ambil Transaksi Mutasi Khusus Tabungan
+        let rawData = window.dataMasterLaporan || [];
+        if ((!rawData || rawData.length === 0) && typeof muatDataJalurLaporan === 'function') {
+            rawData = await muatDataJalurLaporan();
         }
 
-        // Helper untuk mencari saldo berdasarkan nama/tipe akun (dengan fallback jika belum ada data)
-        const getAccountData = (keywords) => {
-            const found = daftarAkun.find(a => {
-                const nama = (a.namaAkun || a.nama || a.namaDompet || '').toLowerCase();
-                return keywords.some(k => nama.includes(k));
-            });
-            return Number(found ? (found.saldo || found.nominal || found.jumlah || 0) : 0);
+        const dataLaporan = Array.isArray(rawData) ? rawData : [];
+
+        // Helper untuk menghitung total saldo berdasarkan kode mutasi persis (exact match / clean string)
+        const hitungSaldoByKode = (targetKode) => {
+            return dataLaporan.reduce((acc, item) => {
+                const kat = String(item.kategori || item.judul || '').toLowerCase().trim();
+                const ket = String(item.keterangan || item.nama || '').toLowerCase().trim();
+                
+                // Pengecekan persis / spesifik
+                const isMatch = kat === targetKode.toLowerCase() || ket === targetKode.toLowerCase();
+
+                if (isMatch) {
+                    const nominal = Math.abs(Number(item.totalBersihNetto || item.nominal || item.jumlah || 0));
+                    const isPengeluaran = String(item.tipe || item.jenis || '').toLowerCase() === 'pengeluaran';
+                    return acc + (isPengeluaran ? -nominal : nominal);
+                }
+                return acc;
+            }, 0);
         };
 
-        // Preset Data 3 Tabungan (Target bisa disesuaikan atau diambil dari master settings)
+        // Preset Data 3 Tabungan
         const listTabungan = [
             {
                 id: 'utama',
@@ -6009,7 +6247,8 @@
                 iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
                 barColor: 'bg-blue-500',
                 textColor: 'text-blue-400',
-                saldo: getAccountData(['utama', 'tabungan utama']),
+                // Hanya membaca mutasi_tabungan1 secara spesifik
+                saldo: hitungSaldoByKode('mutasi_tabungan1'),
                 target: 10000000
             },
             {
@@ -6019,7 +6258,8 @@
                 iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
                 barColor: 'bg-rose-500',
                 textColor: 'text-rose-400',
-                saldo: getAccountData(['darurat', 'dana darurat']),
+                // Hanya membaca mutasi_tabungan2 secara spesifik
+                saldo: hitungSaldoByKode('mutasi_tabungan2'),
                 target: 5000000
             },
             {
@@ -6029,7 +6269,8 @@
                 iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                 barColor: 'bg-amber-500',
                 textColor: 'text-amber-400',
-                saldo: getAccountData(['kendaraan', 'tabungan kendaraan', 'servis']),
+                // Hanya membaca mutasi_tabungan3 secara spesifik
+                saldo: hitungSaldoByKode('mutasi_tabungan3'),
                 target: 2000000
             }
         ];
@@ -6039,7 +6280,7 @@
             const persen = tab.target > 0 ? Math.min(100, Math.round((tab.saldo / tab.target) * 100)) : 0;
 
             return `
-                <div class="bg-slate-900/80 border border-slate-800/80 p-4 rounded-2xl space-y-3">
+                <div class="bg-slate-900/80 border border-[#b5f234] p-4 rounded-2xl space-y-3">
                     <div class="flex items-center gap-3">
                         <div class="w-9 h-9 rounded-xl border flex items-center justify-center text-sm ${tab.iconBg}">
                             <i class="fa-solid ${tab.icon}"></i>
@@ -6065,19 +6306,13 @@
             `;
         }).join('');
 
-        // 2. Ambil Transaksi Mutasi Khusus Tabungan
-        let rawData = window.dataMasterLaporan || [];
-        if ((!rawData || rawData.length === 0) && typeof muatDataJalurLaporan === 'function') {
-            rawData = await muatDataJalurLaporan();
-        }
-
-        // Filter transaksi yang berhubungan dengan tabungan (mutasi / kategori tabungan)
-        const mutasiTabungan = (rawData || []).filter(item => {
-            const kat = String(item.kategori || '').toLowerCase();
-            const ket = String(item.keterangan || '').toLowerCase();
+        // Filter seluruh transaksi mutasi tabungan untuk bagian Riwayat List
+        const mutasiTabungan = dataLaporan.filter(item => {
+            const kat = String(item.kategori || item.judul || '').toLowerCase();
+            const ket = String(item.keterangan || item.nama || '').toLowerCase();
             const tipe = String(item.tipe || item.jenis || '').toLowerCase();
             
-            return kat.includes('tabungan') || kat.includes('darurat') || ket.includes('tabungan') || tipe === 'mutasi';
+            return kat.includes('mutasi_tabungan') || ket.includes('mutasi_tabungan') || tipe === 'mutasi';
         }).sort((a, b) => {
             const tglA = a.waktuTransaksi?.toDate ? a.waktuTransaksi.toDate() : new Date(a.tanggal || 0);
             const tglB = b.waktuTransaksi?.toDate ? b.waktuTransaksi.toDate() : new Date(b.tanggal || 0);
@@ -6088,10 +6323,10 @@
         const groupedMutasi = {};
         mutasiTabungan.forEach(item => {
             let tglObj = item.waktuTransaksi?.toDate ? item.waktuTransaksi.toDate() : new Date(item.tanggal || Date.now());
-            const dateStr = tglObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+            const dateStr = tglObj.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' });
 
             if (!groupedMutasi[dateStr]) groupedMutasi[dateStr] = [];
-            groupedMutasi[dateStr].push(item);
+            groupedMutasi[dateStr].push({ item, tglObj });
         });
 
         // Render HTML List Mutasi
@@ -6101,27 +6336,38 @@
         if (dateKeys.length > 0) {
             htmlMutasi = dateKeys.map(tgl => `
                 <div class="space-y-2">
-                    <p class="text-[11px] font-bold text-slate-400 px-1">${tgl}</p>
-                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-2 space-y-1">
-                        ${groupedMutasi[tgl].map(m => {
-                            const nominal = Number(m.totalBersihNetto || m.nominal || m.jumlah || 0);
-                            const isKeluar = nominal < 0 || String(m.tipe).toLowerCase() === 'pengeluaran';
-                            const displayNominal = (isKeluar ? '-' : '+') + formatRp(Math.abs(nominal));
-                            const namaKat = m.kategori || 'Tabungan';
-                            const ket = m.keterangan || m.nama || namaKat;
+                    <p class="text-[10px] md:text-xs font-semibold text-slate-400 pl-1">${tgl}</p>
+                    <div class="space-y-2">
+                        ${groupedMutasi[tgl].map(({ item: m, tglObj }) => {
+                            const rawNominal = Number(m.totalBersihNetto || m.nominal || m.jumlah || 0);
+                            const isKeluar = rawNominal < 0 || String(m.tipe || m.jenis).toLowerCase() === 'pengeluaran';
+                            
+                            const namaKat = m.kategori || m.judul || 'MUTASI_TABUNGAN';
+                            const ket = m.keterangan || m.nama || 'Tabungan';
+                            const displayNominal = (isKeluar ? '- ' : '') + formatRp(Math.abs(rawNominal));
+                            
+                            const jamStr = tglObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':') + ' WIB';
 
                             return `
-                                <div class="flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/40 transition">
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-[#b5f234] hover:border-sky-500/30 transition">
                                     <div class="flex items-center gap-3 truncate pr-2">
-                                        <div class="w-8 h-8 rounded-full ${isKeluar ? 'bg-purple-950/60 text-purple-400 border border-purple-800/40' : 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/40'} flex items-center justify-center shrink-0">
-                                            <i class="fa-solid ${isKeluar ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
+                                        <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-right-left text-sm"></i>
                                         </div>
-                                        <div class="truncate">
-                                            <p class="text-xs font-bold text-slate-200 truncate">${namaKat}</p>
-                                            <p class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold truncate">${ket}</p>
+                                        
+                                        <div class="truncate space-y-0.5">
+                                            <h4 class="text-xs md:text-sm font-bold text-sky-400 tracking-wide uppercase truncate">${namaKat}</h4>
+                                            <p class="text-[10px] md:text-xs text-slate-400 font-medium truncate">${ket}</p>
+                                            <p class="text-xs md:text-sm font-black ${isKeluar ? 'text-rose-400' : 'text-sky-400'}">${displayNominal}</p>
                                         </div>
                                     </div>
-                                    <span class="text-xs font-extrabold ${isKeluar ? 'text-purple-400' : 'text-emerald-400'} shrink-0">${displayNominal}</span>
+
+                                    <div class="shrink-0">
+                                        <span class="text-[9px] md:text-[10px] font-semibold text-slate-400 bg-slate-800/80 border border-slate-600 px-2.5 py-1 rounded-full flex items-center gap-1">
+                                            <i class="fa-regular fa-clock text-[9px]"></i>
+                                            ${jamStr}
+                                        </span>
+                                    </div>
                                 </div>
                             `;
                         }).join('')}
@@ -6130,7 +6376,7 @@
             `).join('');
         } else {
             htmlMutasi = `
-                <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-6 text-center text-slate-400 space-y-1">
+                <div class="bg-slate-900/60 border border-[#b5f234] rounded-2xl p-6 text-center text-slate-400 space-y-1">
                     <i class="fa-solid fa-receipt text-2xl text-slate-600 mb-1"></i>
                     <p class="text-xs font-medium">Belum ada riwayat mutasi tabungan.</p>
                 </div>
@@ -6139,23 +6385,435 @@
 
         // Combine Seluruh Layout
         container.innerHTML = `
-            <!-- LIST CARD TABUNGAN -->
-            <div class="space-y-3">
-                ${htmlTabunganCards}
-            </div>
-
-            <!-- SECTION RIWAYAT TABUNGAN & MUTASI -->
-            <div class="space-y-3 pt-2">
-                <div class="flex justify-between items-center px-1">
-                    <h4 class="text-xs font-bold text-slate-200 tracking-wider uppercase">RIWAYAT TABUNGAN & MUTASI</h4>
-                    <i class="fa-solid fa-right-left text-slate-400 text-xs"></i>
-                </div>
-                
+            <div class="max-w-6xl mx-auto p-3 md:p-4 space-y-4">
+                <!-- LIST CARD TABUNGAN -->
                 <div class="space-y-3">
-                    ${htmlMutasi}
+                    ${htmlTabunganCards}
+                </div>
+
+                <!-- SECTION RIWAYAT TABUNGAN & MUTASI -->
+                <div class="bg-[#0b0f0ce5] rounded-3xl p-4 md:p-6 border border-[#b5f234]/80 space-y-4">
+                    <div class="flex justify-between items-center border-b border-[#b5f234]/80 pb-3">
+                        <h3 class="text-xs md:text-sm font-bold text-slate-300 tracking-wider uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-sky-400"></i>
+                            RIWAYAT TABUNGAN & MUTASI
+                        </h3>
+                        <i class="fa-solid fa-right-left text-sky-400 text-xs"></i>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        ${htmlMutasi}
+                    </div>
                 </div>
             </div>
         `;
+    }
+    
+
+    
+
+
+    /**
+     * FUNGSI RENDER HALAMAN TAB SERVIS KENDARAAN & RIWAYAT SERVIS
+     */
+    async function renderTabServis() {
+        const container = document.getElementById('tab-servis-content');
+        if (!container) return;
+
+        const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+
+        // 1. Ambil Data Laporan / Transaksi Servis
+        let rawData = window.dataMasterLaporan || [];
+        if ((!rawData || rawData.length === 0) && typeof muatDataJalurLaporan === 'function') {
+            rawData = await muatDataJalurLaporan();
+        }
+        const dataLaporan = Array.isArray(rawData) ? rawData : [];
+
+        // Filter transaksi servis
+        const riwayatServis = dataLaporan.filter(item => {
+            const kat = String(item.kategori || item.judul || '').toLowerCase();
+            const ket = String(item.keterangan || item.nama || '').toLowerCase();
+            return kat.includes('servis') || ket.includes('servis');
+        }).sort((a, b) => {
+            const tglA = a.waktuTransaksi?.toDate ? a.waktuTransaksi.toDate() : new Date(a.tanggal || 0);
+            const tglB = b.waktuTransaksi?.toDate ? b.waktuTransaksi.toDate() : new Date(b.tanggal || 0);
+            return tglB - tglA;
+        });
+
+        // 2. Deteksi User ID Aktif
+        let currentUid = getActiveUserId();
+
+        // 3. Ambil Data Kendaraan dari Firestore (users/{uid}/pengaturan_aplikasi/data_kendaraan)
+        let dbKendaraan = {};
+        if (currentUid && window.db && window.fbDoc && window.fbGetDoc) {
+            try {
+                // Menggunakan alias window.fbDoc & window.fbGetDoc dari script module
+                const docRef = window.fbDoc(window.db, 'users', currentUid, 'pengaturan_aplikasi', 'data_kendaraan');
+                const docSnap = await window.fbGetDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    dbKendaraan = docSnap.data() || {};
+                }
+            } catch (err) {
+                console.warn("Gagal memuat data_kendaraan dari Firestore:", err);
+            }
+        }
+
+        // Helper Penamaan & Matching ID (Format: Nama (Plat))
+        const getNamaKen = (vNama, vPlat, fallback) => {
+            if (vNama && vPlat) return `${vNama} (${vPlat})`;
+            if (vNama) return vNama;
+            if (vPlat) return vPlat;
+            return fallback;
+        };
+
+        // Construct List Kendaraan berdasarkan ID Firestore (v1, v2, v3)
+        const listKendaraan = [
+            {
+                keyId: 'v1',
+                id: 'kendaraan1',
+                nama: getNamaKen(dbKendaraan.v1_nama, dbKendaraan.v1_plat, 'KENDARAAN 1'),
+                vNama: dbKendaraan.v1_nama || '',
+                vPlat: dbKendaraan.v1_plat || '',
+                icon: 'fa-car',
+                color: 'text-sky-400',
+                bgIcon: 'bg-sky-500/10 border-sky-500/20'
+            },
+            {
+                keyId: 'v2',
+                id: 'kendaraan2',
+                nama: getNamaKen(dbKendaraan.v2_nama, dbKendaraan.v2_plat, 'KENDARAAN 2'),
+                vNama: dbKendaraan.v2_nama || '',
+                vPlat: dbKendaraan.v2_plat || '',
+                icon: 'fa-motorcycle',
+                color: 'text-emerald-400',
+                bgIcon: 'bg-emerald-500/10 border-emerald-500/20'
+            },
+            {
+                keyId: 'v3',
+                id: 'kendaraan3',
+                nama: getNamaKen(dbKendaraan.v3_nama, dbKendaraan.v3_plat, 'KENDARAAN 3'),
+                vNama: dbKendaraan.v3_nama || '',
+                vPlat: dbKendaraan.v3_plat || '',
+                icon: 'fa-motorcycle',
+                color: 'text-purple-400',
+                bgIcon: 'bg-purple-500/10 border-purple-500/20'
+            }
+        ];
+
+        // Helper format tanggal
+        const formatTglSingkat = (dateObj) => {
+            if (!dateObj || isNaN(dateObj.getTime())) return '-';
+            return dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        };
+
+        // Render Card Kendaraan
+        const htmlKendaraanCards = listKendaraan.map(ken => {
+            // Filter matching murni berdasarkan ID / Field Firestore dari user aktif
+            const listTransKen = riwayatServis.filter(s => {
+                // 1. Cek jika transaksi menyimpan idKendaraan (v1, v2, v3)
+                if (s.idKendaraan) {
+                    return String(s.idKendaraan).toLowerCase() === ken.keyId;
+                }
+                // 2. Fallback: Cocokkan kata dengan v_nama atau v_plat dari Firestore user ini
+                const fullText = (String(s.keterangan || '') + ' ' + String(s.kategori || '') + ' ' + String(s.nama || '') + ' ' + String(s.namaKendaraan || '')).toLowerCase();
+                const matchNama = ken.vNama && fullText.includes(ken.vNama.toLowerCase());
+                const matchPlat = ken.vPlat && fullText.includes(ken.vPlat.toLowerCase());
+                return matchNama || matchPlat;
+            });
+
+            // Tgl Servis Lalu & Terbaru
+            let tglLalu = '-';
+            let tglTerbaru = '-';
+            let kmAwal = 0;
+            let kmAkhir = 0;
+            let catatan = 'Belum ada catatan servis.';
+
+            if (listTransKen.length > 0) {
+                const itemTerbaru = listTransKen[0];
+                const dateTerbaru = itemTerbaru.waktuTransaksi?.toDate ? itemTerbaru.waktuTransaksi.toDate() : new Date(itemTerbaru.tanggal || Date.now());
+                tglTerbaru = formatTglSingkat(dateTerbaru);
+                catatan = itemTerbaru.keterangan || itemTerbaru.nama || 'Servis Rutin';
+                kmAwal = itemTerbaru.kmAwal || 0;
+                kmAkhir = itemTerbaru.kmAkhir || 0;
+
+                if (listTransKen.length > 1) {
+                    const itemLalu = listTransKen[1];
+                    const dateLalu = itemLalu.waktuTransaksi?.toDate ? itemLalu.waktuTransaksi.toDate() : new Date(itemLalu.tanggal || Date.now());
+                    tglLalu = formatTglSingkat(dateLalu);
+                }
+            }
+
+            const trip = kmAkhir > kmAwal ? (kmAkhir - kmAwal) : 0;
+
+            return `
+                <div class="bg-slate-900/80 border border-[#b5f234] p-4 rounded-2xl space-y-3">
+                    <!-- Header Kendaraan -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-xl border border-[#b5f234] flex items-center justify-center text-xs ${ken.bgIcon} ${ken.color}">
+                                <i class="fa-solid ${ken.icon}"></i>
+                            </div>
+                            <h3 class="text-xs md:text-sm font-extrabold text-white tracking-wide">${ken.nama}</h3>
+                        </div>
+                        <button type="button" onclick="editNamaKendaraan('${ken.keyId}')" class="text-slate-400 hover:text-[#b5f234] transition text-xs p-1.5 rounded-lg bg-slate-950/60 border border-slate-800">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                    </div>
+
+                    <!-- Info Tanggal Servis -->
+                    <div class="grid grid-cols-2 gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-[#b5f234] text-[11px]">
+                        <div>
+                            <span class="text-slate-500 font-semibold block text-[9px] uppercase tracking-wider">Tgl Servis Lalu</span>
+                            <span class="text-slate-300 font-bold">${tglLalu}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-semibold block text-[9px] uppercase tracking-wider">Servis Terbaru</span>
+                            <span class="${ken.color} font-bold">${tglTerbaru}</span>
+                        </div>
+                    </div>
+
+                    <!-- Info KM & Trip -->
+                    <div class="grid grid-cols-3 gap-2 bg-slate-950/40 p-2.5 rounded-xl border border-[#b5f234] text-[11px] text-center">
+                        <div>
+                            <span class="text-slate-500 font-semibold block text-[9px] uppercase tracking-wider">KM Awal</span>
+                            <span class="text-slate-200 font-bold">${kmAwal}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-semibold block text-[9px] uppercase tracking-wider">KM Akhir</span>
+                            <span class="text-slate-200 font-bold">${kmAkhir}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 font-semibold block text-[9px] uppercase tracking-wider">Trip</span>
+                            <span class="${ken.color} font-black">${trip} KM</span>
+                        </div>
+                    </div>
+
+                    <!-- Catatan -->
+                    <div class="space-y-1">
+                        <span class="text-slate-500 font-semibold text-[9px] uppercase tracking-wider block">Keterangan / Catatan</span>
+                        <div class="bg-slate-950/40 p-2.5 rounded-xl border border-[#b5f234] text-xs ${listTransKen.length > 0 ? ken.color : 'text-slate-500'} font-medium">
+                            ${catatan}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // 4. Grouping Riwayat Servis Kendaraan Berdasarkan Tanggal
+        const groupedRiwayat = {};
+        riwayatServis.forEach(item => {
+            let tglObj = item.waktuTransaksi?.toDate ? item.waktuTransaksi.toDate() : new Date(item.tanggal || Date.now());
+            const dateStr = formatTglSingkat(tglObj);
+
+            if (!groupedRiwayat[dateStr]) groupedRiwayat[dateStr] = [];
+            groupedRiwayat[dateStr].push(item);
+        });
+
+        let htmlRiwayatList = '';
+        const dateKeys = Object.keys(groupedRiwayat);
+
+        if (dateKeys.length > 0) {
+            htmlRiwayatList = dateKeys.map(tgl => `
+                <div class="space-y-2">
+                    <p class="text-[10px] md:text-xs font-semibold text-slate-400 pl-1">${tgl}</p>
+                    <div class="space-y-2">
+                        ${groupedRiwayat[tgl].map(s => {
+                            const nominal = Math.abs(Number(s.totalBersihNetto || s.nominal || s.jumlah || 0));
+                            const namaKen = s.namaKendaraan || s.keterangan || s.kategori || 'SERVIS KENDARAAN';
+                            const detailKet = s.catatan || s.keterangan || 'Servis Rutin';
+
+                            return `
+                                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-[#b5f234] hover:border-sky-500/30 transition">
+                                    <div class="flex items-center gap-3 truncate pr-2">
+                                        <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-[#b5f234] text-sky-400 flex items-center justify-center shrink-0">
+                                            <i class="fa-solid fa-wrench text-sm"></i>
+                                        </div>
+                                        <div class="truncate space-y-0.5">
+                                            <h4 class="text-xs md:text-sm font-bold text-slate-200 tracking-wide uppercase truncate">${namaKen}</h4>
+                                            <p class="text-[10px] md:text-xs text-sky-400 font-medium truncate">${detailKet}</p>
+                                        </div>
+                                    </div>
+                                    <div class="shrink-0 text-right">
+                                        <span class="text-xs md:text-sm font-black text-rose-400">- ${formatRp(nominal)}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            htmlRiwayatList = `
+                <div class="bg-slate-900/60 border border-[#b5f234] rounded-2xl p-6 text-center text-slate-400 space-y-1">
+                    <i class="fa-solid fa-wrench text-2xl text-slate-600 mb-1"></i>
+                    <p class="text-xs font-medium">Belum ada riwayat servis kendaraan.</p>
+                </div>
+            `;
+        }
+
+        // Combine Seluruh Layout
+        container.innerHTML = `
+            <div class="max-w-6xl mx-auto p-3 md:p-4 space-y-4">
+                <!-- CARDS KENDARAAN -->
+                <div class="space-y-3">
+                    ${htmlKendaraanCards}
+                </div>
+
+                <!-- SECTION RIWAYAT SERVIS KENDARAAN -->
+                <div class="bg-[#0b0f0ce5] rounded-3xl p-4 md:p-6 border border-[#b5f234]/80 space-y-4">
+                    <div class="flex justify-between items-center border-b border-[#b5f234] pb-3">
+                        <h3 class="text-xs md:text-sm font-bold text-slate-300 tracking-wider uppercase flex items-center gap-2">
+                            RIWAYAT SERVIS KENDARAAN
+                        </h3>
+                        <span class="text-[10px] md:text-xs text-slate-400 font-semibold">${riwayatServis.length} Transaksi</span>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        ${htmlRiwayatList}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    /* ==========================================================================
+    FUNGSI ENGINE MODAL EDIT KENDARAAN & FIRESTORE SAVE
+    ========================================================================== */
+
+    /**
+     * Helper Deteksi User ID Aktif
+     */
+    function getActiveUserId() {
+        if (window.currentUser && window.currentUser.uid) return window.currentUser.uid;
+        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) return firebase.auth().currentUser.uid;
+        return localStorage.getItem('user_id') || null;
+    }
+
+    /**
+     * Pemicu tombol edit kendaraan (v1, v2, atau v3)
+     */
+    async function editNamaKendaraan(keyId) {
+        const modal = document.getElementById('modal-edit-kendaraan');
+        if (!modal) {
+            console.error("Modal #modal-edit-kendaraan tidak ditemukan di HTML!");
+            return;
+        }
+
+        document.getElementById('edit-ken-key').value = keyId;
+        document.getElementById('edit-ken-nama').value = '';
+        document.getElementById('edit-ken-plat').value = '';
+
+        // Ambil data terkini dari Firestore
+        const uid = getActiveUserId();
+        if (uid && window.db) {
+            try {
+                const docSnap = await window.db.collection('users').doc(uid)
+                    .collection('pengaturan_aplikasi').doc('data_kendaraan').get();
+
+                if (docSnap.exists) {
+                    const data = docSnap.data() || {};
+                    document.getElementById('edit-ken-nama').value = data[`${keyId}_nama`] || '';
+                    document.getElementById('edit-ken-plat').value = data[`${keyId}_plat`] || '';
+                }
+            } catch (e) {
+                console.warn("Gagal memuat data spesifik untuk modal:", e);
+            }
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    /**
+     * Tutup Modal Edit
+     */
+    function tutupModalEditKendaraan() {
+        const modal = document.getElementById('modal-edit-kendaraan');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    /**
+     * Simpan Perubahan Nama & Plat ke Firestore
+     */
+    async function simpanDataKendaraan(e) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        const keyId = document.getElementById('edit-ken-key')?.value; // Contoh: 'v1', 'v2', 'v3'
+        const namaVal = document.getElementById('edit-ken-nama')?.value?.trim();
+        const platVal = document.getElementById('edit-ken-plat')?.value?.trim()?.toUpperCase() || '';
+        const btnSimpan = document.getElementById('btn-simpan-ken');
+
+        // 1. Validasi Input Form
+        if (!keyId || !namaVal) {
+            tampilAlertCustom('Nama kendaraan wajib diisi!', 'error', 'Form Tidak Lengkap');
+            return;
+        }
+
+        // 2. Cek User ID Aktif
+        const uid = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+        if (!uid) {
+            tampilAlertCustom('User ID tidak terdeteksi. Silakan tentukan profil user dulu.', 'error', 'Gagal Simpan');
+            return;
+        }
+
+        // 3. Cek Inisialisasi Database
+        if (!window.db || !window.fbDoc || !window.fbSetDoc) {
+            tampilAlertCustom('Koneksi engine Firestore belum siap. Coba muat ulang halaman.', 'error', 'Koneksi Terputus');
+            return;
+        }
+
+        // Ubah status button ke Loading
+        if (btnSimpan) {
+            btnSimpan.disabled = true;
+            btnSimpan.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+        }
+
+        try {
+            // PERBAIKAN SINKRONISASI MODULAR ENGINE v10:
+            // Gunakan window.fbDoc(...) alih-alih .collection().doc()
+            const docRef = window.fbDoc(window.db, 'users', uid, 'pengaturan_aplikasi', 'data_kendaraan');
+
+            // Construct object data dinamis
+            const updatePayload = {};
+            updatePayload[`${keyId}_nama`] = namaVal;
+            updatePayload[`${keyId}_plat`] = platVal;
+            updatePayload['terakhirDiperbarui'] = new Date().toISOString();
+
+            // Gunakan window.fbSetDoc dengan opsi merge: true
+            await window.fbSetDoc(docRef, updatePayload, { merge: true });
+
+            // Tutup Modal Form Edit
+            if (typeof tutupModalEditKendaraan === 'function') {
+                tutupModalEditKendaraan();
+            } else {
+                document.getElementById('modal-edit-kendaraan')?.classList.add('hidden');
+            }
+
+            // Tampilkan Notifikasi Berhasil
+            tampilAlertCustom('Data kendaraan berhasil disimpan!', 'success', 'Berhasil');
+
+            // Refresh Tab Servis
+            if (typeof renderTabServis === 'function') {
+                await renderTabServis();
+            }
+
+        } catch (err) {
+            console.error("❌ Gagal simpan data kendaraan ke Firestore:", err);
+            
+            let detailError = "Terjadi kesalahan saat menyimpan data.";
+            if (err.code === 'permission-denied') {
+                detailError = "Akses ditolak (Permission Denied). Periksa Firestore Security Rules.";
+            } else if (err.message) {
+                detailError = err.message;
+            }
+
+            tampilAlertCustom(detailError, 'error', 'Gagal Simpan');
+        } finally {
+            if (btnSimpan) {
+                btnSimpan.disabled = false;
+                btnSimpan.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Simpan`;
+            }
+        }
     }
 
 
