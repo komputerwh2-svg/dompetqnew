@@ -4156,7 +4156,7 @@
     };
 
     // PILIH KATEGORI (UPDATED: DENGAN TOGGLE PANEL KENDARAAN)
-    window.pilihKategori = function(namaKat) {
+    window.pilihKategori = async function(namaKat) {
         calcState.selectedKategori = namaKat;
         stateKendaraan.kategoriAktif = namaKat;
         renderGridKategori();
@@ -4164,12 +4164,12 @@
         const elQuickNotes = document.getElementById('container-quick-notes');
         const elPanelKendaraan = document.getElementById('panel-khusus-kendaraan');
 
-        // Cek jika kategori adalah Kendaraan (Case Insensitive)
         if (namaKat.toUpperCase() === 'KENDARAAN') {
             if (elQuickNotes) elQuickNotes.classList.add('hidden');
             if (elPanelKendaraan) elPanelKendaraan.classList.remove('hidden');
 
-            loadOpsiKendaraanToSelect();
+            // Panggil fungsi async load data kendaraan
+            await loadOpsiKendaraanToSelect();
             updateCatatanOtomatisKendaraan();
         } else {
             if (elQuickNotes) elQuickNotes.classList.remove('hidden');
@@ -4180,22 +4180,59 @@
     // ==========================================
     // LOGIKA KHUSUS PANEL KENDARAAN
     // ==========================================
-    function loadOpsiKendaraanToSelect() {
+    async function loadOpsiKendaraanToSelect() {
         const sel = document.getElementById('select-data-kendaraan');
         if (!sel) return;
 
-        // Cache / Fallback Data Kendaraan
-        const data = window.dataKendaraanCache || {
-            'v1': { nama: 'Kijang GrandEx (G 1082 AZ)' },
-            'v2': { nama: 'Vario 110 FI (H 4663 AEW)' },
-            'v3': { nama: 'Astrea Grand (H 3129 HW)' }
-        };
+        sel.innerHTML = `<option value="">Memuat data kendaraan...</option>`;
 
-        sel.innerHTML = Object.keys(data).map(key => {
-            const item = data[key];
-            const namaDisplay = item.nama || item.nama_kendaraan || 'Kendaraan';
-            return `<option value="${key}" data-nama="${namaDisplay}">${namaDisplay}</option>`;
-        }).join('');
+        try {
+            const userId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+            let listOptions = [];
+
+            if (userId && window.db && window.fbDoc && window.fbGetDoc) {
+                const docRef = window.fbDoc(window.db, "users", userId, "pengaturan_aplikasi", "data_kendaraan");
+                const docSnap = await window.fbGetDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+
+                    // Loop dari index 1 hingga seterusnya (v1, v2, v3, dst)
+                    let i = 1;
+                    while (data[`v${i}_nama`] || data[`v${i}_plat`]) {
+                        const nama = data[`v${i}_nama`] || `Kendaraan ${i}`;
+                        const plat = data[`v${i}_plat`] || '';
+                        const label = plat ? `${nama} - ${plat}` : nama;
+
+                        listOptions.push({
+                            value: `v${i}`,
+                            label: label
+                        });
+                        i++;
+                    }
+                }
+            }
+
+            // Fallback default jika data di Firestore belum terisi / offline
+            if (listOptions.length === 0) {
+                listOptions = [
+                    { value: 'v1', label: 'Kendaraan 1 - H 1234 AA' },
+                    { value: 'v2', label: 'Kendaraan 2 - H 5678 BB' }
+                ];
+            }
+
+            // Render ke element <select>
+            sel.innerHTML = listOptions.map(item => 
+                `<option value="${item.value}" data-nama="${item.label}">${item.label}</option>`
+            ).join('');
+
+        } catch (err) {
+            console.error("❌ Gagal memuat data kendaraan dari Firestore:", err);
+            sel.innerHTML = `
+                <option value="v1" data-nama="Kendaraan 1 - H 1234 AA">Kendaraan 1 - H 1234 AA</option>
+                <option value="v2" data-nama="Kendaraan 2 - H 5678 BB">Kendaraan 2 - H 5678 BB</option>
+            `;
+        }
     }
 
     window.setSubModeKendaraan = function(mode) {
@@ -6769,8 +6806,6 @@
         }
 
         try {
-            // PERBAIKAN SINKRONISASI MODULAR ENGINE v10:
-            // Gunakan window.fbDoc(...) alih-alih .collection().doc()
             const docRef = window.fbDoc(window.db, 'users', uid, 'pengaturan_aplikasi', 'data_kendaraan');
 
             // Construct object data dinamis
@@ -6779,8 +6814,19 @@
             updatePayload[`${keyId}_plat`] = platVal;
             updatePayload['terakhirDiperbarui'] = new Date().toISOString();
 
-            // Gunakan window.fbSetDoc dengan opsi merge: true
+            // Simpan ke Firestore
             await window.fbSetDoc(docRef, updatePayload, { merge: true });
+
+            // ---> OPTIMISTIC UPDATE: Perbarui cache/state global seketika <---
+            if (!window.globalDataKendaraanCache) window.globalDataKendaraanCache = {};
+            window.globalDataKendaraanCache[`${keyId}_nama`] = namaVal;
+            window.globalDataKendaraanCache[`${keyId}_plat`] = platVal;
+
+            // Jika fungsi render tab servis menggunakan cache lokal, beritahu untuk bypass atau update
+            if (window.cacheFirestoreKendaraan) {
+                window.cacheFirestoreKendaraan[`${keyId}_nama`] = namaVal;
+                window.cacheFirestoreKendaraan[`${keyId}_plat`] = platVal;
+            }
 
             // Tutup Modal Form Edit
             if (typeof tutupModalEditKendaraan === 'function') {
@@ -6792,7 +6838,13 @@
             // Tampilkan Notifikasi Berhasil
             tampilAlertCustom('Data kendaraan berhasil disimpan!', 'success', 'Berhasil');
 
-            // Refresh Tab Servis
+            // ---> TRIGGER REFRESH KOMPONEN UI SEKETIKA <---
+            // 1. Refresh dropdown pilihan kendaraan
+            if (typeof loadOpsiKendaraanToSelect === 'function') {
+                await loadOpsiKendaraanToSelect();
+            }
+
+            // 2. Refresh Tab Servis agar panel atas langsung berubah nama/plat-nya
             if (typeof renderTabServis === 'function') {
                 await renderTabServis();
             }
