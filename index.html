@@ -149,7 +149,7 @@
                         </button>
                         
                         <span id="label-month-main" class="text-[11px] md:text-xs font-bold tracking-wider text-slate-800 uppercase cursor-pointer hover:underline">
-                            SEPTEMBER 2026
+                            -
                         </span>
                         
                         <button id="btn-next-month-main" type="button" class="text-slate-800 text-xs md:text-sm hover:text-black cursor-pointer px-2">
@@ -1789,17 +1789,28 @@
         return `saldo_lalu_${namaBulanLalu}_${tahun}`;
     }
 
-    // Helper Konversi String Teks UI ke Key Standar (contoh: "SEPTEMBER 2026" -> "SEPTEMBER 2026")
+    // Helper Konversi String Teks UI ke Key Standar Berdasarkan Bulan Aktif Kalender
     function getActivePeriodFromUI() {
-        const elLabel = document.getElementById('label-month-main');
-        if (!elLabel) return "";
-        return elLabel.textContent.trim().toUpperCase(); // "SEPTEMBER 2026"
+        // Ambil acuan dari selectedDate atau currDate yang sedang aktif di sistem kalender
+        const targetDate = (typeof selectedDate !== 'undefined' && selectedDate) 
+            ? selectedDate 
+            : ((typeof currDate !== 'undefined' && currDate) ? currDate : new Date());
+
+        const namaBulanIndo = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+            'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+
+        const bulanStr = namaBulanIndo[targetDate.getMonth()].toUpperCase();
+        const tahunStr = targetDate.getFullYear();
+
+        return `${bulanStr} ${tahunStr}`; // Contoh dinamis: "OKTOBER 2026"
     }
 
     // Helper Normalisasi Periode Firestore
     function normalizePeriod(periodStr) {
         if (!periodStr) return "";
-        return periodStr.trim().toUpperCase(); // "SEPTEMBER 2026"
+        return periodStr.trim().toUpperCase();
     }
 
     // HELPER OTOMATIS HITUNG & BUAT DOKUMEN SALDO LALU
@@ -1933,6 +1944,13 @@
         }
 
         const activePeriodUI = getActivePeriodFromUI();
+
+        // ---> TAMBAHKAN BARIS INI AGAR TAMPILAN ATAS LANGSUNG BERUBAH <---
+        const elLabelMonth = document.getElementById('label-month-main');
+        if (elLabelMonth) {
+            elLabelMonth.textContent = activePeriodUI;
+        }
+
         const targetSaldoLaluId = getTargetSaldoLaluId(activePeriodUI);
 
         console.log(`📥 Memuat Data | Periode UI: "${activePeriodUI}" | Target Saldo Lalu: "${targetSaldoLaluId}"`);
@@ -2606,7 +2624,7 @@
         // Reset posisi scroll ke atas
         window.scrollTo({ top: 0, behavior: 'instant' });
     }
-
+    
 
   //Fungsi untuk menampilkan tanggal saat ini dalam format Bahasa Indonesia
   function updateDate() {
@@ -2642,6 +2660,8 @@
       labelMonthMain.textContent = formattedMonth.toUpperCase();
     }
   }
+
+  
 
   // 1. Klik Tombol Kiri (Bulan Sebelumnya)
   btnPrevMonthMain?.addEventListener('click', () => {
