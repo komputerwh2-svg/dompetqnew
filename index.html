@@ -4199,9 +4199,9 @@
             if (elQuickNotes) elQuickNotes.classList.add('hidden');
             if (elPanelKendaraan) elPanelKendaraan.classList.remove('hidden');
 
-            // Panggil fungsi async load data kendaraan
+            // Panggil fungsi load data kendaraan & langsung update KM Terakhirnya
             await loadOpsiKendaraanToSelect();
-            updateCatatanOtomatisKendaraan();
+            await updateOtomatisDataKendaraan(); // <--- Tambahkan baris ini
         } else {
             if (elQuickNotes) elQuickNotes.classList.remove('hidden');
             if (elPanelKendaraan) elPanelKendaraan.classList.add('hidden');
@@ -4227,8 +4227,6 @@
 
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-
-                    // Loop dari index 1 hingga seterusnya (v1, v2, v3, dst)
                     let i = 1;
                     while (data[`v${i}_nama`] || data[`v${i}_plat`]) {
                         const nama = data[`v${i}_nama`] || `Kendaraan ${i}`;
@@ -4244,7 +4242,6 @@
                 }
             }
 
-            // Fallback default jika data di Firestore belum terisi / offline
             if (listOptions.length === 0) {
                 listOptions = [
                     { value: 'v1', label: 'Kendaraan 1 - H 1234 AA' },
@@ -4252,10 +4249,14 @@
                 ];
             }
 
-            // Render ke element <select>
             sel.innerHTML = listOptions.map(item => 
                 `<option value="${item.value}" data-nama="${item.label}">${item.label}</option>`
             ).join('');
+
+            // <--- Tambahkan pemanggilan ini agar langsung mendeteksi KM kendaraan default
+            if (typeof updateOtomatisDataKendaraan === 'function') {
+                updateOtomatisDataKendaraan();
+            }
 
         } catch (err) {
             console.error("❌ Gagal memuat data kendaraan dari Firestore:", err);
@@ -4263,6 +4264,9 @@
                 <option value="v1" data-nama="Kendaraan 1 - H 1234 AA">Kendaraan 1 - H 1234 AA</option>
                 <option value="v2" data-nama="Kendaraan 2 - H 5678 BB">Kendaraan 2 - H 5678 BB</option>
             `;
+            if (typeof updateOtomatisDataKendaraan === 'function') {
+                updateOtomatisDataKendaraan();
+            }
         }
     }
 
@@ -4324,16 +4328,92 @@
         updateCatatanOtomatisKendaraan();
     };
 
-    window.updateOtomatisDataKendaraan = function() {
-        updateCatatanOtomatisKendaraan();
+    /**
+     * Memperbarui Data Kendaraan & Mengambil KM Terakhir Berdasarkan Transaksi Paling Baru
+     */
+    window.updateOtomatisDataKendaraan = async function() {
+        const sel = document.getElementById('select-data-kendaraan');
+        if (!sel) return;
+        const selectedId = sel.value; // Contoh: 'v1', 'v2', dst.
+
+        let lastKm = 0;
+        const userId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+
+        if (userId && window.db && window.fbCollection && window.fbGetDocs) {
+            try {
+                const rekapRef = window.fbCollection(window.db, 'users', userId, 'rekap_finansial');
+                const querySnap = await window.fbGetDocs(rekapRef);
+                
+                let riwayatKendaraan = [];
+                querySnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    if (!data) return;
+
+                    const detail = data.detailKendaraan || {};
+                    const idKenDb = String(detail.idKendaraan || '').toLowerCase();
+
+                    // Cocokkan berdasarkan ID Kendaraan
+                    if (idKenDb && idKenDb === String(selectedId).toLowerCase()) {
+                        // Ambil waktu transaksi untuk diurutkan
+                        let waktuVal = data.waktuTransaksi || data.createdAt || data.tanggal || 0;
+                        let timestamp = 0;
+                        if (waktuVal && typeof waktuVal.toDate === 'function') {
+                            timestamp = waktuVal.toDate().getTime();
+                        } else if (waktuVal && waktuVal.seconds) {
+                            timestamp = waktuVal.seconds * 1000;
+                        } else {
+                            timestamp = new Date(waktuVal).getTime() || 0;
+                        }
+
+                        riwayatKendaraan.push({
+                            kmAkhir: Number(detail.kmAkhir || 0),
+                            waktu: timestamp
+                        });
+                    }
+                });
+
+                // Urutkan dari waktu transaksi terbaru ke terlama (Descending)
+                riwayatKendaraan.sort((a, b) => b.waktu - a.waktu);
+
+                // Ambil kmAkhir dari transaksi paling akhir
+                if (riwayatKendaraan.length > 0) {
+                    lastKm = riwayatKendaraan[0].kmAkhir;
+                }
+
+            } catch (err) {
+                console.warn("Gagal memuat KM terakhir kendaraan:", err);
+            }
+        }
+
+        // Set nilai KM Terakhir pada input form
+        const inputKmTerakhir = document.getElementById('input-km-terakhir');
+        if (inputKmTerakhir) {
+            inputKmTerakhir.value = lastKm;
+        }
+
+        // Set default KM Baru Sekarang agar sinkron
+        //const inputKmSekarang = document.getElementById('input-km-sekarang');
+        //if (inputKmSekarang) {
+        //    if (!inputKmSekarang.value || Number(inputKmSekarang.value) === 0 || Number(inputKmSekarang.value) === 383124) {
+        //        inputKmSekarang.value = lastKm;
+        //    }
+        //}
+
+        if (typeof updateCatatanOtomatisKendaraan === 'function') {
+            updateCatatanOtomatisKendaraan();
+        }
     };
 
-    function updateCatatanOtomatisKendaraan() {
+    window.updateCatatanOtomatisKendaraan = function() {
         if (!stateKendaraan.kategoriAktif || stateKendaraan.kategoriAktif.toUpperCase() !== 'KENDARAAN') return;
 
         const sel = document.getElementById('select-data-kendaraan');
         const namaKendaraan = sel && sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].getAttribute('data-nama') : 'Kendaraan';
         const inputCatatan = document.getElementById('input-keterangan-pengeluaran');
+        
+        const kmAwal = parseFloat(document.getElementById('input-km-terakhir')?.value) || 0;
+        const kmAkhir = parseFloat(document.getElementById('input-km-sekarang')?.value) || 0;
+        const jarakTrip = kmAkhir > kmAwal ? (kmAkhir - kmAwal) : 0;
 
         if (stateKendaraan.subMode === 'Bensin') {
             const nominal = Number(calcState.currentValue) || 0;
@@ -4341,14 +4421,17 @@
             const liter = harga > 0 ? (nominal / harga).toFixed(2) : '0.00';
 
             if (inputCatatan) {
-                inputCatatan.value = `Bensin ${stateKendaraan.jenisBBM} (${liter}L) ${namaKendaraan}`;
+                // Catatan otomatis mencakup info bensin, liter, dan jarak trip KM jika ada
+                let infoTrip = jarakTrip > 0 ? ` [Trip: ${jarakTrip} KM]` : '';
+                inputCatatan.value = `Bensin ${stateKendaraan.jenisBBM} (${liter}L) ${namaKendaraan}${infoTrip}`;
             }
         } else {
-            if (inputCatatan && (!inputCatatan.value || inputCatatan.value.startsWith('Bensin'))) {
-                inputCatatan.value = `Servis ${namaKendaraan}`;
+            if (inputCatatan) {
+                let infoTrip = jarakTrip > 0 ? ` [Trip: ${jarakTrip} KM]` : '';
+                inputCatatan.value = `Servis ${namaKendaraan}${infoTrip}`;
             }
         }
-    }
+    };
 
     // ==========================================
     // MENU PENGATURAN KATEGORI & QUICK NOTES
@@ -4900,43 +4983,49 @@
     });
 
     /**
-     * Memuat Opsi Kategori dari Firestore (pengaturan_aplikasi -> kategori)
+     * Memuat Opsi Kategori untuk Modal Edit
      */
-    window.muatOpsiKategoriEdit = async function(selectedKategori = '') {
-        const selectElem = document.getElementById('edit-kategori');
-        if (!selectElem) return;
+    window.muatOpsiKategoriEdit = async function(selectedKategori) {
+        const selectEl = document.getElementById('edit-kategori');
+        if (!selectEl) return;
 
-        selectElem.innerHTML = '<option value="">Memuat kategori...</option>';
+        selectEl.innerHTML = '<option value="">Memuat kategori...</option>';
 
         try {
-            const activeUserId = window.getActiveUserId ? window.getActiveUserId() : (localStorage.getItem('dompetq_user_id') || localStorage.getItem('USER_ID'));
+            // Ambil daftar kategori dari Firestore (sesuaikan dengan fungsi pengambilan kategori Anda)
+            // Contoh mengambil dari koleksi kategori atau lokal
+            let daftarKategori = [];
             
-            // Ambil dokumen kategori dari Firestore
-            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'pengaturan_aplikasi', 'kategori');
-            const docSnap = await window.fbGetDoc(docRef);
-
-            selectElem.innerHTML = '';
-
-            if (docSnap.exists() && Array.isArray(docSnap.data().listKategori)) {
-                const listKategori = docSnap.data().listKategori;
-
-                listKategori.forEach(item => {
-                    const namaKategori = item.nama || item;
-                    const opt = document.createElement('option');
-                    opt.value = namaKategori;
-                    opt.textContent = namaKategori;
-
-                    if (namaKategori.toLowerCase() === String(selectedKategori).toLowerCase()) {
-                        opt.selected = true;
-                    }
-                    selectElem.appendChild(opt);
-                });
+            if (typeof window.ambilDataKategoriFirestore === 'function') {
+                daftarKategori = await window.ambilDataKategoriFirestore();
+            } else if (window.kategoriListGlobal) {
+                daftarKategori = window.kategoriListGlobal;
             } else {
-                selectElem.innerHTML = '<option value="">(Belum Ada Kategori)</option>';
+                // Default fallback jika belum ada
+                daftarKategori = ['Konsumsi', 'Belanja', 'Kendaraan', 'Tagihan', 'Jatah Bulanan', 'Bulanan', 'Catatan Lainnya'];
             }
+
+            selectEl.innerHTML = '';
+
+            // Pastikan kategori yang sedang dipilih (misal: 'gaji' atau kategori unik lain) ikut dimasukkan jika belum ada di list
+            let kategoriAda = daftarKategori.includes(selectedKategori);
+            if (selectedKategori && !kategoriAda) {
+                daftarKategori.unshift(selectedKategori); // Letakkan di paling atas atau masukkan ke array
+            }
+
+            daftarKategori.forEach(kat => {
+                const opt = document.createElement('option');
+                opt.value = kat;
+                opt.textContent = kat;
+                if (kat === selectedKategori) {
+                    opt.selected = true;
+                }
+                selectEl.appendChild(opt);
+            });
+
         } catch (err) {
-            console.error("Gagal memuat list kategori:", err);
-            selectElem.innerHTML = '<option value="">Gagal memuat kategori</option>';
+            console.error("Gagal memuat kategori edit:", err);
+            selectEl.innerHTML = `<option value="${selectedKategori}">${selectedKategori || 'Pilih Kategori'}</option>`;
         }
     };
 
