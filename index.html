@@ -1206,24 +1206,35 @@
             <div class="space-y-3 pt-1">
                 <input type="hidden" id="edit-id-transaksi">
 
-                <!-- Tanggal Baru -->
-                <div>
-                <label class="block text-[11px] font-medium text-slate-400 mb-1">Tanggal Transaksi</label>
-                <div class="relative w-full">
-                    <!-- Input Text untuk Menampilkan DD/MM/YYYY -->
-                    <input type="text" id="edit-tanggal-display" readonly 
-                    placeholder="dd/mm/yyyy" 
-                    class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#b5f234] cursor-pointer pr-9">
-                    
-                    <!-- Hidden Input untuk menyimpan format mentah YYYY-MM-DD -->
-                    <input type="hidden" id="edit-tanggal-raw">
+                <!-- Tanggal & Jam Transaksi (Sejajar 2 Kolom) -->
+                <div class="grid grid-cols-2 gap-2">
+                    <!-- Tanggal Baru -->
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-400 mb-1">Tanggal Transaksi</label>
+                        <div class="relative w-full">
+                            <input type="text" id="edit-tanggal-display" readonly 
+                            placeholder="dd/mm/yyyy" 
+                            class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#b5f234] cursor-pointer pr-9">
+                            
+                            <input type="hidden" id="edit-tanggal-raw">
 
-                    <!-- Tombol Buka Modal Kalender Kustom -->
-                    <button type="button" onclick="window.bukaKalenderUntukEdit()" 
-                    class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Pilih Tanggal">
-                    <i class="fa-regular fa-calendar text-xs"></i>
-                    </button>
-                </div>
+                            <button type="button" onclick="window.bukaKalenderUntukEdit()" 
+                            class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Pilih Tanggal">
+                            <i class="fa-regular fa-calendar text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Jam Baru (Format 24 Jam) -->
+                    <div>
+                        <label class="block text-[11px] font-medium text-slate-400 mb-1">Waktu Transaksi</label>
+                        <div class="relative w-full">
+                            <input type="text" id="edit-jam-input" maxlength="5" inputmode="numeric"
+                            placeholder="00:00"
+                            class="w-full bg-slate-900 border border-[#b5f234] rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#b5f234] pr-8 tracking-wider font-mono">
+                            <i class="fa-regular fa-clock text-xs text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Dropdown Kategori dari Firestore -->
@@ -4940,30 +4951,44 @@
             const modal = document.getElementById('modal-edit-transaksi');
             if (modal) modal.classList.remove('hidden');
 
-            // Parse Tanggal dari waktuTransaksi
+            // Parse Tanggal & Jam dari waktuTransaksi
             let dateObj = null;
             const rawWaktu = item.waktuTransaksi || item.tanggal || item.createdAt;
 
             if (rawWaktu) {
-            if (typeof rawWaktu.toDate === 'function') {
-                dateObj = rawWaktu.toDate();
-            } else if (rawWaktu.seconds) {
-                dateObj = new Date(rawWaktu.seconds * 1000);
-            } else {
-                dateObj = new Date(rawWaktu);
-            }
+                if (typeof rawWaktu.toDate === 'function') {
+                    dateObj = rawWaktu.toDate();
+                } else if (rawWaktu.seconds) {
+                    dateObj = new Date(rawWaktu.seconds * 1000);
+                } else {
+                    dateObj = new Date(rawWaktu);
+                }
             }
 
             let displayDateString = '-';
             let rawDateString = '';
+            
+            // Ambil jam sistem saat ini sebagai default jika data transaksi sebelumnya tidak memiliki jam presisi
+            const now = new Date();
+            let timeString = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
 
             if (dateObj && !isNaN(dateObj.getTime())) {
-            const yyyy = dateObj.getFullYear();
-            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-            const dd = String(dateObj.getDate()).padStart(2, '0');
-            
-            displayDateString = `${dd}/${mm}/${yyyy}`;
-            rawDateString = `${yyyy}-${mm}-${dd}`;
+                const yyyy = dateObj.getFullYear();
+                const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const dd = String(dateObj.getDate()).padStart(2, '0');
+                const hh = String(dateObj.getHours()).padStart(2, '0');
+                const min = String(dateObj.getMinutes()).padStart(2, '0');
+                
+                displayDateString = `${dd}/${mm}/${yyyy}`;
+                rawDateString = `${yyyy}-${mm}-${dd}`;
+                timeString = `${hh}:${min}`;
+            } else {
+                // Jika tanggal transaksi lama juga belum ada, gunakan tanggal hari ini
+                const yyyy = now.getFullYear();
+                const mm = String(now.getMonth() + 1).padStart(2, '0');
+                const dd = String(now.getDate()).padStart(2, '0');
+                displayDateString = `${dd}/${mm}/${yyyy}`;
+                rawDateString = `${yyyy}-${mm}-${dd}`;
             }
 
             // Set Ringkasan Data Lama
@@ -4971,46 +4996,68 @@
             const isPengeluaran = (item.tipe === 'pengeluaran') || String(item.idTransaksi || item.docId || '').startsWith('out_');
             const prefixNominal = isPengeluaran ? '- ' : '+ ';
 
-            const oldKategoriElem = document.getElementById('preview-old-kategori');
-            const oldKeteranganElem = document.getElementById('preview-old-keterangan');
-            const oldTanggalElem = document.getElementById('preview-old-tanggal');
-            const oldNominalElem = document.getElementById('preview-old-nominal');
-
-            if (oldKategoriElem) oldKategoriElem.textContent = item.kategori || 'Tanpa Kategori';
-            if (oldKeteranganElem) oldKeteranganElem.textContent = item.keterangan || '-';
-            if (oldTanggalElem) oldTanggalElem.textContent = displayDateString;
-            if (oldNominalElem) oldNominalElem.textContent = prefixNominal + 'Rp ' + nominalNilai.toLocaleString('id-ID');
+            document.getElementById('preview-old-kategori').textContent = item.kategori || 'Tanpa Kategori';
+            document.getElementById('preview-old-keterangan').textContent = item.keterangan || '-';
+            document.getElementById('preview-old-tanggal').textContent = displayDateString;
+            document.getElementById('preview-old-nominal').textContent = prefixNominal + 'Rp ' + nominalNilai.toLocaleString('id-ID');
 
             // Populate Input Form Edit
-            const inputId = document.getElementById('edit-id-transaksi');
-            const inputDisplay = document.getElementById('edit-tanggal-display');
-            const inputRaw = document.getElementById('edit-tanggal-raw');
-            const inputNominal = document.getElementById('edit-nominal');
-            const inputKeterangan = document.getElementById('edit-keterangan');
+            document.getElementById('edit-id-transaksi').value = item.idTransaksi || item.docId || '';
+            document.getElementById('edit-tanggal-display').value = displayDateString;
+            document.getElementById('edit-tanggal-raw').value = rawDateString;
+            
+            // Set nilai input jam (Format 24 Jam HH:MM)
+            const inputJam = document.getElementById('edit-jam-input');
+            if (inputJam) {
+                inputJam.value = timeString;
 
-            if (inputId) inputId.value = item.idTransaksi || item.docId || '';
-            if (inputDisplay) inputDisplay.value = displayDateString;
-            if (inputRaw) inputRaw.value = rawDateString;
-            
-            // Format angka ke ribuan Indonesia saat diisikan ke input
-            if (inputNominal) {
-            inputNominal.value = nominalNilai ? nominalNilai.toLocaleString('id-ID') : '';
-            
-            // Pasang event handler realtime typing (jika belum terpasang)
-            if (!inputNominal.dataset.hasInputListener) {
-                inputNominal.addEventListener('input', (e) => {
-                let val = e.target.value.replace(/\D/g, ''); // Hapus non-angka
-                if (val) {
-                    e.target.value = parseInt(val, 10).toLocaleString('id-ID');
-                } else {
-                    e.target.value = '';
+                if (!inputJam.dataset.hasTimeListener) {
+                    // Auto-format ketikan menjadi HH:MM
+                    inputJam.addEventListener('input', (e) => {
+                        let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        if (val.length >= 3) {
+                            val = val.slice(0, 2) + ':' + val.slice(2);
+                        }
+                        e.target.value = val;
+                    });
+
+                    // Rapikan & koreksi otomatis saat selesai mengetik (blur)
+                    inputJam.addEventListener('blur', (e) => {
+                        let parts = e.target.value.split(':');
+                        let hh = parseInt(parts[0], 10);
+                        let min = parseInt(parts[1], 10);
+
+                        if (isNaN(hh)) hh = 0;
+                        if (isNaN(min)) min = 0;
+
+                        hh = Math.min(23, Math.max(0, hh));
+                        min = Math.min(59, Math.max(0, min));
+
+                        e.target.value = String(hh).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+                    });
+
+                    inputJam.dataset.hasTimeListener = 'true';
                 }
-                });
-                inputNominal.dataset.hasInputListener = 'true';
-            }
             }
 
-            if (inputKeterangan) inputKeterangan.value = item.keterangan || '';
+            const inputNominal = document.getElementById('edit-nominal');
+            if (inputNominal) {
+                inputNominal.value = nominalNilai ? nominalNilai.toLocaleString('id-ID') : '';
+                
+                if (!inputNominal.dataset.hasInputListener) {
+                    inputNominal.addEventListener('input', (e) => {
+                        let val = e.target.value.replace(/\D/g, '');
+                        if (val) {
+                            e.target.value = parseInt(val, 10).toLocaleString('id-ID');
+                        } else {
+                            e.target.value = '';
+                        }
+                    });
+                    inputNominal.dataset.hasInputListener = 'true';
+                }
+            }
+
+            document.getElementById('edit-keterangan').value = item.keterangan || '';
 
             await window.muatOpsiKategoriEdit(item.kategori || '');
 
@@ -5036,8 +5083,8 @@
 
         const docId = window.currentEditItem.idTransaksi || window.currentEditItem.docId;
         const inputRawVal = document.getElementById('edit-tanggal-raw')?.value; // Format YYYY-MM-DD
+        const inputJamVal = document.getElementById('edit-jam-input')?.value || '00:00'; // Format HH:MM
         
-        // Ambil string nominal, bersihkan karakter titik (format ribuan), lalu konversi ke angka murni
         const rawNominalString = document.getElementById('edit-nominal')?.value || '0';
         const cleanNominalString = rawNominalString.replace(/\./g, '').trim();
         const inputNominal = Number(cleanNominalString);
@@ -5046,29 +5093,29 @@
         const inputKategori = document.getElementById('edit-kategori')?.value || window.currentEditItem.kategori;
 
         if (!inputRawVal) {
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert("Tanggal transaksi harus diisi!", "warning");
-            } else {
-                alert("Tanggal transaksi harus diisi!");
-            }
+            await window.tampilAlert("Tanggal transaksi harus diisi!", "warning");
+            return;
+        }
+
+        // Validasi Format Jam 24 Jam (00:00 - 23:59) <-- Diletakkan di sini
+        const matchJam = inputJamVal.match(/^([01]\d|2[0-3]):([0-5]\d)$/);
+        if (!matchJam) {
+            await window.tampilAlert("Format jam harus 24 jam yang valid (00:00 - 23:59)!", "warning");
             return;
         }
 
         if (isNaN(inputNominal) || inputNominal <= 0) {
-            if (typeof window.tampilAlert === 'function') {
-                await window.tampilAlert("Nominal harus lebih besar dari 0!", "warning");
-            } else {
-                alert("Nominal harus lebih besar dari 0!");
-            }
+            await window.tampilAlert("Nominal harus lebih besar dari 0!", "warning");
             return;
         }
 
         const isPengeluaran = (window.currentEditItem.tipe === 'pengeluaran') || String(docId).startsWith('out_');
         const nominalBersih = isPengeluaran ? -Math.abs(inputNominal) : Math.abs(inputNominal);
 
-        // Buat Timestamp Baru dari YYYY-MM-DD
+        // Gabungkan Tanggal & Jam yang dipilih user
         const [y, m, d] = inputRawVal.split('-').map(Number);
-        const newDateObj = new Date(y, m - 1, d, 12, 0, 0);
+        const [hh, min] = inputJamVal.split(':').map(Number);
+        const newDateObj = new Date(y, m - 1, d, isNaN(hh) ? 0 : hh, isNaN(min) ? 0 : min, 0);
 
         const updatedPayload = {
             ...window.currentEditItem,
