@@ -79,7 +79,7 @@
             </button>
 
             <!-- Center FAB (+) Button -->
-            <button class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-slate-950 text-[#b5f234] flex items-center justify-center text-lg md:text-xl hover:scale-105 transition active:scale-95 shadow-md -my-2">
+            <button type="button" onclick="bukaModalPilihCatatan()" class="w-11 h-11 md:w-12 md:h-12 rounded-full bg-slate-950 text-[#b5f234] flex items-center justify-center text-lg md:text-xl hover:scale-105 transition active:scale-95 shadow-md -my-2">
                 <i class="fa-solid fa-plus"></i>
             </button>
 
@@ -342,8 +342,8 @@
             <span id="arsip-subtitle" class="text-[10px] text-slate-400">Riwayat berkas slip yang tersimpan</span>
             </div>
         </div>
-        <button id="btn-close-arsip" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
-            <i class="fa-solid fa-xmark text-sm"></i>
+        <button id="btn-close-arsip" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+            <i class="fa-solid fa-xmark"></i>
         </button>
         </div>
 
@@ -388,7 +388,9 @@
         <div class="relative bg-slate-900 border border-[#b5f234] rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
             <div class="flex items-center justify-between p-4 border-b border-[#b5f234] bg-slate-950 text-white">
                 <h3 class="font-bold text-sm" id="pratinjau-judul">Pratinjau Dokumen</h3>
-                <button onclick="tutupModalPratinjauSlip()" class="text-slate-400 hover:text-white text-xl">&times;</button>
+                <button onclick="tutupModalPratinjauSlip()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             <div class="p-4 flex-1 overflow-y-auto flex items-center justify-center custom-scrollbar">
                 <img id="pratinjau-gambar" src="" onclick="bukaZoomGambar(this.src)" class="max-w-full max-h-[60vh] object-contain rounded-lg cursor-zoom-in hover:opacity-95 transition" alt="Foto Slip Gaji">
@@ -412,8 +414,8 @@
             </div>
             <h3 class="text-xs font-bold text-white uppercase tracking-wider">Pilih Tanggal</h3>
           </div>
-          <button id="btn-close-kalender" type="button" class="w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
-            <i class="fa-solid fa-xmark text-xs"></i>
+          <button id="btn-close-kalender" type="button" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+            <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
 
@@ -482,8 +484,8 @@
             
             <!-- Header Modal -->
             <div class="p-5 text-center bg-[#141a16] border-b border-[#b5f234] relative">
-                <button onclick="tutupModalRegistrasiUser()" class="absolute right-4 top-4 w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Tutup Modal">
-                    <i class="fa-solid fa-xmark text-xs"></i>
+                <button onclick="tutupModalRegistrasiUser()" class="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition cursor-pointer" title="Tutup Modal">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
                 
                 <h3 class="text-sm font-bold text-white leading-none">Profil & Akun Perangkat</h3>
@@ -560,8 +562,8 @@
                         <span class="text-[10px] text-slate-400">Pindai dokumen slip gaji/tunjangan otomatis</span>
                     </div>
                 </div>
-                <button onclick="tutupModalOcr()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer">
-                    <i class="fa-solid fa-xmark text-sm"></i>
+                <button onclick="tutupModalOcr()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
@@ -678,8 +680,8 @@
               <p id="modal-masuk-subtittle" class="text-[11px] text-slate-400">Periode: <span class="text-lime-400 font-semibold" id="modal-masuk-periode">September 2026</span></p>
             </div>
           </div>
-          <button id="btn-close-modal-masuk" type="button" class="text-slate-400 hover:text-white w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-800 transition-colors">
-            <i class="fa-solid fa-xmark text-base"></i>
+          <button id="btn-close-modal-masuk" type="button" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition" title="Tutup Modal">
+            <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
 
@@ -724,8 +726,8 @@
                 </div>
             </div>
             <!-- Hanya Tombol Close di Header Atas -->
-            <button onclick="tutupModalPengeluaran()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Tutup">
-                <i class="fa-solid fa-xmark text-sm"></i>
+            <button onclick="tutupModalPengeluaran()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition" title="Tutup Modal">
+                <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
@@ -892,8 +894,8 @@
                 <h3 class="text-xs font-bold tracking-wider text-slate-300 uppercase flex items-center gap-2">
                     <i class="fas fa-cog text-[#b5f234]"></i> Kelola Kategori & Catatan
                 </h3>
-                <button onclick="tutupPengaturanPengeluaran()" class="text-slate-400 hover:text-white transition-colors">
-                    <i class="fas fa-times"></i>
+                <button onclick="tutupPengaturanPengeluaran()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
@@ -951,7 +953,7 @@
                 <button onclick="exportLaporan()" class="px-3 py-1.5 rounded-xl bg-[#b5f234] text-black font-bold text-xs flex items-center gap-1.5 hover:bg-[#a2dc2e] transition cursor-pointer">
                     <i class="fa-solid fa-file-arrow-down"></i> <span class="hidden sm:inline">Cetak</span>
                 </button>
-                <button onclick="tutupModalLaporan()" class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-slate-800/60 hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer shrink-0">
+                <button onclick="tutupModalLaporan()" class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition cursor-pointer shrink-0" title="Tutup Modal">
                     <i class="fa-solid fa-xmark text-sm md:text-base"></i>
                 </button>
             </div>
@@ -1135,8 +1137,8 @@
         <!-- Sticky Header Navigation -->
         <div class="sticky top-0 bg-[#0f1412]/95 backdrop-blur-md px-4 py-3.5 border-b border-slate-800/80 flex items-center justify-between z-20">
             <!-- Tombol Kembali -->
-            <button onclick="tutupModalDetailJelajahi()" class="p-2.5 rounded-xl bg-slate-800/60 text-slate-300 hover:text-white hover:bg-slate-800 transition cursor-pointer flex items-center justify-center">
-                <i class="fa-solid fa-arrow-left text-base"></i>
+            <button onclick="tutupModalDetailJelajahi()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition" title="Tutup Modal">
+                <i class="fa-solid fa-xmark"></i>
             </button>
 
             <!-- Judul Dinamis Sub-page -->
@@ -1180,8 +1182,8 @@
                 <h3 class="text-sm font-bold text-white flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-[#b5f234]"></i> Rincian & Edit Transaksi
                 </h3>
-                <button onclick="window.tutupModalEditTransaksi()" class="text-slate-400 hover:text-white transition">
-                    <i class="fa-solid fa-xmark text-base"></i>
+                <button onclick="window.tutupModalEditTransaksi()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
@@ -1279,7 +1281,7 @@
                 <h3 class="text-xs md:text-sm font-extrabold text-white tracking-wide uppercase flex items-center gap-2">
                     <i class="fa-solid fa-pen-to-square text-[#b5f234]"></i> Edit Data Kendaraan
                 </h3>
-                <button type="button" onclick="tutupModalEditKendaraan()" class="text-slate-400 hover:text-white text-base">
+                <button type="button" onclick="tutupModalEditKendaraan()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition" title="Tutup Modal">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -1983,12 +1985,27 @@
                 const data = docSnap.data();
                 const idTrans = (data.idTransaksi || docSnap.id || "").toLowerCase();
                 const rawPeriode = normalizePeriod(data.periode);
-                const nominalNetto = Number(data.totalBersihNetto || 0);
+                const nominalNetto = Number(data.totalBersihNetto || data.nominal || 0);
                 const katName = (data.kategori || "").toLowerCase();
+                const tipeTrans = (data.tipe || "").toLowerCase();
 
-                // Hitung Akumulasi Seluruh Saldo Tabungan Milik User (Semua Periode)
-                if (katName.startsWith('mutasi_tabungan') || idTrans.startsWith('mutasi_tabungan')) {
-                    totalSaldoTabunganAkomulasi += Math.abs(nominalNetto);
+                // Cek jika transaksi adalah mutasi
+                const isMutasi = tipeTrans === 'mutasi' || katName.includes('→') || idTrans.startsWith('mutasi_');
+
+                if (isMutasi) {
+                    // Jika ini mutasi masuk ke tabungan (misal _in), tambahkan ke total tabungan
+                    if (idTrans.includes('_in_') || nominalNetto > 0) {
+                        totalSaldoTabunganAkomulasi += Math.abs(nominalNetto);
+                    }
+                    
+                    // Jika ini mutasi keluar dari saldo utama (misal _out), hitung sebagai pengurang saldo utama (masuk ke pengeluaran/mutasi)
+                    if (rawPeriode === activePeriodUI) {
+                        if (idTrans.includes('_out_') || nominalNetto < 0) {
+                            totalPengeluaranBulanIni += Math.abs(nominalNetto); // Saldo utama berkurang
+                        }
+                        listTransaksiBulanIni.push({ ...data, tipe: 'mutasi' });
+                    }
+                    return; 
                 }
 
                 // Abaikan semua dokumen catatan saldo lalu untuk list & rekap bulanan
@@ -2000,8 +2017,7 @@
                                         idTrans.startsWith('thr') || 
                                         idTrans.startsWith('lainnya');
 
-                    const isPengeluaran = idTrans.startsWith('mutasi') || 
-                                        idTrans.startsWith('out');
+                    const isPengeluaran = idTrans.startsWith('out');
 
                     if (isPemasukan) {
                         totalPemasukanBulanIni += Math.abs(nominalNetto);
@@ -6395,43 +6411,296 @@
     }
 
 
+    // Membuka Modal Pilihan Catatan (Masuk, Keluar, Mutasi) saat tombol (+) diklik
+    function bukaModalPilihCatatan() {
+        // Cek atau buat elemen modal pilihan jika belum ada di DOM
+        let modalEl = document.getElementById('modal-pilih-catatan');
+        if (!modalEl) {
+            const htmlModal = `
+            <div id="modal-pilih-catatan" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 hidden">
+                <div class="bg-[#121814] border border-[#b5f234]/30 w-full max-w-sm rounded-3xl p-6 shadow-2xl text-white relative animate-scale-up">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="font-bold text-base text-[#b5f234]">Pilih Jenis Transaksi</h3>
+                        <button onclick="tutupModalPilihCatatan()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="tutupModalPilihCatatan(); bukaModalOcr();" class="flex flex-col items-center justify-center bg-slate-900 border border-emerald-500/30 hover:border-emerald-500 rounded-2xl p-4 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-arrow-down text-base"></i>
+                            </div>
+                            <span class="text-xs font-semibold">Masuk</span>
+                        </button>
+                        <button onclick="tutupModalPilihCatatan(); bukaModalPengeluaran();" class="flex flex-col items-center justify-center bg-slate-900 border border-rose-500/30 hover:border-rose-500 rounded-2xl p-4 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-arrow-up text-base"></i>
+                            </div>
+                            <span class="text-xs font-semibold">Keluar</span>
+                        </button>
+                        <button onclick="tutupModalPilihCatatan(); bukaModalMutasiTabungan();" class="flex flex-col items-center justify-center bg-slate-900 border border-[#b5f234]/30 hover:border-[#b5f234] rounded-2xl p-4 transition group">
+                            <div class="w-10 h-10 rounded-xl bg-[#b5f234]/10 text-[#b5f234] flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                                <i class="fa-solid fa-wallet text-base"></i>
+                            </div>
+                            <span class="text-xs font-semibold">Mutasi</span>
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', htmlModal);
+            modalEl = document.getElementById('modal-pilih-catatan');
+        }
+        modalEl.classList.remove('hidden');
+    }
+
+    function tutupModalPilihCatatan() {
+        const modalEl = document.getElementById('modal-pilih-catatan');
+        if (modalEl) modalEl.classList.add('hidden');
+    }
+
+    // Membuka Modal Mutasi Tabungan
+    function bukaModalMutasiTabungan() {
+        let modalEl = document.getElementById('modal-mutasi-tabungan');
+        if (!modalEl) {
+            const htmlModal = `
+            <!-- Modal Mutasi / Alokasi Saldo -->
+            <div id="modal-mutasi-tabungan" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+                <div class="bg-[#0f172a] border border-lime-400/30 rounded-2xl w-full max-w-md p-6 shadow-2xl">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-lime-400 text-xl">💳</span>
+                            <div>
+                                <h3 class="text-lime-400 font-bold text-lg leading-tight">Mutasi / Alokasi Saldo</h3>
+                                <p class="text-slate-400 text-xs">Pindahkan saldo antar dompet atau pos tabungan</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="tutupModalMutasiTabungan()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition">
+                            ✕
+                        </button>
+                    </div>
+
+                    <!-- Form Mutasi -->
+                    <form id="form-mutasi-tabungan" onsubmit="simpanMutasiTabungan(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- Asal Mutasi -->
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Dari (Asal Mutasi)</label>
+                                <select id="mutasi-asal" required class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                                    <option value="Saldo Utama">Saldo Utama</option>
+                                    <option value="Tabungan Utama">Tabungan Utama</option>
+                                    <option value="Dana Darurat">Dana Darurat</option>
+                                    <option value="Tabungan Kendaraan">Tabungan Kendaraan</option>
+                                </select>
+                            </div>
+
+                            <!-- Tujuan Mutasi -->
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Ke (Tujuan Mutasi)</label>
+                                <select id="mutasi-tujuan" required class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                                    <option value="Tabungan Utama">Tabungan Utama</option>
+                                    <option value="Dana Darurat">Dana Darurat</option>
+                                    <option value="Tabungan Kendaraan">Tabungan Kendaraan</option>
+                                    <option value="Saldo Utama">Saldo Utama</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Nominal -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Nominal Mutasi (Rp)</label>
+                            <input type="text" id="mutasi-nominal" required placeholder="Contoh: 100.000"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
+                                class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
+                        </div>
+
+                        <!-- Keterangan -->
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Keterangan / Catatan</label>
+                            <input type="text" id="mutasi-keterangan" placeholder="Misal: Nabung bulanan, Sisihan servis"
+                                class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
+                        </div>
+
+                        <!-- Tombol Aksi -->
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <button type="button" onclick="tutupModalMutasiTabungan()"
+                                class="w-full py-2.5 px-4 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                class="w-full py-2.5 px-4 rounded-xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold text-sm transition shadow-lg shadow-lime-400/20">
+                                Simpan Mutasi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', htmlModal);
+            modalEl = document.getElementById('modal-mutasi-tabungan');
+        }
+        
+        // Reset form setiap kali dibuka
+        const formEl = document.getElementById('form-mutasi-tabungan');
+        if (formEl) formEl.reset();
+
+        // Ubah display menjadi flex agar posisinya berada tepat di tengah layar
+        modalEl.classList.remove('hidden');
+        modalEl.classList.add('flex'); // <-- Menggunakan modalEl yang sudah dideklarasikan
+    }
+
+    function tutupModalMutasiTabungan() {
+        const modal = document.getElementById('modal-mutasi-tabungan');
+        if (modal) {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+    }
+
+
+    // Fungsi Simpan Mutasi ke Firestore / State Utama (Menyesuaikan Struktur Database Anda)
+    async function simpanMutasiTabungan(e) {
+        e.preventDefault();
+
+        const asal = document.getElementById('mutasi-asal').value;
+        const tujuan = document.getElementById('mutasi-tujuan').value;
+        const nominalStr = document.getElementById('mutasi-nominal').value.replace(/\./g, '');
+        const nominal = parseFloat(nominalStr) || 0;
+        const keterangan = document.getElementById('mutasi-keterangan').value.trim() || `Mutasi dari ${asal} ke ${tujuan}`;
+
+        if (asal === tujuan) {
+            await window.tampilAlert('Asal mutasi dan tujuan mutasi tidak boleh sama!', 'warning', 'Validasi Mutasi');
+            return;
+        }
+
+        if (nominal <= 0) {
+            await window.tampilAlert('Masukkan nominal mutasi yang valid!', 'warning', 'Nominal Kosong');
+            return;
+        }
+
+        const getKodeTabungan = (namaPos) => {
+            const p = namaPos.toLowerCase();
+            if (p.includes('darurat')) return 'mutasi_tabungan2';
+            if (p.includes('kendaraan')) return 'mutasi_tabungan3';
+            return 'mutasi_tabungan1'; 
+        };
+
+        const kodeAsal = getKodeTabungan(asal);
+        const kodeTujuan = getKodeTabungan(tujuan);
+
+        const activePeriodUI = typeof getActivePeriodFromUI === 'function' ? getActivePeriodFromUI() : 'September 2026';
+        const cleanPeriodeId = activePeriodUI.toLowerCase().replace(/\s+/g, '_');
+        const timestamp = Date.now();
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+        const username = localStorage.getItem('dompetq_username') || "iwashia";
+
+        // 1. Data untuk Pengurangan di Pos Asal
+        const idAsal = `${kodeAsal}_${cleanPeriodeId}_out_${timestamp}`;
+        const dataAsalFirestore = {
+            idTransaksi: idAsal,
+            kategori: kodeAsal,
+            keterangan: `Keluar ke ${tujuan}: ${keterangan}`,
+            namaUser: username,
+            pendapatan: 0,
+            potongan: nominal,
+            periode: activePeriodUI,
+            referenceKeyImage: kodeAsal.toUpperCase(),
+            totalBersihNetto: -Math.abs(nominal),
+            uid: activeUserId,
+            waktuTransaksi: new Date(),
+            tipe: 'mutasi',
+            asalMutasi: asal,       // <-- Pastikan tersimpan
+            tujuanMutasi: tujuan     // <-- Pastikan tersimpan
+        };
+
+        // 2. Data untuk Penambahan di Pos Tujuan
+        const idTujuan = `${kodeTujuan}_${cleanPeriodeId}_in_${timestamp}`;
+        const dataTujuanFirestore = {
+            idTransaksi: idTujuan,
+            kategori: kodeTujuan,
+            keterangan: `Masuk dari ${asal}: ${keterangan}`,
+            namaUser: username,
+            pendapatan: nominal,
+            potongan: 0,
+            periode: activePeriodUI,
+            referenceKeyImage: kodeTujuan.toUpperCase(),
+            totalBersihNetto: Math.abs(nominal),
+            uid: activeUserId,
+            waktuTransaksi: new Date(),
+            tipe: 'mutasi',
+            asalMutasi: asal,       // <-- Pastikan tersimpan
+            tujuanMutasi: tujuan     // <-- Pastikan tersimpan
+        };
+
+        try {
+            if (typeof window.db !== 'undefined' && activeUserId) {
+                const docRefAsal = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idAsal);
+                const docRefTujuan = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idTujuan);
+                
+                await Promise.all([
+                    window.fbSetDoc(docRefAsal, dataAsalFirestore),
+                    window.fbSetDoc(docRefTujuan, dataTujuanFirestore)
+                ]);
+            }
+
+            tutupModalMutasiTabungan();
+            await window.tampilAlert(`Berhasil memindahkan Rp ${nominal.toLocaleString('id-ID')} dari ${asal} ke ${tujuan}.`, 'success', 'Mutasi Berhasil');
+
+            if (typeof muatDataUtama === 'function') muatDataUtama();
+            if (typeof renderTabTabungan === 'function') renderTabTabungan();
+        } catch (err) {
+            console.error('Gagal menyimpan mutasi:', err);
+            await window.tampilAlert('Terjadi kesalahan saat memproses mutasi saldo.', 'error', 'Gagal');
+        }
+    }
+
+
 
     /**
-     * FUNGSI RENDER HALAMAN TABUNGAN & RIWAYAT MUTASI
+     * FUNGSI RENDER HALAMAN TABUNGAN & RIWAYAT MUTASI (Sistem Penampungan Total)
      */
     async function renderTabTabungan() {
         const container = document.getElementById('tab-tabungan-content');
         if (!container) return;
 
         const formatRp = (v) => typeof window.formatRupiah === 'function' ? window.formatRupiah(v) : 'Rp ' + Number(v || 0).toLocaleString('id-ID');
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
 
-        // 1. Ambil Transaksi Mutasi Khusus Tabungan
-        let rawData = window.dataMasterLaporan || [];
-        if ((!rawData || rawData.length === 0) && typeof muatDataJalurLaporan === 'function') {
-            rawData = await muatDataJalurLaporan();
+        let dataLaporan = [];
+
+        try {
+            if (typeof db !== 'undefined' && activeUserId) {
+                const rekapRef = window.fbCollection(window.db, 'users', activeUserId, 'rekap_finansial');
+                const snapRekap = await window.fbGetDocs(rekapRef);
+                snapRekap.forEach(docSnap => {
+                    dataLaporan.push({ id: docSnap.id, ...docSnap.data() });
+                });
+            } else {
+                dataLaporan = JSON.parse(localStorage.getItem('dompetq_transaksi') || '[]');
+            }
+        } catch (err) {
+            console.error("Gagal mengambil data tabungan:", err);
+            dataLaporan = window.dataMasterLaporan || [];
         }
 
-        const dataLaporan = Array.isArray(rawData) ? rawData : [];
-
-        // Helper untuk menghitung total saldo berdasarkan kode mutasi persis (exact match / clean string)
-        const hitungSaldoByKode = (targetKode) => {
+        // Helper untuk menjumlahkan total saldo dari penampungan kategori tertentu
+        const hitungTotalPenampungan = (kodeKat) => {
             return dataLaporan.reduce((acc, item) => {
-                const kat = String(item.kategori || item.judul || '').toLowerCase().trim();
-                const ket = String(item.keterangan || item.nama || '').toLowerCase().trim();
+                const kat = String(item.kategori || '').toLowerCase().trim();
+                const idTrans = String(item.idTransaksi || item.id || '').toLowerCase().trim();
                 
-                // Pengecekan persis / spesifik
-                const isMatch = kat === targetKode.toLowerCase() || ket === targetKode.toLowerCase();
-
-                if (isMatch) {
-                    const nominal = Math.abs(Number(item.totalBersihNetto || item.nominal || item.jumlah || 0));
-                    const isPengeluaran = String(item.tipe || item.jenis || '').toLowerCase() === 'pengeluaran';
-                    return acc + (isPengeluaran ? -nominal : nominal);
+                if (kat === kodeKat.toLowerCase() || idTrans.startsWith(kodeKat.toLowerCase())) {
+                    const nominal = Number(item.totalBersihNetto || item.nominal || item.pendapatan || 0);
+                    return acc + nominal; // Menjumlahkan bersih (bisa positif/negatif)
                 }
                 return acc;
             }, 0);
         };
 
-        // Preset Data 3 Tabungan
+        // 3 Tabungan Utama Mengambil dari Penampungan Masing-Masing
+        const saldoUtama = Math.abs(hitungTotalPenampungan('mutasi_tabungan1'));
+        const saldoDarurat = Math.abs(hitungTotalPenampungan('mutasi_tabungan2'));
+        const saldoKendaraan = Math.abs(hitungTotalPenampungan('mutasi_tabungan3'));
+
         const listTabungan = [
             {
                 id: 'utama',
@@ -6440,8 +6709,7 @@
                 iconBg: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
                 barColor: 'bg-blue-500',
                 textColor: 'text-blue-400',
-                // Hanya membaca mutasi_tabungan1 secara spesifik
-                saldo: hitungSaldoByKode('mutasi_tabungan1'),
+                saldo: saldoUtama,
                 target: 10000000
             },
             {
@@ -6451,8 +6719,7 @@
                 iconBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
                 barColor: 'bg-rose-500',
                 textColor: 'text-rose-400',
-                // Hanya membaca mutasi_tabungan2 secara spesifik
-                saldo: hitungSaldoByKode('mutasi_tabungan2'),
+                saldo: saldoDarurat,
                 target: 5000000
             },
             {
@@ -6462,8 +6729,7 @@
                 iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                 barColor: 'bg-amber-500',
                 textColor: 'text-amber-400',
-                // Hanya membaca mutasi_tabungan3 secara spesifik
-                saldo: hitungSaldoByKode('mutasi_tabungan3'),
+                saldo: saldoKendaraan,
                 target: 2000000
             }
         ];
@@ -6499,17 +6765,34 @@
             `;
         }).join('');
 
-        // Filter seluruh transaksi mutasi tabungan untuk bagian Riwayat List
+        // Filter Riwayat Mutasi & Tabungan yang aman agar transaksi lama tidak hilang
         const mutasiTabungan = dataLaporan.filter(item => {
-            const kat = String(item.kategori || item.judul || '').toLowerCase();
-            const ket = String(item.keterangan || item.nama || '').toLowerCase();
-            const tipe = String(item.tipe || item.jenis || '').toLowerCase();
+            const kat = String(item.kategori || '').toLowerCase();
+            const idTrans = String(item.idTransaksi || item.id || '').toLowerCase();
+            const tipe = String(item.tipe || '').toLowerCase();
             
-            return kat.includes('mutasi_tabungan') || ket.includes('mutasi_tabungan') || tipe === 'mutasi';
+            const isSaldoLalu = idTrans.startsWith('saldo_lalu_');
+            if (isSaldoLalu) return false;
+
+            // Apakah ini termasuk kategori tabungan atau mutasi?
+            const isTabunganOrMutasi = kat.includes('mutasi_tabungan') || 
+                                       idTrans.includes('mutasi_tabungan') || 
+                                       tipe === 'mutasi' || 
+                                       kat.includes('tabungan');
+
+            if (!isTabunganOrMutasi) return false;
+
+            // Jika ini transaksi mutasi baru (yang memiliki _in / _out), kita hanya tampilkan bagian _in (masuk) 
+            // agar tidak muncul dobel dengan rekap utama. Tapi jika transaksi lama tidak punya _in/_out, tetap tampilkan.
+            if (idTrans.includes('_out_')) {
+                return false; // Sembunyikan _out karena sudah direkap di tab Rekap
+            }
+
+            return true;
         }).sort((a, b) => {
             const tglA = a.waktuTransaksi?.toDate ? a.waktuTransaksi.toDate() : new Date(a.tanggal || 0);
             const tglB = b.waktuTransaksi?.toDate ? b.waktuTransaksi.toDate() : new Date(b.tanggal || 0);
-            return tglB - tglA;
+            return tglB - tglA; // Urutkan dari yang terbaru
         });
 
         // Grouping Mutasi berdasarkan Tanggal
@@ -6522,7 +6805,16 @@
             groupedMutasi[dateStr].push({ item, tglObj });
         });
 
-        // Render HTML List Mutasi
+        // Helper untuk mengubah string kode pos menjadi nama label yang rapi
+        const getNamaPosLabel = (katStr) => {
+            const k = String(katStr || '').toLowerCase();
+            if (k.includes('mutasi_tabungan1') || k.includes('utama')) return 'TABUNGAN UTAMA';
+            if (k.includes('mutasi_tabungan2') || k.includes('darurat')) return 'DANA DARURAT';
+            if (k.includes('mutasi_tabungan3') || k.includes('kendaraan')) return 'TABUNGAN KENDARAAN';
+            return (k || 'MUTASI').toUpperCase();
+        };
+
+        // Render HTML List Riwayat Mutasi
         let htmlMutasi = '';
         const dateKeys = Object.keys(groupedMutasi);
 
@@ -6532,17 +6824,36 @@
                     <p class="text-[10px] md:text-xs font-semibold text-slate-400 pl-1">${tgl}</p>
                     <div class="space-y-2">
                         ${groupedMutasi[tgl].map(({ item: m, tglObj }) => {
-                            const rawNominal = Number(m.totalBersihNetto || m.nominal || m.jumlah || 0);
-                            const isKeluar = rawNominal < 0 || String(m.tipe || m.jenis).toLowerCase() === 'pengeluaran';
+                            const rawNominal = Number(m.totalBersihNetto || m.nominal || m.pendapatan || 0);
+                            const idTrans = String(m.idTransaksi || m.id || '').toLowerCase();
                             
-                            const namaKat = m.kategori || m.judul || 'MUTASI_TABUNGAN';
-                            const ket = m.keterangan || m.nama || 'Tabungan';
-                            const displayNominal = (isKeluar ? '- ' : '') + formatRp(Math.abs(rawNominal));
-                            
+                            // Tentukan Asal & Tujuan berdasarkan arah ID (_in atau _out) atau data Firestore
+                            let asalTxt = m.asalMutasi;
+                            let tujuanTxt = m.tujuanMutasi;
+
+                            if (!asalTxt || !tujuanTxt) {
+                                const kat = String(m.kategori || '').toLowerCase();
+                                const targetPos = kat.includes('2') ? 'Dana Darurat' : kat.includes('3') ? 'Tabungan Kendaraan' : 'Tabungan Utama';
+                                
+                                if (idTrans.includes('_in_')) {
+                                    asalTxt = 'Saldo Utama';
+                                    tujuanTxt = targetPos;
+                                } else if (idTrans.includes('_out_')) {
+                                    asalTxt = targetPos;
+                                    tujuanTxt = 'Saldo Utama';
+                                } else {
+                                    asalTxt = 'Saldo Utama';
+                                    tujuanTxt = targetPos;
+                                }
+                            }
+
+                            const namaKat = `${asalTxt.toUpperCase()} → ${tujuanTxt.toUpperCase()}`;
+                            const ket = m.keterangan || 'Mutasi Saldo Tabungan';
+                            const displayNominal = formatRp(Math.abs(rawNominal));
                             const jamStr = tglObj.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':') + ' WIB';
 
                             return `
-                                <div class="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-[#b5f234] hover:border-sky-500/30 transition">
+                                <div onclick="bukaModalEditMutasi('${m.idTransaksi || m.id}')" class="flex items-center justify-between p-3 rounded-2xl bg-slate-900/60 border border-[#b5f234] hover:border-lime-400 cursor-pointer transition">
                                     <div class="flex items-center gap-3 truncate pr-2">
                                         <div class="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
                                             <i class="fa-solid fa-right-left text-sm"></i>
@@ -6551,7 +6862,7 @@
                                         <div class="truncate space-y-0.5">
                                             <h4 class="text-xs md:text-sm font-bold text-sky-400 tracking-wide uppercase truncate">${namaKat}</h4>
                                             <p class="text-[10px] md:text-xs text-slate-400 font-medium truncate">${ket}</p>
-                                            <p class="text-xs md:text-sm font-black ${isKeluar ? 'text-rose-400' : 'text-sky-400'}">${displayNominal}</p>
+                                            <p class="text-xs md:text-sm font-black text-sky-400">${displayNominal}</p>
                                         </div>
                                     </div>
 
@@ -6576,15 +6887,12 @@
             `;
         }
 
-        // Combine Seluruh Layout
         container.innerHTML = `
             <div class="max-w-6xl mx-auto p-3 md:p-4 space-y-4">
-                <!-- LIST CARD TABUNGAN -->
                 <div class="space-y-3">
                     ${htmlTabunganCards}
                 </div>
 
-                <!-- SECTION RIWAYAT TABUNGAN & MUTASI -->
                 <div class="bg-[#0b0f0ce5] rounded-3xl p-4 md:p-6 border border-[#b5f234]/80 space-y-4">
                     <div class="flex justify-between items-center border-b border-[#b5f234]/80 pb-3">
                         <h3 class="text-xs md:text-sm font-bold text-slate-300 tracking-wider uppercase flex items-center gap-2">
@@ -6600,6 +6908,295 @@
                 </div>
             </div>
         `;
+    }
+
+
+    // Membuka Modal Edit / Hapus Mutasi Tabungan
+    async function bukaModalEditMutasi(idTransaksi) {
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+        let itemData = null;
+
+        // Cari data transaksi berdasarkan ID di data lokal atau ambil dari Firestore
+        if (typeof db !== 'undefined' && activeUserId) {
+            try {
+                const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idTransaksi);
+                const docSnap = await window.fbGetDoc(docRef);
+                if (docSnap.exists()) {
+                    itemData = { id: docSnap.id, ...docSnap.data() };
+                }
+            } catch (err) {
+                console.error("Gagal mengambil detail transaksi:", err);
+            }
+        }
+
+        if (!itemData && window.dataMasterLaporan) {
+            itemData = window.dataMasterLaporan.find(d => (d.idTransaksi || d.id) === idTransaksi);
+        }
+
+        if (!itemData) {
+            await window.tampilAlert('Data transaksi tidak ditemukan!', 'error', 'Gagal');
+            return;
+        }
+
+        // Tentukan nilai asal dan tujuan untuk form
+        let asalVal = itemData.asalMutasi || 'Saldo Utama';
+        let tujuanVal = itemData.tujuanMutasi || (itemData.kategori ? itemData.kategori.replace('mutasi_tabungan', 'Tabungan ') : 'Tabungan Utama');
+        
+        // Normalisasi nama pos jika dari data lama
+        if (!itemData.asalMutasi && itemData.kategori) {
+            asalVal = 'Saldo Utama';
+            if (itemData.kategori.includes('1')) tujuanVal = 'Tabungan Utama';
+            if (itemData.kategori.includes('2')) tujuanVal = 'Dana Darurat';
+            if (itemData.kategori.includes('3')) tujuanVal = 'Tabungan Kendaraan';
+        }
+
+        let modalEl = document.getElementById('modal-edit-mutasi-tabungan');
+        if (!modalEl) {
+            const htmlModal = `
+            <!-- Modal Edit / Hapus Mutasi -->
+            <div id="modal-edit-mutasi-tabungan" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+                <div class="bg-[#0f172a] border border-lime-400/30 rounded-2xl w-full max-w-md p-6 shadow-2xl">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-lime-400 text-xl">✏️</span>
+                            <div>
+                                <h3 class="text-lime-400 font-bold text-lg leading-tight">Edit / Hapus Mutasi</h3>
+                                <p class="text-slate-400 text-xs">Ubah atau hapus riwayat alokasi saldo</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="tutupModalEditMutasi()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+
+                    <!-- Form Edit -->
+                    <form id="form-edit-mutasi" onsubmit="simpanPerubahanMutasi(event)" class="space-y-4">
+                        <input type="hidden" id="edit-id-transaksi">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Dari (Asal Mutasi)</label>
+                                <select id="edit-mutasi-asal" required class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                                    <option value="Saldo Utama">Saldo Utama</option>
+                                    <option value="Tabungan Utama">Tabungan Utama</option>
+                                    <option value="Dana Darurat">Dana Darurat</option>
+                                    <option value="Tabungan Kendaraan">Tabungan Kendaraan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-300 mb-1.5">Ke (Tujuan Mutasi)</label>
+                                <select id="edit-mutasi-tujuan" required class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                                    <option value="Tabungan Utama">Tabungan Utama</option>
+                                    <option value="Dana Darurat">Dana Darurat</option>
+                                    <option value="Tabungan Kendaraan">Tabungan Kendaraan</option>
+                                    <option value="Saldo Utama">Saldo Utama</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Nominal Mutasi (Rp)</label>
+                            <input type="text" id="edit-mutasi-nominal" required
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
+                                class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Keterangan / Catatan</label>
+                            <input type="text" id="edit-mutasi-keterangan"
+                                class="w-full bg-[#1e293b] border border-slate-700 focus:border-lime-400 rounded-xl px-4 py-2.5 text-sm text-white outline-none">
+                        </div>
+
+                        <!-- Tombol Aksi -->
+                        <div class="grid grid-cols-3 gap-2 pt-2">
+                            <button type="button" onclick="hapusDataMutasi()"
+                                class="py-2.5 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 font-bold text-xs transition border border-rose-500/30">
+                                Hapus
+                            </button>
+                            <button type="button" onclick="tutupModalEditMutasi()"
+                                class="py-2.5 px-3 rounded-xl bg-[#1e293b] hover:bg-slate-700 text-slate-300 font-semibold text-xs transition">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                class="py-2.5 px-3 rounded-xl bg-lime-400 hover:bg-lime-300 text-slate-950 font-bold text-xs transition shadow-lg shadow-lime-400/20">
+                                Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>`;
+            document.body.insertAdjacentHTML('beforeend', htmlModal);
+            modalEl = document.getElementById('modal-edit-mutasi-tabungan');
+        }
+
+        // Isi nilai form dengan data yang dipilih
+        document.getElementById('edit-id-transaksi').value = itemData.idTransaksi || itemData.id;
+        document.getElementById('edit-mutasi-asal').value = asalVal;
+        document.getElementById('edit-mutasi-tujuan').value = tujuanVal;
+        
+        const rawNom = Math.abs(Number(itemData.totalBersihNetto || itemData.nominal || itemData.pendapatan || 0));
+        document.getElementById('edit-mutasi-nominal').value = rawNom.toLocaleString('id-ID');
+        document.getElementById('edit-mutasi-keterangan').value = itemData.keterangan || '';
+
+        modalEl.classList.remove('hidden');
+        modalEl.classList.add('flex');
+    }
+
+    function tutupModalEditMutasi() {
+        const modal = document.getElementById('modal-edit-mutasi-tabungan');
+        if (modal) {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+    }
+
+
+    // Simpan Perubahan Edit Mutasi
+    async function simpanPerubahanMutasi(e) {
+        e.preventDefault();
+
+        const idLama = document.getElementById('edit-id-transaksi').value;
+        const asal = document.getElementById('edit-mutasi-asal').value;
+        const tujuan = document.getElementById('edit-mutasi-tujuan').value;
+        const nominalStr = document.getElementById('edit-mutasi-nominal').value.replace(/\./g, '');
+        const nominal = parseFloat(nominalStr) || 0;
+        const keterangan = document.getElementById('edit-mutasi-keterangan').value.trim() || `Mutasi dari ${asal} ke ${tujuan}`;
+
+        if (asal === tujuan) {
+            await window.tampilAlert('Asal mutasi dan tujuan mutasi tidak boleh sama!', 'warning', 'Validasi');
+            return;
+        }
+
+        if (nominal <= 0) {
+            await window.tampilAlert('Masukkan nominal yang valid!', 'warning', 'Nominal Kosong');
+            return;
+        }
+
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+
+        try {
+            // 1. Hapus dokumen lama terlebih dahulu (baik ID tunggal maupun pasangan _out / _in)
+            if (typeof window.db !== 'undefined' && activeUserId) {
+                const baseId = idLama.replace(/_(out|in)_.*$/, '');
+                const docRef1 = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idLama);
+                await window.fbDeleteDoc(docRef1).catch(() => {});
+                
+                // Coba hapus pasangan jika ada format _out / _in
+                const docRefOut = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_out_${idLama.split('_').pop()}`);
+                const docRefIn = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_in_${idLama.split('_').pop()}`);
+                await window.fbDeleteDoc(docRefOut).catch(() => {});
+                await window.fbDeleteDoc(docRefIn).catch(() => {});
+            }
+
+            // 2. Buat data baru yang diperbarui
+            const getKodeTabungan = (namaPos) => {
+                const p = namaPos.toLowerCase();
+                if (p.includes('darurat')) return 'mutasi_tabungan2';
+                if (p.includes('kendaraan')) return 'mutasi_tabungan3';
+                return 'mutasi_tabungan1';
+            };
+
+            const kodeAsal = getKodeTabungan(asal);
+            const kodeTujuan = getKodeTabungan(tujuan);
+            const activePeriodUI = typeof getActivePeriodFromUI === 'function' ? getActivePeriodFromUI() : 'September 2026';
+            const cleanPeriodeId = activePeriodUI.toLowerCase().replace(/\s+/g, '_');
+            const timestamp = Date.now();
+            const username = localStorage.getItem('dompetq_username') || "iwashia";
+
+            const idAsal = `${kodeAsal}_${cleanPeriodeId}_out_${timestamp}`;
+            const dataAsalFirestore = {
+                idTransaksi: idAsal,
+                kategori: kodeAsal,
+                keterangan: `Keluar ke ${tujuan}: ${keterangan}`,
+                namaUser: username,
+                pendapatan: 0,
+                potongan: nominal,
+                periode: activePeriodUI,
+                referenceKeyImage: kodeAsal.toUpperCase(),
+                totalBersihNetto: -nominal,
+                uid: activeUserId || "7NK4cAVLrDNjgywwUkyaCFZOFM2",
+                waktuTransaksi: new Date(),
+                tipe: 'mutasi',
+                asalMutasi: asal,
+                tujuanMutasi: tujuan
+            };
+
+            const idTujuan = `${kodeTujuan}_${cleanPeriodeId}_in_${timestamp}`;
+            const dataTujuanFirestore = {
+                idTransaksi: idTujuan,
+                kategori: kodeTujuan,
+                keterangan: `Masuk dari ${asal}: ${keterangan}`,
+                namaUser: username,
+                pendapatan: nominal,
+                potongan: 0,
+                periode: activePeriodUI,
+                referenceKeyImage: kodeTujuan.toUpperCase(),
+                totalBersihNetto: nominal,
+                uid: activeUserId || "7NK4cAVLrDNjgywwUkyaCFZOFM2",
+                waktuTransaksi: new Date(),
+                tipe: 'mutasi',
+                asalMutasi: asal,
+                tujuanMutasi: tujuan
+            };
+
+            if (typeof window.db !== 'undefined' && activeUserId) {
+                const docRefAsal = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idAsal);
+                const docRefTujuan = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idTujuan);
+                await Promise.all([
+                    window.fbSetDoc(docRefAsal, dataAsalFirestore),
+                    window.fbSetDoc(docRefTujuan, dataTujuanFirestore)
+                ]);
+            }
+
+            tutupModalEditMutasi();
+            await window.tampilAlert('Perubahan mutasi berhasil disimpan!', 'success', 'Berhasil');
+
+            if (typeof muatDataUtama === 'function') muatDataUtama();
+            if (typeof renderTabTabungan === 'function') renderTabTabungan();
+        } catch (err) {
+            console.error('Gagal memperbarui mutasi:', err);
+            await window.tampilAlert('Terjadi kesalahan saat menyimpan perubahan.', 'error', 'Gagal');
+        }
+    }
+
+    // Hapus Data Mutasi menggunakan Custom Konfirmasi Dialog
+    async function hapusDataMutasi() {
+        const konfirmasi = typeof window.tampilKonfirmasi === 'function' 
+            ? await window.tampilKonfirmasi('Apakah Anda yakin ingin menghapus riwayat mutasi ini? Saldo tabungan akan disesuaikan kembali.', 'Konfirmasi Hapus')
+            : confirm('Apakah Anda yakin ingin menghapus riwayat mutasi ini?');
+
+        if (!konfirmasi) return;
+
+        const idLama = document.getElementById('edit-id-transaksi').value;
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+
+        try {
+            if (typeof window.db !== 'undefined' && activeUserId) {
+                const baseId = idLama.replace(/_(out|in)_.*$/, '');
+                const docRef1 = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idLama);
+                await window.fbDeleteDoc(docRef1).catch(() => {});
+                
+                const docRefOut = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_out_${idLama.split('_').pop()}`);
+                const docRefIn = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_in_${idLama.split('_').pop()}`);
+                await window.fbDeleteDoc(docRefOut).catch(() => {});
+                await window.fbDeleteDoc(docRefIn).catch(() => {});
+            } else {
+                // Fallback localStorage jika offline
+                let dataLokal = JSON.parse(localStorage.getItem('dompetq_transaksi') || '[]');
+                dataLokal = dataLokal.filter(d => (d.idTransaksi || d.id) !== idLama);
+                localStorage.setItem('dompetq_transaksi', JSON.stringify(dataLokal));
+            }
+
+            tutupModalEditMutasi();
+            await window.tampilAlert('Riwayat mutasi berhasil dihapus.', 'success', 'Terhapus');
+
+            if (typeof muatDataUtama === 'function') muatDataUtama();
+            if (typeof renderTabTabungan === 'function') renderTabTabungan();
+        } catch (err) {
+            console.error('Gagal menghapus mutasi:', err);
+            await window.tampilAlert('Terjadi kesalahan saat menghapus data.', 'error', 'Gagal');
+        }
     }
     
 
