@@ -1981,32 +1981,37 @@
             const sisaBulanLaluCatatan = await periksaDanAutoKunciSaldoLalu(activeUserId, activePeriodUI, snapRekap);
 
             // B. PROSES PEMASUKAN, PENGELUARAN & TOTAL TABUNGAN USER AKTIF
-            snapRekap.forEach(docSnap => {
-                const data = docSnap.data();
-                const idTrans = (data.idTransaksi || docSnap.id || "").toLowerCase();
-                const rawPeriode = normalizePeriod(data.periode);
-                const nominalNetto = Number(data.totalBersihNetto || data.nominal || 0);
-                const katName = (data.kategori || "").toLowerCase();
-                const tipeTrans = (data.tipe || "").toLowerCase();
+        snapRekap.forEach(docSnap => {
+            const data = docSnap.data();
+            const idTrans = (data.idTransaksi || docSnap.id || "").toLowerCase();
+            const rawPeriode = normalizePeriod(data.periode);
+            const nominalNetto = Number(data.totalBersihNetto || data.nominal || 0);
+            const katName = (data.kategori || "").toLowerCase();
+            const tipeTrans = (data.tipe || "").toLowerCase();
 
-                // Cek jika transaksi adalah mutasi
-                const isMutasi = tipeTrans === 'mutasi' || katName.includes('→') || idTrans.startsWith('mutasi_');
+            // 1. TANGANI SEMUA TRANSAKSI MUTASI / TABUNGAN (Termasuk yang bernilai negatif/positif di totalBersihNetto)
+            const isMutasiTabungan = idTrans.includes('mutasi_tabungan') || 
+                                    idTrans.includes('_in_') || 
+                                    tipeTrans === 'mutasi_tabungan' || 
+                                    katName.startsWith('mutasi_tabungan');
 
-                if (isMutasi) {
-                    // Jika ini mutasi masuk ke tabungan (misal _in), tambahkan ke total tabungan
-                    if (idTrans.includes('_in_') || nominalNetto > 0) {
-                        totalSaldoTabunganAkomulasi += Math.abs(nominalNetto);
-                    }
-                    
-                    // Jika ini mutasi keluar dari saldo utama (misal _out), hitung sebagai pengurang saldo utama (masuk ke pengeluaran/mutasi)
-                    if (rawPeriode === activePeriodUI) {
-                        if (idTrans.includes('_out_') || nominalNetto < 0) {
-                            totalPengeluaranBulanIni += Math.abs(nominalNetto); // Saldo utama berkurang
-                        }
-                        listTransaksiBulanIni.push({ ...data, tipe: 'mutasi' });
-                    }
-                    return; 
+            if (isMutasiTabungan) {
+                // Gunakan Math.abs() agar nilai minus dari totalBersihNetto tetap terhitung sebagai akumulasi positif tabungan
+                if (nominalNetto !== 0) {
+                    totalSaldoTabunganAkomulasi += Math.abs(nominalNetto);
                 }
+                return; // Lewati dari rekap pengeluaran operasional utama
+            }
+
+            // 2. Cek jika ini adalah mutasi keluar dari Saldo Utama
+            const isMutasiUtama = idTrans.includes('out_mutasi_utama') || idTrans.includes('_out_') || (katName === 'mutasi' && nominalNetto < 0);
+            if (isMutasiUtama) {
+                if (rawPeriode === activePeriodUI) {
+                    totalPengeluaranBulanIni += Math.abs(nominalNetto);
+                    listTransaksiBulanIni.push({ ...data, tipe: 'pengeluaran' });
+                }
+                return;
+            }
 
                 // Abaikan semua dokumen catatan saldo lalu untuk list & rekap bulanan
                 if (idTrans.startsWith('saldo_lalu_')) return;
@@ -2015,7 +2020,8 @@
                     const isPemasukan = idTrans.startsWith('gaji') || 
                                         idTrans.startsWith('ksp') || 
                                         idTrans.startsWith('thr') || 
-                                        idTrans.startsWith('lainnya');
+                                        idTrans.startsWith('lainnya') ||
+                                        idTrans.startsWith('in_mutasi_utama');
 
                     const isPengeluaran = idTrans.startsWith('out');
 
@@ -2408,28 +2414,55 @@
      * @param {string} docId - Document ID / idTransaksi yang ingin dihapus
      */
     window.hapusTransaksiFirestore = async function(docId) {
-        const activeUserId = window.getActiveUserId();
-        if (!activeUserId) {
-            await window.tampilAlert("Silakan login/pilih akun terlebih dahulu!", "warning");
-            return;
-        }
+    const activeUserId = window.getActiveUserId();
+    if (!activeUserId) {
+        await window.tampilAlert("Silakan login/pilih akun terlebih dahulu!", "warning");
+        return;
+    }
 
-        const konfirmasi = await window.tampilKonfirmasi("Apakah Anda yakin ingin menghapus catatan transaksi ini?", "Hapus Transaksi");
-        if (!konfirmasi) return;
+    const konfirmasi = await window.tampilKonfirmasi("Apakah Anda yakin ingin menghapus catatan transaksi ini?", "Hapus Transaksi");
+    if (!konfirmasi) return;
 
-        try {
-            const docRef = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', docId);
-            await window.fbDeleteDoc(docRef);
+    try {
+        const batchDeletions = [];
+        
+        // 1. Hapus dokumen utama yang diklik
+        const docRefUtama = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', docId);
+        batchDeletions.push(window.fbDeleteDoc(docRefUtama));
 
-            await window.tampilAlert("Data transaksi berhasil dihapus!", "success");
+        // 2. DETEKSI APAKAH INI MUTASI / TABUNGAN (Punya pasangan _out / _in atau prefix mutasi_tabungan)
+        const lowerId = String(docId).toLowerCase();
+        if (lowerId.includes('mutasi') || lowerId.includes('_out_') || lowerId.includes('_in_')) {
+            // Ambil base ID untuk mencari pasangannya
+            const baseId = docId.replace(/_(out|in)_.*$/, '');
+            const timestampSuffix = docId.split('_').pop();
+
+            // Coba hapus pasangan kembarnya di rekap_finansial (misal jika ada _out, cari _in nya atau sebaliknya)
+            const partnerOutId = `${baseId}_out_${timestampSuffix}`;
+            const partnerInId = `${baseId}_in_${timestampSuffix}`;
             
-            // Re-sync UI secara otomatis
-            await window.muatDataUtama(activeUserId);
-        } catch (err) {
-            console.error("❌ Gagal menghapus transaksi:", err);
-            await window.tampilAlert("Gagal menghapus data: " + err.message, "error");
+            if (docId !== partnerOutId) {
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', partnerOutId)).catch(() => {}));
+            }
+            if (docId !== partnerInId) {
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', partnerInId)).catch(() => {}));
+            }
         }
-    };
+
+        await Promise.all(batchDeletions);
+
+        await window.tampilAlert("Data transaksi berhasil dihapus dari semua bagian!", "success");
+        
+        // Re-sync UI secara otomatis
+        await window.muatDataUtama(activeUserId);
+        if (typeof renderTabTabungan === 'function') {
+            renderTabTabungan();
+        }
+    } catch (err) {
+        console.error("❌ Gagal menghapus transaksi:", err);
+        await window.tampilAlert("Gagal menghapus data: " + err.message, "error");
+    }
+};
 
     /**
      * Simpan / Update Transaksi ke Firestore (Tambah Baru atau Edit)
@@ -6557,12 +6590,14 @@
     }
 
 
-    // Fungsi Simpan Mutasi ke Firestore / State Utama (Menyesuaikan Struktur Database Anda)
+    // ==========================================
+    // SIMPAN MUTASI TABUNGAN (ANTI BENTROK SALDO & RIWAYAT)
+    // ==========================================
     async function simpanMutasiTabungan(e) {
         e.preventDefault();
 
-        const asal = document.getElementById('mutasi-asal').value;
-        const tujuan = document.getElementById('mutasi-tujuan').value;
+        const asal = document.getElementById('mutasi-asal').value; // Contoh: 'Saldo Utama'
+        const tujuan = document.getElementById('mutasi-tujuan').value; // Contoh: 'Dana Darurat'
         const nominalStr = document.getElementById('mutasi-nominal').value.replace(/\./g, '');
         const nominal = parseFloat(nominalStr) || 0;
         const keterangan = document.getElementById('mutasi-keterangan').value.trim() || `Mutasi dari ${asal} ke ${tujuan}`;
@@ -6577,79 +6612,133 @@
             return;
         }
 
+        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
+        if (!activeUserId) {
+            await window.tampilAlert('Profil pengguna tidak ditemukan!', 'error', 'User Tidak Ditemukan');
+            return;
+        }
+
+        const elLabelPeriode = document.getElementById('label-month-main');
+        const rawPeriodUI = elLabelPeriode ? elLabelPeriode.textContent.trim() : 'November 2026';
+        const periodeAktif = rawPeriodUI.toUpperCase();
+        const cleanPeriodeId = rawPeriodUI.toLowerCase().replace(/\s+/g, '_');
+
+        const timestamp = Date.now();
+        const username = localStorage.getItem('dompetq_username') || "komputerwh2";
+
         const getKodeTabungan = (namaPos) => {
             const p = namaPos.toLowerCase();
             if (p.includes('darurat')) return 'mutasi_tabungan2';
             if (p.includes('kendaraan')) return 'mutasi_tabungan3';
-            return 'mutasi_tabungan1'; 
+            return 'mutasi_tabungan1';
         };
 
-        const kodeAsal = getKodeTabungan(asal);
-        const kodeTujuan = getKodeTabungan(tujuan);
+        const isAsalSaldoUtama = asal.toLowerCase().includes('saldo utama');
+        const isTujuanSaldoUtama = tujuan.toLowerCase().includes('saldo utama');
 
-        const activePeriodUI = typeof getActivePeriodFromUI === 'function' ? getActivePeriodFromUI() : 'September 2026';
-        const cleanPeriodeId = activePeriodUI.toLowerCase().replace(/\s+/g, '_');
-        const timestamp = Date.now();
-        const activeUserId = window.getActiveUserId ? window.getActiveUserId() : localStorage.getItem('dompetq_user_id');
-        const username = localStorage.getItem('dompetq_username') || "iwashia";
+        const batchPromises = [];
 
-        // 1. Data untuk Pengurangan di Pos Asal
-        const idAsal = `${kodeAsal}_${cleanPeriodeId}_out_${timestamp}`;
-        const dataAsalFirestore = {
-            idTransaksi: idAsal,
-            kategori: kodeAsal,
-            keterangan: `Keluar ke ${tujuan}: ${keterangan}`,
-            namaUser: username,
-            pendapatan: 0,
-            potongan: nominal,
-            periode: activePeriodUI,
-            referenceKeyImage: kodeAsal.toUpperCase(),
-            totalBersihNetto: -Math.abs(nominal),
-            uid: activeUserId,
-            waktuTransaksi: new Date(),
-            tipe: 'mutasi',
-            asalMutasi: asal,       // <-- Pastikan tersimpan
-            tujuanMutasi: tujuan     // <-- Pastikan tersimpan
-        };
+        // A. JIKA ASAL DARI SALDO UTAMA -> Catat pengeluaran di Rekap Utama (tanpa kata kunci pos tabungan di ID/kategori)
+        if (isAsalSaldoUtama) {
+            const idOut = `out_mutasi_utama_${cleanPeriodeId}_${timestamp}`;
+            const dataOut = {
+                idTransaksi: idOut,
+                uid: activeUserId,
+                namaUser: username,
+                periode: periodeAktif,
+                tipe: 'pengeluaran',
+                kategori: 'MUTASI',
+                keterangan: `Mutasi ke ${tujuan}: ${keterangan}`,
+                pendapatan: 0,
+                potongan: nominal,
+                totalBersihNetto: -Math.abs(nominal), // Mengurangi Saldo Utama
+                waktuTransaksi: new Date(),
+                diperbaruiPada: new Date().toISOString()
+            };
+            const docRefOut = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idOut);
+            batchPromises.push(window.fbSetDoc(docRefOut, dataOut, { merge: true }));
+        } else {
+            // Jika asal dari pos tabungan lain (misal pindah dari Darurat ke Kendaraan)
+            const kodeAsal = getKodeTabungan(asal);
+            const idTabOut = `${kodeAsal}_${cleanPeriodeId}_out_${timestamp}`;
+            const dataTabOut = {
+                idTransaksi: idTabOut,
+                uid: activeUserId,
+                namaUser: username,
+                periode: periodeAktif,
+                tipe: 'mutasi_tabungan', // Penanda khusus agar tidak tampil di Rekap Bulanan
+                kategori: kodeAsal,
+                referenceKeyImage: kodeAsal.toUpperCase(),
+                keterangan: `Keluar ke ${tujuan}: ${keterangan}`,
+                pendapatan: 0,
+                potongan: nominal,
+                totalBersihNetto: -Math.abs(nominal),
+                waktuTransaksi: new Date(),
+                diperbaruiPada: new Date().toISOString(),
+                asalMutasi: asal,
+                tujuanMutasi: tujuan
+            };
+            const docRefTabOut = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idTabOut);
+            batchPromises.push(window.fbSetDoc(docRefTabOut, dataTabOut, { merge: true }));
+        }
 
-        // 2. Data untuk Penambahan di Pos Tujuan
-        const idTujuan = `${kodeTujuan}_${cleanPeriodeId}_in_${timestamp}`;
-        const dataTujuanFirestore = {
-            idTransaksi: idTujuan,
-            kategori: kodeTujuan,
-            keterangan: `Masuk dari ${asal}: ${keterangan}`,
-            namaUser: username,
-            pendapatan: nominal,
-            potongan: 0,
-            periode: activePeriodUI,
-            referenceKeyImage: kodeTujuan.toUpperCase(),
-            totalBersihNetto: Math.abs(nominal),
-            uid: activeUserId,
-            waktuTransaksi: new Date(),
-            tipe: 'mutasi',
-            asalMutasi: asal,       // <-- Pastikan tersimpan
-            tujuanMutasi: tujuan     // <-- Pastikan tersimpan
-        };
+        // B. JIKA TUJUAN KE POS TABUNGAN -> Sesuaikan agar terbaca benar oleh sistem penjumlahan tabungan Anda
+        if (!isTujuanSaldoUtama) {
+            const kodeTujuan = getKodeTabungan(tujuan);
+            const idTabIn = `${kodeTujuan}_${cleanPeriodeId}_in_${timestamp}`;
+            
+            // Payload disesuaikan mengikuti format database yang sukses (potongan diisi positif, totalBersihNetto negatif)
+            const dataTabIn = {
+                idTransaksi: idTabIn,
+                uid: activeUserId,
+                namaUser: username,
+                periode: periodeAktif,
+                tipe: 'mutasi_tabungan',
+                kategori: kodeTujuan,
+                referenceKeyImage: kodeTujuan.toUpperCase(),
+                keterangan: `Mutasi dari ${asal}: ${keterangan}`,
+                pendapatan: 0,
+                potongan: Math.abs(nominal),          // Diset positif agar terakumulasi benar di sistem Anda
+                totalBersihNetto: -Math.abs(nominal), // Diset negatif sesuai struktur database tabungan Anda
+                waktuTransaksi: new Date(),
+                diperbaruiPada: new Date().toISOString(),
+                asalMutasi: asal,
+                tujuanMutasi: tujuan
+            };
+            const docRefTabIn = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idTabIn);
+            batchPromises.push(window.fbSetDoc(docRefTabIn, dataTabIn, { merge: true }));
+        } else {
+            // Jika tujuan kembali ke Saldo Utama (tarik tabungan ke Saldo Utama)
+            const idIn = `in_mutasi_utama_${cleanPeriodeId}_${timestamp}`;
+            const dataIn = {
+                idTransaksi: idIn,
+                uid: activeUserId,
+                namaUser: username,
+                periode: periodeAktif,
+                tipe: 'pemasukan',
+                kategori: 'MUTASI_MASUK',
+                keterangan: `Tarik dari ${asal}: ${keterangan}`,
+                pendapatan: nominal,
+                potongan: 0,
+                totalBersihNetto: Math.abs(nominal),
+                waktuTransaksi: new Date(),
+                diperbaruiPada: new Date().toISOString()
+            };
+            const docRefIn = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idIn);
+            batchPromises.push(window.fbSetDoc(docRefIn, dataIn, { merge: true }));
+        }
 
         try {
-            if (typeof window.db !== 'undefined' && activeUserId) {
-                const docRefAsal = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idAsal);
-                const docRefTujuan = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idTujuan);
-                
-                await Promise.all([
-                    window.fbSetDoc(docRefAsal, dataAsalFirestore),
-                    window.fbSetDoc(docRefTujuan, dataTujuanFirestore)
-                ]);
-            }
+            await Promise.all(batchPromises);
 
-            tutupModalMutasiTabungan();
+            if (typeof tutupModalMutasiTabungan === 'function') tutupModalMutasiTabungan();
             await window.tampilAlert(`Berhasil memindahkan Rp ${nominal.toLocaleString('id-ID')} dari ${asal} ke ${tujuan}.`, 'success', 'Mutasi Berhasil');
 
-            if (typeof muatDataUtama === 'function') muatDataUtama();
-            if (typeof renderTabTabungan === 'function') renderTabTabungan();
+            if (typeof window.muatDataUtama === 'function') await window.muatDataUtama(activeUserId);
+            if (typeof window.renderTabTabungan === 'function') window.renderTabTabungan();
         } catch (err) {
-            console.error('Gagal menyimpan mutasi:', err);
-            await window.tampilAlert('Terjadi kesalahan saat memproses mutasi saldo.', 'error', 'Gagal');
+            console.error('❌ Gagal menyimpan mutasi:', err);
+            await window.tampilAlert('Terjadi kesalahan saat memproses mutasi saldo: ' + err.message, 'error', 'Gagal');
         }
     }
 
@@ -7163,7 +7252,7 @@
     // Hapus Data Mutasi menggunakan Custom Konfirmasi Dialog
     async function hapusDataMutasi() {
         const konfirmasi = typeof window.tampilKonfirmasi === 'function' 
-            ? await window.tampilKonfirmasi('Apakah Anda yakin ingin menghapus riwayat mutasi ini? Saldo tabungan akan disesuaikan kembali.', 'Konfirmasi Hapus')
+            ? await window.tampilKonfirmasi('Apakah Anda yakin ingin menghapus riwayat mutasi ini? Saldo tabungan dan rekap utama akan disesuaikan kembali.', 'Konfirmasi Hapus')
             : confirm('Apakah Anda yakin ingin menghapus riwayat mutasi ini?');
 
         if (!konfirmasi) return;
@@ -7173,23 +7262,29 @@
 
         try {
             if (typeof window.db !== 'undefined' && activeUserId) {
-                const baseId = idLama.replace(/_(out|in)_.*$/, '');
-                const docRef1 = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idLama);
-                await window.fbDeleteDoc(docRef1).catch(() => {});
+                const batchDeletions = [];
                 
-                const docRefOut = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_out_${idLama.split('_').pop()}`);
-                const docRefIn = window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_in_${idLama.split('_').pop()}`);
-                await window.fbDeleteDoc(docRefOut).catch(() => {});
-                await window.fbDeleteDoc(docRefIn).catch(() => {});
+                // Hapus dokumen utama
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', idLama)).catch(() => {}));
+
+                // Hapus pasangan terkait mutasi (_out / _in / mutasi_utama)
+                const baseId = idLama.replace(/_(out|in)_.*$/, '');
+                const suffix = idLama.split('_').pop();
+
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_out_${suffix}`)).catch(() => {}));
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `${baseId}_in_${suffix}`)).catch(() => {}));
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `out_mutasi_utama_${suffix}`)).catch(() => {}));
+                batchDeletions.push(window.fbDeleteDoc(window.fbDoc(window.db, 'users', activeUserId, 'rekap_finansial', `in_mutasi_utama_${suffix}`)).catch(() => {}));
+
+                await Promise.all(batchDeletions);
             } else {
-                // Fallback localStorage jika offline
                 let dataLokal = JSON.parse(localStorage.getItem('dompetq_transaksi') || '[]');
                 dataLokal = dataLokal.filter(d => (d.idTransaksi || d.id) !== idLama);
                 localStorage.setItem('dompetq_transaksi', JSON.stringify(dataLokal));
             }
 
             tutupModalEditMutasi();
-            await window.tampilAlert('Riwayat mutasi berhasil dihapus.', 'success', 'Terhapus');
+            await window.tampilAlert('Riwayat mutasi berhasil dihapus total.', 'success', 'Terhapus');
 
             if (typeof muatDataUtama === 'function') muatDataUtama();
             if (typeof renderTabTabungan === 'function') renderTabTabungan();
